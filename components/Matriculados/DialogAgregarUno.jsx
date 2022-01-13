@@ -28,15 +28,20 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import CommentIcon from '@mui/icons-material/Comment';
+import {
+    collection,
+    setDoc,
+    doc,
+    getFirestore,
+    serverTimestamp,
+} from "firebase/firestore";
+import config from "../../firebase/config";
 
 
 const PosiblesAsignaciones = ({ tipo, nombre, checked, cambiarChecked }) => {
-
-    
-
     return (
         <ListItem disablePadding >
-            <ListItemButton dense onClick={()=>{cambiarChecked(tipo)}}>
+            <ListItemButton dense onClick={() => { cambiarChecked(tipo) }}>
                 <ListItemIcon>
                     <Checkbox
                         edge="start"
@@ -52,8 +57,7 @@ const PosiblesAsignaciones = ({ tipo, nombre, checked, cambiarChecked }) => {
 }
 
 
-export default function DialogAgregarUno({ open, setOpen }) {
-
+export default function DialogAgregarUno({ open, setOpen, consultar }) {
 
     const [nombre, setNombre] = useState("")
     const [genero, setGenero] = useState("hombre")
@@ -100,10 +104,62 @@ export default function DialogAgregarUno({ open, setOpen }) {
         setOpen(true);
     };
 
-    const handleClose = (e) => {
-        e.preventDefault()
+    const handleClose = () => {
         setOpen(false);
     };
+
+    //* Para crear matriculado
+    const db = getFirestore(config)
+    const crearMatriculado = async (e) => {
+
+        e.preventDefault()
+
+        const direccionMatriculados = doc(collection(db, "congregaciones/Del Bosque/matriculados"));
+        const direccionFamilias = doc(collection(db, "congregaciones/Del Bosque/familias"));
+        if(nuevaFamilia != "") {
+            await setDoc(direccionFamilias, {
+                familia: nuevaFamilia
+            })
+        }
+
+        function seCreoFamilia() {
+            if (nuevaFamilia != "") {
+                return nuevaFamilia
+            }
+            return familia
+        }
+
+        await setDoc(direccionMatriculados, {
+            nombre,
+            genero,
+            familia: seCreoFamilia(),
+            timeStampUltimaAsignacion,
+            ultimaSala,
+            tipoDeUltimaAsignacion,
+            posiblesAsignaciones,
+        });
+
+
+        setNombre('');
+        setGenero('');
+        setFamilia('');
+        setTimeStampUltimaAsignacion('')
+        setUltimaSala('');
+        setTipoDeUltimaAsignacion('A')
+        setPosiblesAsignaciones({
+            A: false,
+            PC: false,
+            R: false,
+            CB: false,
+            D: false,
+            L: false
+        })
+
+        consultar();
+        handleClose();
+    }
+
+
 
 
 
@@ -187,6 +243,8 @@ export default function DialogAgregarUno({ open, setOpen }) {
                             fullWidth
                             variant="outlined"
                             sx={{ mb: 1 }}
+                            value={nuevaFamilia}
+                            onChange={(e)=>setNuevaFamilia(e.target.value)}
                         />
                     }
 
@@ -264,7 +322,7 @@ export default function DialogAgregarUno({ open, setOpen }) {
 
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} variant="contained" type="submit" >Guardar</Button>
+                    <Button onClick={crearMatriculado} variant="contained" type="submit" >Guardar</Button>
                     <Button onClick={handleClose}>cerrar</Button>
                 </DialogActions>
             </form>

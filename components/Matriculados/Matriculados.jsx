@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Button,
     Card,
@@ -36,29 +36,39 @@ export default function Matriculados() {
         setOpen(true);
     };
 
-  
+
     const consultarBaseDeDatos = async () => {
 
-        let tarjetas = []
+        let matriculadosDescargados = []
 
         const q = query(collection(db, `congregaciones/Del Bosque/matriculados`), orderBy("nombre"))
         const n = await getDocs(q);
         n.forEach((doc) => {
-            
+
+            //* TimeStamp de última asignación
+            const fecha = doc.data().timeStampUltimaAsignacion
+
             const agregar = {
                 id: doc.id,
-                data: doc.data(),
-                descripcion: doc.data().despuesDeLaSesion.principalAprendido,
-                hora: texto
+                nombre: doc.data().nombre,
+                genero: doc.data().genero,
+                familia: doc.data().familia,
+                ultimaAsignacion: fecha,
+                tipoDeUltimaAsignacion: doc.data().tipoDeUltimaAsignacion,
+                posiblesAsignaciones: doc.data().posiblesAsignaciones
             }
-            tarjetas.push(agregar)
+            matriculadosDescargados.push(agregar)
         })
 
-        setMatriculados(tarjetas)
+        setMatriculados(matriculadosDescargados)
     }
 
 
-  
+    useEffect(() => {
+        consultarBaseDeDatos()
+    }, [])
+
+
 
 
     return (
@@ -72,11 +82,13 @@ export default function Matriculados() {
                     minHeight: "900px",
                     background: "#e7e7e5",
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    alignItems: "start",
+                    justifyContent: "start",
                     flexWrap: "wrap"
                 }}
                 elevation={20}>
+
+
 
                 <Card sx={{ maxWidth: "250px" }}>
                     <CardContent>
@@ -96,13 +108,29 @@ export default function Matriculados() {
                             Agregar información</Button>
                     </CardContent>
                 </Card>
+
+                {
+                    matriculados.map((matriculado) => {
+                        return (
+                            <Card key={matriculado.id} sx={{m:1}}>
+                                <CardContent>
+                                    <Typography sx={{ textAlign: "center" }}>
+                                        <b>{matriculado.nombre}</b>
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        )
+                    })
+                }
+
+
             </Paper>
 
 
 
 
-            <DialogAgregarUno open={open} setOpen={setOpen} />
-           
+            <DialogAgregarUno open={open} setOpen={setOpen} consultar={consultarBaseDeDatos} />
+
         </>
     )
 }
