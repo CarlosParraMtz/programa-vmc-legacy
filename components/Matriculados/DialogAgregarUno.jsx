@@ -309,7 +309,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
                     <Divider sx={{ mt: 2, mb: 1 }}> Futuras asignaciones </Divider>
 
                     <Typography variant="subtitle2" sx={{ color: "#777", fontSize: "12px" }}>Tipo de asignaciones que puede tener:</Typography>
-                    <List sx={{ width: '100%', m: "0 auto", maxWidth: 360, bgcolor: 'background.paper' }}>
+                    <List fullWidth sx={{ m: "0 auto", bgcolor: 'background.paper' }}>
                         <PosiblesAsignaciones tipo="A" nombre="Ayudante" checked={posiblesAsignaciones.A} cambiarChecked={cambiarChecked} />
                         <PosiblesAsignaciones tipo="PC" nombre="Primera conversación" checked={posiblesAsignaciones.PC} cambiarChecked={cambiarChecked} />
                         <PosiblesAsignaciones tipo="R" nombre="Revisita" checked={posiblesAsignaciones.R} cambiarChecked={cambiarChecked} />
