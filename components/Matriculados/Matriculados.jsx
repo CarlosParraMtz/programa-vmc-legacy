@@ -62,7 +62,7 @@ const Elemento = ({ data }) => {
                             Ultima asignación:
                         </Typography>
                         <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                            {data.tipoDeUltimaAsignacion}, el {data.ultimaAsignacion}, en la sala {data.ultimaSala}
+                            <b>{data.tipoDeUltimaAsignacion}, el {data.ultimaAsignacion}, en la sala {data.ultimaSala}</b>
                         </Typography>
                     </CardContent>
                 </Card>
