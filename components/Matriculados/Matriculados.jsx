@@ -3,6 +3,7 @@ import {
     Box,
     Button,
     Card,
+    CardActions,
     CardContent,
     CardHeader,
     CircularProgress,
@@ -19,6 +20,13 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DialogAgregarUno from './DialogAgregarUno';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { ExpandMore, ExpandLess } from '@mui/icons-material';
+import { useRecoilState } from 'recoil';
+import matriculadosState from '../../Recoil/matriculadosState';
+
+import DialogEditar from './DialogEditar';
 
 import {
     collection,
@@ -35,7 +43,7 @@ import config from "../../firebase/config";
 const db = getFirestore(config)
 
 
-const Elemento = ({ data }) => {
+const Elemento = ({ data, consultar }) => {
 
     const [open, setOpen] = useState(false)
 
@@ -45,29 +53,67 @@ const Elemento = ({ data }) => {
             <Collapse in={!open}>
                 <ListItem disablePadding>
                     <ListItemButton onClick={() => setOpen(!open)}>
-                        <ListItemText primary={data.nombre} secondary="Click para más información" />
+                        <ListItemText primary={<b>{data.nombre}</b>} />
+                        <ExpandMore />
                     </ListItemButton>
                 </ListItem>
             </Collapse>
 
             <Collapse in={open}>
-                <Card onClick={() => setOpen(false)} >
-                    <CardHeader title={data.nombre} sx={{ background: "#5b3c88", color: "white" }} />
+                <Card >
+                    <CardHeader title={data.nombre} sx={{ background: "#5b3c88", color: "white", maxHeight: "50px", pr: 3 }} onClick={() => setOpen(false)} action={<ExpandLess />} />
 
                     <CardContent>
                         <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                            Familia: <b>{data.familia}</b>
+                            <b>Familia:</b> {data.familia}
+                        </Typography>
+
+                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
+                            <b>Ultima asignación:</b>
                         </Typography>
                         <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                            Ultima asignación:
+                            {data.tipoDeUltimaAsignacion}, el {data.ultimaAsignacion}, en la sala {data.ultimaSala}
                         </Typography>
-                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                            <b>{data.tipoDeUltimaAsignacion}, el {data.ultimaAsignacion}, en la sala {data.ultimaSala}</b>
+
+                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
+                            <b>Se puede asignar a:</b>
                         </Typography>
+
+                        {
+                            data.arrayPosiblesAsignaciones.map((asignacion, index) => {
+                                return (
+                                    <Typography key={index}>
+                                        {asignacion}
+                                    </Typography>
+                                )
+                            })
+                        }
+
                     </CardContent>
+                    <CardActions>
+                        <Box sx={{ m: "0 auto" }}>
+
+                            <DialogEditar consultar={consultar} data={data} />
+
+                            <Button
+                                variant="contained"
+                                startIcon={<DeleteIcon />}
+                                sx={{
+                                    m: 1,
+                                    background: "#5b3c88",
+                                    "&:hover": {
+                                        background: "#6b4c88"
+                                    }
+                                }} >
+                                Borrar
+                            </Button>
+
+                        </Box>
+                    </CardActions>
+
                 </Card>
             </Collapse>
-            <Divider sx={{ m: 0 }} />
+            <Divider />
         </>
     )
 }
@@ -77,7 +123,7 @@ const Elemento = ({ data }) => {
 export default function Matriculados() {
 
     const [open, setOpen] = useState(false);
-    const [matriculados, setMatriculados] = useState([])
+    const [matriculados, setMatriculados] = useRecoilState(matriculadosState)
     const [cargando, setCargando] = useState(false)
 
 
@@ -90,23 +136,54 @@ export default function Matriculados() {
         setCargando(true)
 
         let matriculadosDescargados = []
+        const mesDelAño = [
+            "enero",
+            "febrero",
+            "marzo",
+            "abril",
+            "mayo",
+            "junio",
+            "julio",
+            "agosto",
+            "septiembre",
+            "octubre",
+            "noviembre",
+            "diciembre"
+        ]
 
         const q = query(collection(db, `congregaciones/Del Bosque/matriculados`), orderBy("nombre"))
         const n = await getDocs(q);
         n.forEach((doc) => {
+            const fecha = new Date(doc.data().timeStampUltimaAsignacion)
+            const año = fecha.getFullYear();
+            const diaNum = fecha.getDate();
+            const mes = fecha.getMonth();
+            const textoFecha = `${diaNum} de ${mesDelAño[mes]} del ${año}`;
 
-            //* TimeStamp de última asignación
-            const fecha = doc.data().timeStampUltimaAsignacion
+
+            let posibles = []
+            let json = doc.data().posiblesAsignaciones
+            for (var i in json) {
+                if (json[i]) {
+                    posibles.push(i)
+                }
+            }
+
+            const mesT = mes < 9 ? `0${mes + 1}` : mes + 1
+            const diaT = diaNum < 9 ? `0${diaNum + 1}` : diaNum + 1
+            const valueCalendar = `${año}-${mesT}-${diaT}`
 
             const agregar = {
                 id: doc.id,
                 nombre: doc.data().nombre,
                 genero: doc.data().genero,
                 familia: doc.data().familia,
-                ultimaAsignacion: fecha,
+                ultimaAsignacion: textoFecha,
+                defaultValueCalendar: valueCalendar,
                 ultimaSala: doc.data().ultimaSala,
                 tipoDeUltimaAsignacion: doc.data().tipoDeUltimaAsignacion,
-                posiblesAsignaciones: doc.data().posiblesAsignaciones
+                posiblesAsignaciones: json,
+                arrayPosiblesAsignaciones: posibles
             }
             matriculadosDescargados.push(agregar)
         })
@@ -161,10 +238,10 @@ export default function Matriculados() {
                         </CardContent>
                     </Card>
                 ) : (
-                    <List fullWidth sx={{ width: "100%", maxHeight: "100%", overflow: "auto" }} disablePadding>
+                    <List sx={{ width: "100%", maxHeight: "100%", overflow: "auto" }} disablePadding>
                         {
                             matriculados.map((matriculado) => {
-                                return <Elemento data={matriculado} key={matriculado.id} />
+                                return <Elemento data={matriculado} key={matriculado.id} consultar={consultarBaseDeDatos} />
                             })
                         }
                     </List>
@@ -194,9 +271,9 @@ export default function Matriculados() {
             <DialogAgregarUno open={open} setOpen={setOpen} consultar={consultarBaseDeDatos} />
 
             {cargando &&
-                <Box sx={{ background: "#5b3c88", width: "100vw", height: "100vh", position: "fixed", top:0, left:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}>
-                    <CircularProgress sx={{color:"white"}} />
-                    <Typography variant="h6" sx={{textAlign:"center", color:"white"}} ><b>Cargando...</b></Typography>
+                <Box sx={{ background: "#5b3c88", width: "100vw", height: "100vh", position: "fixed", top: 0, left: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                    <CircularProgress sx={{ color: "white" }} />
+                    <Typography variant="h6" sx={{ textAlign: "center", color: "white" }} ><b>Cargando...</b></Typography>
                 </Box>
             }
         </>

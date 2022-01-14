@@ -101,6 +101,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
     };
 
     const cambiarFechaUltimaAsignacion = e => {
+        console.log(e.target.value)
         const date = new Date(e.target.value)
         setTimeStampUltimaAsignacion(date.valueOf())
     }
@@ -181,6 +182,11 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
     }, [open])
 
 
+    useEffect(() => {
+        if (familia != "nuevaFamilia") {
+            setNuevaFamilia('')
+        }
+    }, [familia])
 
 
 
@@ -203,8 +209,8 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
             <form>
                 <DialogTitle>Agrega un matriculado</DialogTitle>
                 <DialogContent sx={{ overflow: "auto" }} >
-                    <DialogContentText>
-                        Agrega todos los datos para evitar errores en la generación automática de asignaciones.
+                    <DialogContentText sx={{textAlign:"center"}}>
+                        Agrega todos los datos cuidadosamente para evitar errores en la generación automática de asignaciones.
                     </DialogContentText>
 
                     <Divider sx={{ mt: 1, mb: 1 }}> Datos básicos </Divider>
@@ -287,7 +293,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
                         variant="outlined"
                     />
 
-                    <Grid container spacing={1} sx={{ width: "100%" }}>
+                    <Grid container spacing={0} sx={{ width: "100%" }}>
                         <Grid item sm={4} xs={12}>
                             <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
                                 <InputLabel id="demo-simple-select-label">Sala de última asignación</InputLabel>
@@ -332,7 +338,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
                     <Divider sx={{ mt: 2, mb: 1 }}> Futuras asignaciones </Divider>
 
                     <Typography variant="subtitle2" sx={{ color: "#777", fontSize: "12px" }}>Tipo de asignaciones que puede tener:</Typography>
-                    <List fullWidth sx={{ m: "0 auto", bgcolor: 'background.paper' }}>
+                    <List sx={{ m: "0 auto", bgcolor: 'background.paper' }}>
                         <PosiblesAsignaciones nombre="Ayudante" checked={posiblesAsignaciones["Ayudante"]} cambiarChecked={cambiarChecked} />
                         <PosiblesAsignaciones nombre="Primera conversación" checked={posiblesAsignaciones["Primera conversación"]} cambiarChecked={cambiarChecked} />
                         <PosiblesAsignaciones nombre="Revisita" checked={posiblesAsignaciones["Revisita"]} cambiarChecked={cambiarChecked} />
