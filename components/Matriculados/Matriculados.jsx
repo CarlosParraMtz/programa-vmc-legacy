@@ -1,11 +1,23 @@
 import { useState, useEffect } from 'react'
 import {
+    Box,
     Button,
     Card,
     CardContent,
+    CardHeader,
+    CircularProgress,
+    Collapse,
+    Divider,
+    Fab,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemText,
     Paper,
+    Tooltip,
     Typography,
-} from '@mui/material'
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import DialogAgregarUno from './DialogAgregarUno';
 
 import {
@@ -23,6 +35,42 @@ import config from "../../firebase/config";
 const db = getFirestore(config)
 
 
+const Elemento = ({ data }) => {
+
+    const [open, setOpen] = useState(false)
+
+    return (
+        <>
+
+            <Collapse in={!open}>
+                <ListItem disablePadding>
+                    <ListItemButton onClick={() => setOpen(!open)}>
+                        <ListItemText primary={data.nombre} secondary="Click para más información" />
+                    </ListItemButton>
+                </ListItem>
+            </Collapse>
+
+            <Collapse in={open}>
+                <Card onClick={() => setOpen(false)} >
+                    <CardHeader title={data.nombre} sx={{ background: "#5b3c88", color: "white" }} />
+
+                    <CardContent>
+                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
+                            Familia: <b>{data.familia}</b>
+                        </Typography>
+                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
+                            Ultima asignación:
+                        </Typography>
+                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
+                            {data.tipoDeUltimaAsignacion}, el {data.ultimaAsignacion}, en la sala {data.ultimaSala}
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Collapse>
+            <Divider sx={{ m: 0 }} />
+        </>
+    )
+}
 
 
 
@@ -30,6 +78,7 @@ export default function Matriculados() {
 
     const [open, setOpen] = useState(false);
     const [matriculados, setMatriculados] = useState([])
+    const [cargando, setCargando] = useState(false)
 
 
     const handleClickOpen = () => {
@@ -38,6 +87,7 @@ export default function Matriculados() {
 
 
     const consultarBaseDeDatos = async () => {
+        setCargando(true)
 
         let matriculadosDescargados = []
 
@@ -54,6 +104,7 @@ export default function Matriculados() {
                 genero: doc.data().genero,
                 familia: doc.data().familia,
                 ultimaAsignacion: fecha,
+                ultimaSala: doc.data().ultimaSala,
                 tipoDeUltimaAsignacion: doc.data().tipoDeUltimaAsignacion,
                 posiblesAsignaciones: doc.data().posiblesAsignaciones
             }
@@ -61,6 +112,7 @@ export default function Matriculados() {
         })
 
         setMatriculados(matriculadosDescargados)
+        setCargando(false)
     }
 
 
@@ -76,10 +128,10 @@ export default function Matriculados() {
             <Paper
                 sx={{
                     width: "100%",
-                    maxWidth: "1120px",
+                    maxWidth: "920px",
                     m: "10px auto",
                     p: 1,
-                    minHeight: "900px",
+                    height: "87vh",
                     background: "#e7e7e5",
                     display: "flex",
                     alignItems: "start",
@@ -89,48 +141,64 @@ export default function Matriculados() {
                 elevation={20}>
 
 
+                {matriculados.length == 0 ? (
+                    <Card sx={{ maxWidth: "250px", m: "auto auto" }}>
+                        <CardContent>
+                            <Typography sx={{ textAlign: "center" }}>
+                                <b>No hay datos.</b>
+                            </Typography>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={handleClickOpen}
+                                sx={{
+                                    background: "#5b3c88",
+                                    "&:hover": {
+                                        background: "#6b4c88"
+                                    }
+                                }}>
+                                Agregar información</Button>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <List fullWidth sx={{ width: "100%", maxHeight: "100%", overflow: "auto" }} disablePadding>
+                        {
+                            matriculados.map((matriculado) => {
+                                return <Elemento data={matriculado} key={matriculado.id} />
+                            })
+                        }
+                    </List>
+                )}
 
-                <Card sx={{ maxWidth: "250px" }}>
-                    <CardContent>
-                        <Typography sx={{ textAlign: "center" }}>
-                            <b>No hay datos.</b>
-                        </Typography>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            onClick={handleClickOpen}
-                            sx={{
-                                background: "#5b3c88",
-                                "&:hover": {
-                                    background: "#6b4c88"
-                                }
-                            }}>
-                            Agregar información</Button>
-                    </CardContent>
-                </Card>
-
-                {
-                    matriculados.map((matriculado) => {
-                        return (
-                            <Card key={matriculado.id} sx={{m:1}}>
-                                <CardContent>
-                                    <Typography sx={{ textAlign: "center" }}>
-                                        <b>{matriculado.nombre}</b>
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        )
-                    })
-                }
 
 
             </Paper>
 
 
 
+            <Tooltip title="Agregar uno">
+                <Fab onClick={() => setOpen(true)}
+                    sx={{
+                        background: "#5b3c88",
+                        position: "fixed",
+                        bottom: 30,
+                        right: 20,
+                        "&:hover": {
+                            background: "#6b4c88"
+                        }
+                    }}>
+                    <AddIcon sx={{ color: "white" }} />
+                </Fab>
+            </Tooltip>
 
             <DialogAgregarUno open={open} setOpen={setOpen} consultar={consultarBaseDeDatos} />
 
+            {cargando &&
+                <Box sx={{ background: "#5b3c88", width: "100vw", height: "100vh", position: "fixed", top:0, left:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}>
+                    <CircularProgress sx={{color:"white"}} />
+                    <Typography variant="h6" sx={{textAlign:"center", color:"white"}} ><b>Cargando...</b></Typography>
+                </Box>
+            }
         </>
     )
 }

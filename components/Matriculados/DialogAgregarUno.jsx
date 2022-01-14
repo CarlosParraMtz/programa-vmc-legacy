@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Button,
     Card,
@@ -34,23 +34,27 @@ import {
     doc,
     getFirestore,
     serverTimestamp,
+    getDocs,
+    query,
+    orderBy,
+    deleteDoc,
 } from "firebase/firestore";
 import config from "../../firebase/config";
 
 
-const PosiblesAsignaciones = ({ tipo, nombre, checked, cambiarChecked }) => {
+const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
     return (
         <ListItem disablePadding >
-            <ListItemButton dense onClick={() => { cambiarChecked(tipo) }}>
+            <ListItemButton dense onClick={() => { cambiarChecked(nombre) }}>
                 <ListItemIcon>
                     <Checkbox
                         edge="start"
                         checked={checked}
                         disableRipple
-                        onChange={() => cambiarChecked(tipo)}
+                        onChange={() => cambiarChecked(nombre)}
                     />
                 </ListItemIcon>
-                <ListItemText id={tipo} primary={nombre} />
+                <ListItemText id={nombre} primary={nombre} />
             </ListItemButton>
         </ListItem>
     )
@@ -62,19 +66,20 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
     const [nombre, setNombre] = useState("")
     const [genero, setGenero] = useState("hombre")
     const [familia, setFamilia] = useState('');
+    const [listaDeFamilias, setListaDeFamilias] = useState([])
     const [nuevaFamilia, setNuevaFamilia] = useState("")
 
-    const [timeStampUltimaAsignacion, setTimeStampUltimaAsignacion] = useState("")
+    const [timeStampUltimaAsignacion, setTimeStampUltimaAsignacion] = useState(1609632000000)
     const [ultimaSala, setUltimaSala] = useState("A")
-    const [tipoDeUltimaAsignacion, setTipoDeUltimaAsignacion] = useState('A')
+    const [tipoDeUltimaAsignacion, setTipoDeUltimaAsignacion] = useState('Ayudante')
 
     const [posiblesAsignaciones, setPosiblesAsignaciones] = useState({
-        A: false,
-        PC: false,
-        R: false,
-        CB: false,
-        D: false,
-        L: false
+        "Ayudante": false,
+        "Primera conversación": false,
+        "Revisita": false,
+        "Curso bíblico": false,
+        "Discurso": false,
+        "Lectura": false
     })
 
 
@@ -115,8 +120,9 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
         e.preventDefault()
 
         const direccionMatriculados = doc(collection(db, "congregaciones/Del Bosque/matriculados"));
-        const direccionFamilias = doc(collection(db, "congregaciones/Del Bosque/familias"));
-        if(nuevaFamilia != "") {
+
+        if (nuevaFamilia != "") {
+            const direccionFamilias = doc(collection(db, "congregaciones/Del Bosque/familias"));
             await setDoc(direccionFamilias, {
                 familia: nuevaFamilia
             })
@@ -147,17 +153,32 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
         setUltimaSala('');
         setTipoDeUltimaAsignacion('A')
         setPosiblesAsignaciones({
-            A: false,
-            PC: false,
-            R: false,
-            CB: false,
-            D: false,
-            L: false
+            "Ayudante": false,
+            "Primera conversación": false,
+            "Revisita": false,
+            "Curso bíblico": false,
+            "Discurso": false,
+            "Lectura": false
         })
 
         consultar();
         handleClose();
     }
+
+
+    //* Para mostrar la lista de las familias
+    const traerListaDeFamilias = async () => {
+        let lista = []
+        const q = query(collection(db, `congregaciones/Del Bosque/familias`))
+        const n = await getDocs(q);
+        n.forEach((doc) => {
+            lista.push(doc.data().familia)
+        })
+        setListaDeFamilias(lista)
+    }
+    useEffect(() => {
+        traerListaDeFamilias()
+    }, [open])
 
 
 
@@ -178,10 +199,10 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
 
 
     return (
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open} onClose={handleClose} >
             <form>
                 <DialogTitle>Agrega un matriculado</DialogTitle>
-                <DialogContent sx={{ maxHeight: "500px", overflow: "auto" }}>
+                <DialogContent sx={{ overflow: "auto" }} >
                     <DialogContentText>
                         Agrega todos los datos para evitar errores en la generación automática de asignaciones.
                     </DialogContentText>
@@ -227,7 +248,9 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
                             label="Familia"
                             onChange={handleChange}
                         >
-
+                            {
+                                listaDeFamilias.map((familia, index) => <MenuItem key={index} value={familia}>{familia}</MenuItem>)
+                            }
                             <MenuItem value={"nuevaFamilia"}>Agregar familia...</MenuItem>
                         </Select>
                     </FormControl>
@@ -244,7 +267,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
                             variant="outlined"
                             sx={{ mb: 1 }}
                             value={nuevaFamilia}
-                            onChange={(e)=>setNuevaFamilia(e.target.value)}
+                            onChange={(e) => setNuevaFamilia(e.target.value)}
                         />
                     }
 
@@ -293,12 +316,12 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
                                     onChange={cambiarTipo}
                                 >
 
-                                    <MenuItem value={"A"}>Ayudante</MenuItem>
-                                    <MenuItem value={"PC"}>Primera conversación</MenuItem>
-                                    <MenuItem value={"R"}>Revisita</MenuItem>
-                                    <MenuItem value={"CB"}>Curso bíblico</MenuItem>
-                                    <MenuItem value={"D"}>Discurso</MenuItem>
-                                    <MenuItem value={"L"}>Lectura</MenuItem>
+                                    <MenuItem value={"Ayudante"}>Ayudante</MenuItem>
+                                    <MenuItem value={"Primera conversación"}>Primera conversación</MenuItem>
+                                    <MenuItem value={"Revisita"}>Revisita</MenuItem>
+                                    <MenuItem value={"Curso bíblico"}>Curso bíblico</MenuItem>
+                                    <MenuItem value={"Discurso"}>Discurso</MenuItem>
+                                    <MenuItem value={"Lectura"}>Lectura</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -310,20 +333,36 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
 
                     <Typography variant="subtitle2" sx={{ color: "#777", fontSize: "12px" }}>Tipo de asignaciones que puede tener:</Typography>
                     <List fullWidth sx={{ m: "0 auto", bgcolor: 'background.paper' }}>
-                        <PosiblesAsignaciones tipo="A" nombre="Ayudante" checked={posiblesAsignaciones.A} cambiarChecked={cambiarChecked} />
-                        <PosiblesAsignaciones tipo="PC" nombre="Primera conversación" checked={posiblesAsignaciones.PC} cambiarChecked={cambiarChecked} />
-                        <PosiblesAsignaciones tipo="R" nombre="Revisita" checked={posiblesAsignaciones.R} cambiarChecked={cambiarChecked} />
-                        <PosiblesAsignaciones tipo="CB" nombre="Curso bíblico" checked={posiblesAsignaciones.CB} cambiarChecked={cambiarChecked} />
-                        <PosiblesAsignaciones tipo="D" nombre="Discurso" checked={posiblesAsignaciones.D} cambiarChecked={cambiarChecked} />
-                        <PosiblesAsignaciones tipo="L" nombre="Lectura" checked={posiblesAsignaciones.L} cambiarChecked={cambiarChecked} />
+                        <PosiblesAsignaciones nombre="Ayudante" checked={posiblesAsignaciones["Ayudante"]} cambiarChecked={cambiarChecked} />
+                        <PosiblesAsignaciones nombre="Primera conversación" checked={posiblesAsignaciones["Primera conversación"]} cambiarChecked={cambiarChecked} />
+                        <PosiblesAsignaciones nombre="Revisita" checked={posiblesAsignaciones["Revisita"]} cambiarChecked={cambiarChecked} />
+                        <PosiblesAsignaciones nombre="Curso bíblico" checked={posiblesAsignaciones["Curso bíblico"]} cambiarChecked={cambiarChecked} />
+                        <PosiblesAsignaciones nombre="Discurso" checked={posiblesAsignaciones["Discurso"]} cambiarChecked={cambiarChecked} />
+                        <PosiblesAsignaciones nombre="Lectura" checked={posiblesAsignaciones["Lectura"]} cambiarChecked={cambiarChecked} />
                     </List>
 
 
 
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={crearMatriculado} variant="contained" type="submit" >Guardar</Button>
-                    <Button onClick={handleClose}>cerrar</Button>
+
+                    <Button
+                        onClick={crearMatriculado}
+                        variant="contained"
+                        type="submit"
+                        sx={{
+                            background: "#5b3c88",
+                            "&:hover": { background: "#6b4c88" }
+                        }} >
+                        Guardar
+                    </Button>
+
+                    <Button
+                        onClick={handleClose}
+                        sx={{ color: "#5b3c88", "&:hover": { color: "#6b4c88" } }} >
+                        cerrar
+                    </Button>
+
                 </DialogActions>
             </form>
         </Dialog>
