@@ -36,7 +36,7 @@ function BotonLink({ url, texto, iconClass }) {
 
 export default function Menu() {
     return (
-        <Box sx={{ display: "flex", mt: 3 }}>
+        <Box sx={{ display: "flex", mt: 3, flexWrap:"wrap", justifyContent:"center" }}>
 
             <BotonLink
                 url="/matriculados"
