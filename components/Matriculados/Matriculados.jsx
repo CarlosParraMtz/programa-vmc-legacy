@@ -217,7 +217,6 @@ export default function Matriculados() {
             <Paper
                 sx={{
                     width: "100%",
-                    maxWidth: "920px",
                     m: "10px auto",
                     p: 1,
                     height: "87vh",
@@ -234,7 +233,7 @@ export default function Matriculados() {
                     <Card sx={{ maxWidth: "250px", m: "auto auto" }}>
                         <CardContent>
                             <Typography sx={{ textAlign: "center" }}>
-                                <b>No hay datos.</b>
+                                <b>No hay matriculados registrados todavía.</b>
                             </Typography>
                             <Button
                                 fullWidth
@@ -246,7 +245,7 @@ export default function Matriculados() {
                                         background: "#6b4c88"
                                     }
                                 }}>
-                                Agregar información</Button>
+                                Agrega uno</Button>
                         </CardContent>
                     </Card>
                 ) : (
