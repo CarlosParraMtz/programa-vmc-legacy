@@ -5,6 +5,7 @@ import {
     CardHeader,
     CardContent,
     Divider,
+    ListSubheader,
     Paper,
     TextField,
     Typography,
@@ -27,6 +28,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import Edit from '@mui/icons-material/Edit';
+import { Delete } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import CommentIcon from '@mui/icons-material/Comment';
 import {
@@ -41,6 +43,8 @@ import {
     deleteDoc,
 } from "firebase/firestore";
 import config from "../../firebase/config";
+import { useRecoilValue } from 'recoil';
+import matriculadosState from '../../Recoil/matriculadosState';
 
 
 const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
@@ -86,6 +90,68 @@ export default function DialogEditar({ consultar, data }) {
         "Discurso": false,
         "Lectura": false
     })
+
+
+    const matriculados = useRecoilValue(matriculadosState);
+
+    const [ayudantesAnteriores, setAyudantesAnteriores] = useState([])
+    const [posiblesAyudantes, setPosiblesAyudantes] = useState([])
+    const [posible, setPosible] = useState("")
+    const [dialogAgregarAyudante, setDialogAgregarAyudante] = useState(false)
+
+    const obtenerPosiblesAyudantes = () => {
+
+        let todos = []
+        matriculados.forEach((matriculado) => {
+            if (matriculado.genero == genero) {
+                todos.push(matriculado)
+            }
+        })
+
+        let sinPropio = []
+        todos.forEach((cadaUno) => {
+            if (cadaUno.nombre !== nombre) {
+                sinPropio.push(cadaUno.nombre)
+            }
+        })
+
+        let sinNombresQueYaEstan = []
+        sinPropio.forEach((cadaUno) => {
+            const f = ayudantesAnteriores.find(i => i == cadaUno)
+            if (!f) {
+                sinNombresQueYaEstan.push(cadaUno)
+            }
+        })
+
+        setPosiblesAyudantes(sinNombresQueYaEstan)
+    }
+
+    useEffect(() => {
+
+        obtenerPosiblesAyudantes()
+
+    }, [dialogAgregarAyudante])
+
+    const agregarAyudanteAnterior = (e) => {
+        e.preventDefault()
+        let arr = [...ayudantesAnteriores]
+        arr.push(posible)
+        setAyudantesAnteriores(arr)
+        setPosible("")
+        obtenerPosiblesAyudantes()
+        cerrarDialog()
+    }
+
+    const cerrarDialog = () => {
+        setPosible("")
+        setDialogAgregarAyudante(false)
+    }
+
+    const borrarAyudante = (id) => {
+        let arr = [...ayudantesAnteriores];
+        arr.splice(id, 1)
+        setAyudantesAnteriores(arr)
+    }
 
 
 
@@ -140,7 +206,7 @@ export default function DialogEditar({ consultar, data }) {
 
         e.preventDefault()
 
-        
+
 
         if (nuevaFamilia != "") {
             const direccionFamilias = doc(collection(db, "congregaciones/Del Bosque/familias"));
@@ -328,7 +394,7 @@ export default function DialogEditar({ consultar, data }) {
                             id="name"
                             label="Fecha de última asignación"
                             type="date"
-                            value={defaultValueCalendar}
+                            defaultValue="2021-01-01"
                             fullWidth
                             onChange={cambiarFechaUltimaAsignacion}
                             variant="outlined"
@@ -373,6 +439,76 @@ export default function DialogEditar({ consultar, data }) {
                                 </FormControl>
                             </Grid>
                         </Grid>
+
+                        <List dense subheader={
+                            <ListSubheader>
+                                Ayudantes anteriores:
+                            </ListSubheader>
+                        }>
+                            <ListItem dense>
+                                <ListItemButton onClick={() => setDialogAgregarAyudante(true)} >
+                                    <ListItemText primary="Agregar ayudante..." />
+                                </ListItemButton>
+                            </ListItem>
+
+                            <Dialog open={dialogAgregarAyudante} onClose={cerrarDialog}>
+                                <DialogTitle>
+                                    Selecciona un ayudante de la lista:
+                                </DialogTitle>
+                                <DialogContent>
+                                    <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
+                                        <InputLabel id="demo-simple-select-label">Ayudante</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={posible}
+                                            label="Ayudante"
+                                            onChange={(e) => setPosible(e.target.value)}
+                                        >
+                                            {
+                                                posiblesAyudantes.map((nombre, index) => (
+                                                    <MenuItem value={nombre} key={index} >
+                                                        {nombre}
+                                                    </MenuItem>
+                                                ))
+                                            }
+                                        </Select>
+                                    </FormControl>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button
+                                        onClick={agregarAyudanteAnterior}
+                                        variant="contained"
+                                        sx={{
+                                            background: "#5b3c88",
+                                            "&:hover": {
+                                                background: "#6b4c88"
+                                            }
+                                        }}
+                                        disabled={posible == "" ? true : false} >
+                                        Agregar
+                                    </Button>
+                                    <Button onClick={cerrarDialog}>
+                                        Cancelar
+                                    </Button>
+                                </DialogActions>
+
+                            </Dialog>
+
+                            {
+                                ayudantesAnteriores.map((ayudante, index) => (
+                                    <ListItem key={index} dense >
+                                        <ListItemIcon>
+                                            <IconButton onClick={() => borrarAyudante(index)} >
+                                                <Delete />
+                                            </IconButton>
+                                        </ListItemIcon>
+                                        <ListItemText primary={ayudante} />
+
+                                    </ListItem>
+                                ))
+                            }
+                        </List>
 
 
 
