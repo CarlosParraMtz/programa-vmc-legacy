@@ -543,7 +543,7 @@ export default function DialogEditar({ consultar, data }) {
                                 background: "#5b3c88",
                                 "&:hover": { background: "#6b4c88" }
                             }} >
-                            {!loading ? "Guardar" : <CircularProgress />}
+                            {!loading ? "Guardar" : <CircularProgress size={25} sx={{color:"white"}} />}
                         </Button>
 
                         <Button
