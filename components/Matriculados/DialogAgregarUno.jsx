@@ -360,7 +360,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
                         id="name"
                         label="Fecha de última asignación"
                         type="date"
-                        defaultValue="2021-01-01"
+                        defaultValue="2022-01-01"
                         fullWidth
                         onChange={cambiarFechaUltimaAsignacion}
                         variant="outlined"
