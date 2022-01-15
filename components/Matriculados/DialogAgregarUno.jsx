@@ -10,6 +10,7 @@ import {
     TextField,
     Typography,
     Grid,
+    CircularProgress,
 } from '@mui/material'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -73,6 +74,8 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
     const [listaDeFamilias, setListaDeFamilias] = useState([])
     const [nuevaFamilia, setNuevaFamilia] = useState("")
 
+    const [loading, setLoading] = useState(false)
+
     const [timeStampUltimaAsignacion, setTimeStampUltimaAsignacion] = useState(1609632000000)
     const [ultimaSala, setUltimaSala] = useState("A")
     const [tipoDeUltimaAsignacion, setTipoDeUltimaAsignacion] = useState('Ayudante')
@@ -87,17 +90,6 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
     })
 
 
-
-
-
-
-
-
-
-
-
-
-    //! Copiar desde aquí
 
     const matriculados = useRecoilValue(matriculadosState);
 
@@ -161,17 +153,6 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
     }
 
 
-    //! Copiar hasta aquí
-
-
-
-
-
-
-
-
-
-
 
 
     const handleChange = (event) => {
@@ -208,6 +189,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
     const crearMatriculado = async (e) => {
 
         e.preventDefault()
+        setLoading(true)
 
         const direccionMatriculados = doc(collection(db, "congregaciones/Del Bosque/matriculados"));
 
@@ -254,6 +236,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
 
         consultar();
         handleClose();
+        setLoading(false)
     }
 
 
@@ -515,12 +498,13 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
                     <Button
                         onClick={crearMatriculado}
                         variant="contained"
+                        disabled={loading ? true : false}
                         type="submit"
                         sx={{
                             background: "#5b3c88",
-                            "&:hover": { background: "#6b4c88" }
+                            "&:hover": { background: "#6b4c88" }                            
                         }} >
-                        Guardar
+                        {!loading ? "Guardar" : <CircularProgress /> }
                     </Button>
 
                     <Button

@@ -4,6 +4,7 @@ import {
     Card,
     CardHeader,
     CardContent,
+    CircularProgress,
     Divider,
     ListSubheader,
     Paper,
@@ -69,6 +70,8 @@ const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
 export default function DialogEditar({ consultar, data }) {
 
     const [open, setOpen] = useState(false)
+
+    const [loading, setLoading] = useState(false)
 
     const [nombre, setNombre] = useState("")
     const [genero, setGenero] = useState("hombre")
@@ -205,6 +208,7 @@ export default function DialogEditar({ consultar, data }) {
     const crearMatriculado = async (e) => {
 
         e.preventDefault()
+        setLoading(true)
 
 
 
@@ -254,6 +258,7 @@ export default function DialogEditar({ consultar, data }) {
 
         consultar();
         handleClose();
+        setLoading(false)
     }
 
 
@@ -532,12 +537,13 @@ export default function DialogEditar({ consultar, data }) {
                         <Button
                             onClick={crearMatriculado}
                             variant="contained"
+                            disabled={loading ? true : false}
                             type="submit"
                             sx={{
                                 background: "#5b3c88",
                                 "&:hover": { background: "#6b4c88" }
                             }} >
-                            Guardar
+                            {!loading ? "Guardar" : <CircularProgress />}
                         </Button>
 
                         <Button
