@@ -77,6 +77,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
         L: false
     })
 
+    const [ayudantesAnteriores, setAyudantesAnteriores] = useState([])
 
 
     const handleChange = (event) => {
@@ -137,6 +138,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
             ultimaSala,
             tipoDeUltimaAsignacion,
             posiblesAsignaciones,
+            ayudantesAnteriores
         });
 
 
