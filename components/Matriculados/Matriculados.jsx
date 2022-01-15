@@ -47,6 +47,16 @@ const Elemento = ({ data, consultar }) => {
 
     const [open, setOpen] = useState(false)
 
+
+
+    const borrarMatriculado = async() => {
+
+        await deleteDoc(doc(db, `congregaciones/Del Bosque/matriculados`, data.id))
+        consultar()
+    }
+
+
+
     return (
         <>
 
@@ -96,6 +106,7 @@ const Elemento = ({ data, consultar }) => {
                             <DialogEditar consultar={consultar} data={data} />
 
                             <Button
+                                onClick={borrarMatriculado}
                                 variant="contained"
                                 startIcon={<DeleteIcon />}
                                 sx={{
@@ -179,6 +190,7 @@ export default function Matriculados() {
                 genero: doc.data().genero,
                 familia: doc.data().familia,
                 ultimaAsignacion: textoFecha,
+                timeStampUltimaAsignacion: doc.data().timeStampUltimaAsignacion,
                 defaultValueCalendar: valueCalendar,
                 ultimaSala: doc.data().ultimaSala,
                 tipoDeUltimaAsignacion: doc.data().tipoDeUltimaAsignacion,

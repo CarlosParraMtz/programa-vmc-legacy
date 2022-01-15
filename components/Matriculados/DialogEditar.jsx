@@ -37,7 +37,7 @@ import {
     serverTimestamp,
     getDocs,
     query,
-    orderBy,
+    updateDoc,
     deleteDoc,
 } from "firebase/firestore";
 import config from "../../firebase/config";
@@ -106,6 +106,7 @@ export default function DialogEditar({ consultar, data }) {
     };
 
     const cambiarFechaUltimaAsignacion = e => {
+        setDefaultValueCalendar(e.target.value)
         const date = new Date(e.target.value)
         setTimeStampUltimaAsignacion(date.valueOf())
     }
@@ -125,18 +126,21 @@ export default function DialogEditar({ consultar, data }) {
         setFamilia(data.familia)
         setUltimaSala(data.ultimaSala)
         setDefaultValueCalendar(data.defaultValueCalendar)
+        setTimeStampUltimaAsignacion(data.timeStampUltimaAsignacion)
         setTipoDeUltimaAsignacion(data.tipoDeUltimaAsignacion)
         setPosiblesAsignaciones(data.posiblesAsignaciones)
     }, [open])
 
 
-    //TODO Hay que reemplazar esto por la funcionalidad para actualizar matriculado.
+
+
+
     const db = getFirestore(config)
     const crearMatriculado = async (e) => {
 
         e.preventDefault()
 
-        const direccionMatriculados = doc(collection(db, "congregaciones/Del Bosque/matriculados"));
+        
 
         if (nuevaFamilia != "") {
             const direccionFamilias = doc(collection(db, "congregaciones/Del Bosque/familias"));
@@ -152,7 +156,8 @@ export default function DialogEditar({ consultar, data }) {
             return familia
         }
 
-        await setDoc(direccionMatriculados, {
+
+        const datosActualizar = {
             nombre,
             genero,
             familia: seCreoFamilia(),
@@ -160,7 +165,10 @@ export default function DialogEditar({ consultar, data }) {
             ultimaSala,
             tipoDeUltimaAsignacion,
             posiblesAsignaciones,
-        });
+        }
+
+        await updateDoc(doc(db, `congregaciones/Del Bosque/matriculados`, data.id), datosActualizar)
+
 
 
         setNombre('');
@@ -320,7 +328,7 @@ export default function DialogEditar({ consultar, data }) {
                             id="name"
                             label="Fecha de última asignación"
                             type="date"
-                            defaultValue={defaultValueCalendar}
+                            value={defaultValueCalendar}
                             fullWidth
                             onChange={cambiarFechaUltimaAsignacion}
                             variant="outlined"
