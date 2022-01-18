@@ -39,6 +39,7 @@ import {
     getFirestore,
     serverTimestamp,
     getDocs,
+    orderBy,
     query,
     updateDoc,
     deleteDoc,
@@ -79,8 +80,7 @@ export default function DialogEditar({ consultar, data }) {
     const [listaDeFamilias, setListaDeFamilias] = useState([])
     const [nuevaFamilia, setNuevaFamilia] = useState("")
 
-    const [timeStampUltimaAsignacion, setTimeStampUltimaAsignacion] = useState(1609632000000)
-    const [defaultValueCalendar, setDefaultValueCalendar] = useState('')
+    const [fechaUltimaAsignacion, setFechaUltimaAsignacion] = useState('2022-01-01')
 
     const [ultimaSala, setUltimaSala] = useState("A")
     const [tipoDeUltimaAsignacion, setTipoDeUltimaAsignacion] = useState('Ayudante')
@@ -175,9 +175,7 @@ export default function DialogEditar({ consultar, data }) {
     };
 
     const cambiarFechaUltimaAsignacion = e => {
-        setDefaultValueCalendar(e.target.value)
-        const date = new Date(e.target.value)
-        setTimeStampUltimaAsignacion(date.valueOf())
+        setFechaUltimaAsignacion(e.target.value)
     }
 
     const handleClickOpen = () => {
@@ -190,14 +188,15 @@ export default function DialogEditar({ consultar, data }) {
 
 
     useEffect(() => {
-        setNombre(data.nombre)
-        setGenero(data.genero)
-        setFamilia(data.familia)
-        setUltimaSala(data.ultimaSala)
-        setDefaultValueCalendar(data.defaultValueCalendar)
-        setTimeStampUltimaAsignacion(data.timeStampUltimaAsignacion)
-        setTipoDeUltimaAsignacion(data.tipoDeUltimaAsignacion)
-        setPosiblesAsignaciones(data.posiblesAsignaciones)
+        if (open) {
+            setNombre(data.nombre)
+            setGenero(data.genero)
+            setFamilia(data.familia)
+            setUltimaSala(data.ultimaSala)
+            setFechaUltimaAsignacion(data.fechaUltimaAsignacion)
+            setTipoDeUltimaAsignacion(data.tipoDeUltimaAsignacion)
+            setPosiblesAsignaciones(data.posiblesAsignaciones)
+        }
     }, [open])
 
 
@@ -231,7 +230,7 @@ export default function DialogEditar({ consultar, data }) {
             nombre,
             genero,
             familia: seCreoFamilia(),
-            timeStampUltimaAsignacion,
+            fechaUltimaAsignacion,
             ultimaSala,
             tipoDeUltimaAsignacion,
             posiblesAsignaciones,
@@ -244,9 +243,9 @@ export default function DialogEditar({ consultar, data }) {
         setNombre('');
         setGenero('');
         setFamilia('');
-        setTimeStampUltimaAsignacion('')
+        setFechaUltimaAsignacion('')
         setUltimaSala('');
-        setTipoDeUltimaAsignacion('A')
+        setTipoDeUltimaAsignacion('Ayudante')
         setPosiblesAsignaciones({
             "Ayudante": false,
             "Primera conversación": false,
@@ -255,6 +254,9 @@ export default function DialogEditar({ consultar, data }) {
             "Discurso": false,
             "Lectura": false
         })
+        setAyudantesAnteriores([])
+        setPosiblesAyudantes([])
+        setPosible("")
 
         consultar();
         handleClose();
@@ -265,7 +267,7 @@ export default function DialogEditar({ consultar, data }) {
     //* Para mostrar la lista de las familias
     const traerListaDeFamilias = async () => {
         let lista = []
-        const q = query(collection(db, `congregaciones/Del Bosque/familias`))
+        const q = query(collection(db, `congregaciones/Del Bosque/familias`), orderBy("familia"))
         const n = await getDocs(q);
         n.forEach((doc) => {
             lista.push(doc.data().familia)
@@ -399,7 +401,7 @@ export default function DialogEditar({ consultar, data }) {
                             id="name"
                             label="Fecha de última asignación"
                             type="date"
-                            defaultValue="2021-01-01"
+                            value={fechaUltimaAsignacion}
                             fullWidth
                             onChange={cambiarFechaUltimaAsignacion}
                             variant="outlined"
@@ -543,7 +545,7 @@ export default function DialogEditar({ consultar, data }) {
                                 background: "#5b3c88",
                                 "&:hover": { background: "#6b4c88" }
                             }} >
-                            {!loading ? "Guardar" : <CircularProgress size={25} sx={{color:"white"}} />}
+                            {!loading ? "Guardar" : <CircularProgress size={25} sx={{ color: "white" }} />}
                         </Button>
 
                         <Button

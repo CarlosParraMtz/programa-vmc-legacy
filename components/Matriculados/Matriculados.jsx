@@ -131,6 +131,20 @@ const Elemento = ({ data, consultar }) => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export default function Matriculados() {
 
     const [open, setOpen] = useState(false);
@@ -162,10 +176,11 @@ export default function Matriculados() {
             "diciembre"
         ]
 
-        const q = query(collection(db, `congregaciones/Del Bosque/matriculados`), orderBy("nombre"))
+        const q = query(collection(db, `congregaciones/Del Bosque/matriculados`), orderBy("fechaUltimaAsignacion"))
         const n = await getDocs(q);
         n.forEach((doc) => {
-            const fecha = new Date(doc.data().timeStampUltimaAsignacion)
+            const fecha = new Date(doc.data().fechaUltimaAsignacion)
+            fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset())
             const año = fecha.getFullYear();
             const diaNum = fecha.getDate();
             const mes = fecha.getMonth();
@@ -180,9 +195,7 @@ export default function Matriculados() {
                 }
             }
 
-            const mesT = mes < 9 ? `0${mes + 1}` : mes + 1
-            const diaT = diaNum < 9 ? `0${diaNum + 1}` : diaNum + 1
-            const valueCalendar = `${año}-${mesT}-${diaT}`
+
 
             const agregar = {
                 id: doc.id,
@@ -190,12 +203,12 @@ export default function Matriculados() {
                 genero: doc.data().genero,
                 familia: doc.data().familia,
                 ultimaAsignacion: textoFecha,
-                timeStampUltimaAsignacion: doc.data().timeStampUltimaAsignacion,
-                defaultValueCalendar: valueCalendar,
+                fechaUltimaAsignacion: doc.data().fechaUltimaAsignacion,
                 ultimaSala: doc.data().ultimaSala,
                 tipoDeUltimaAsignacion: doc.data().tipoDeUltimaAsignacion,
                 posiblesAsignaciones: json,
-                arrayPosiblesAsignaciones: posibles
+                arrayPosiblesAsignaciones: posibles,
+                ayudantesAnteriores: doc.data().ayudantesAnteriores
             }
             matriculadosDescargados.push(agregar)
         })

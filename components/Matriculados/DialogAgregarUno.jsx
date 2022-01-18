@@ -76,7 +76,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
 
     const [loading, setLoading] = useState(false)
 
-    const [timeStampUltimaAsignacion, setTimeStampUltimaAsignacion] = useState(1609632000000)
+    const [fechaUltimaAsignacion, setFechaUltimaAsignacion] = useState('2022-01-01')
     const [ultimaSala, setUltimaSala] = useState("A")
     const [tipoDeUltimaAsignacion, setTipoDeUltimaAsignacion] = useState('Ayudante')
 
@@ -172,8 +172,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
     };
 
     const cambiarFechaUltimaAsignacion = e => {
-        const date = new Date(e.target.value)
-        setTimeStampUltimaAsignacion(date.valueOf())
+        setFechaUltimaAsignacion(e.target.value)
     }
 
     const handleClickOpen = () => {
@@ -191,6 +190,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
         e.preventDefault()
         setLoading(true)
 
+
         const direccionMatriculados = doc(collection(db, "congregaciones/Del Bosque/matriculados"));
 
         if (nuevaFamilia != "") {
@@ -207,11 +207,12 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
             return familia
         }
 
+
         await setDoc(direccionMatriculados, {
             nombre,
             genero,
             familia: seCreoFamilia(),
-            timeStampUltimaAsignacion,
+            fechaUltimaAsignacion,
             ultimaSala,
             tipoDeUltimaAsignacion,
             posiblesAsignaciones,
@@ -219,20 +220,27 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
         });
 
 
+
+
+
+
         setNombre('');
         setGenero('');
         setFamilia('');
-        setTimeStampUltimaAsignacion('')
+        setFechaUltimaAsignacion('2022-01-01')
         setUltimaSala('A');
         setTipoDeUltimaAsignacion('Ayudante')
         setPosiblesAsignaciones({
             "Ayudante": false,
-            "Primera conversación": false,
+            "Primera conversación": false,  
             "Revisita": false,
             "Curso bíblico": false,
             "Discurso": false,
             "Lectura": false
         })
+        setAyudantesAnteriores([])
+        setPosiblesAyudantes([])
+        setPosible("")
 
         consultar();
         handleClose();
@@ -243,7 +251,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
     //* Para mostrar la lista de las familias
     const traerListaDeFamilias = async () => {
         let lista = []
-        const q = query(collection(db, `congregaciones/Del Bosque/familias`))
+        const q = query(collection(db, `congregaciones/Del Bosque/familias`), orderBy("familia"))
         const n = await getDocs(q);
         n.forEach((doc) => {
             lista.push(doc.data().familia)
@@ -465,7 +473,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
                             ayudantesAnteriores.map((ayudante, index) => (
                                 <ListItem key={index} dense >
                                     <ListItemIcon>
-                                        <IconButton onClick={()=>borrarAyudante(index)} >
+                                        <IconButton onClick={() => borrarAyudante(index)} >
                                             <Delete />
                                         </IconButton>
                                     </ListItemIcon>
@@ -502,9 +510,9 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
                         type="submit"
                         sx={{
                             background: "#5b3c88",
-                            "&:hover": { background: "#6b4c88" }                            
+                            "&:hover": { background: "#6b4c88" }
                         }} >
-                        {!loading ? "Guardar" : <CircularProgress size={25} sx={{color:"white"}} /> }
+                        {!loading ? "Guardar" : <CircularProgress size={25} sx={{ color: "white" }} />}
                     </Button>
 
                     <Button
