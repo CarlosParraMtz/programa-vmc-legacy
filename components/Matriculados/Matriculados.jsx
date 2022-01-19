@@ -70,7 +70,7 @@ const Elemento = ({ data, consultar }) => {
             </Collapse>
 
             <Collapse in={open}>
-                <Card >
+                <Card sx={{m:1}} >
                     <CardHeader title={data.nombre} sx={{ background: "#5b3c88", color: "white", maxHeight: "50px", pr: 3 }} onClick={() => setOpen(false)} action={<ExpandLess />} />
 
                     <CardContent>
@@ -176,7 +176,7 @@ export default function Matriculados() {
             "diciembre"
         ]
 
-        const q = query(collection(db, `congregaciones/Del Bosque/matriculados`), orderBy("fechaUltimaAsignacion"))
+        const q = query(collection(db, `congregaciones/Del Bosque/matriculados`), orderBy("nombre"))
         const n = await getDocs(q);
         n.forEach((doc) => {
             const fecha = new Date(doc.data().fechaUltimaAsignacion)
@@ -230,9 +230,10 @@ export default function Matriculados() {
             <Paper
                 sx={{
                     width: "100%",
+                    maxWidth:"720px",
                     m: "10px auto",
-                    p: 1,
-                    height: "87vh",
+                    p: 0,
+                    height: "90vh",
                     background: "#e7e7e5",
                     display: "flex",
                     alignItems: "start",
