@@ -12,21 +12,6 @@
   align-items: center;
 }
 
-.footer {
-  display: flex;
-  flex: 1;
-  padding: 2rem 0;
-  border-top: 1px solid #eaeaea;
-  justify-content: center;
-  align-items: center;
-}
-
-.footer a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
-}
 
 .title a {
   color: #0070f3;
@@ -113,4 +98,19 @@
     width: 100%;
     flex-direction: column;
   }
+}
+
+
+.btnCondiciones {
+  color: #bbb;
+  padding: 5px 12px;
+  border: solid 1px #2c2c2c;
+  border-radius: 25px;
+  transition: 200ms;
+}
+
+.btnCondiciones:hover {
+  color: white;
+  border: solid 1px white;
+  transition: 200ms;
 }

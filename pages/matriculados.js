@@ -1,10 +1,13 @@
 import Layout from '../components/Layout';
 import Matriculados from '../components/Matriculados/Matriculados';
 
+
 export default function matriculados() {
-    return(
+
+
+    return (
         <Layout>
-            <Matriculados/>
+            <Matriculados />
         </Layout>
     )
 }

@@ -9,8 +9,26 @@ import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import Link from 'next/link';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
+import styles from '../styles/Home.module.css'
+import Router from 'next/router';
+import { useEffect } from 'react';
 
-export default function Layout({ children }) {
+
+import { useRecoilValue } from 'recoil';
+import userState from '../Recoil/userState';
+
+
+export default function Layout({ children, home = false }) {
+
+    const user = useRecoilValue(userState)
+    const ruta = Router.pathname
+
+    useEffect(()=>{
+        if(!user.logeado){
+            Router.push('/')
+        }
+    },[user])
+
     return (
         <>
 
@@ -28,26 +46,52 @@ export default function Layout({ children }) {
                         edge="start"
                         color="inherit"
                         aria-label="menu"
-                        sx={{ mr: 2, width:"30px", height:"30px" }}
+                        sx={{ mr: 2, width: "30px", height: "30px" }}
                     >
-                        <i className="fi fi-rr-menu-dots-vertical" style={{fontSize:"15px"}} />
-                    
+                        <i className="fi fi-rr-menu-dots-vertical" style={{ fontSize: "15px" }} />
+
                     </IconButton>
+
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Matriculados
+                        {ruta == '/matriculados' && 'Matriculados'}
+                        {ruta == '/asignaciones' && 'Asignaciones'}
                     </Typography>
 
-                    <Link href="/">
-                        <Tooltip title="Volver al inicio" arrow placement='left'>
-                            <IconButton sx={{ width: "30px", height: "30px" }}>
-                                <i className="fi fi-rr-home" style={{ color: "white", fontSize: "15px" }} />
-                            </IconButton>
-                        </Tooltip>
-                    </Link>
+                    {ruta != '/asignaciones' &&
+                        <Link href="/asignaciones">
+                            <Tooltip title="Volver al inicio" arrow placement='left'>
+                                <IconButton sx={{ width: "30px", height: "30px" }}>
+                                    <i className="fi fi-rr-home" style={{ color: "white", fontSize: "15px" }} />
+                                </IconButton>
+                            </Tooltip>
+                        </Link>
+                    }
                 </Toolbar>
             </AppBar>
 
             <main>{children}</main>
+
+            <footer style={{
+                background: "#222",
+                position: "fixed",
+                bottom: 0,
+                left: 0,
+                width: "100%",
+                padding: "10px"
+            }} >
+
+                <Box sx={{
+                    margin: "0 auto",
+                    maxWidth: "200px",
+                    textAlign: "center",
+                }} >
+                    <Link href="/condiciones" >
+                        <a className={styles.btnCondiciones}>
+                            Condiciones de uso
+                        </a>
+                    </Link>
+                </Box>
+            </footer>
         </>
     )
 }
