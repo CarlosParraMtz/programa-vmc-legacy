@@ -1,13 +1,17 @@
 import React from 'react';
 import Layout from '../components/Layout';
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 export default function asignaciones() {
+
+  const router = useRouter()
+
+
   return (
-      <Layout>
+    <Layout>
 
-      
+      <button onClick={() => router.push("/matriculados")} >Matriculados</button>
 
-      </Layout>
+    </Layout>
   )
 }

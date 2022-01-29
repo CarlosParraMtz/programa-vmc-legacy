@@ -10,7 +10,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import Link from 'next/link';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 import styles from '../styles/Home.module.css'
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 
@@ -21,13 +21,14 @@ import userState from '../Recoil/userState';
 export default function Layout({ children, home = false }) {
 
     const user = useRecoilValue(userState)
-    const ruta = Router.pathname
+    const router = useRouter()
+    const ruta = router.pathname
 
-    useEffect(()=>{
-        if(!user.logeado){
-            Router.push('/')
+    useEffect(() => {
+        if (!user.logeado) {
+            router.push('/')
         }
-    },[user])
+    }, [user])
 
     return (
         <>
@@ -58,13 +59,13 @@ export default function Layout({ children, home = false }) {
                     </Typography>
 
                     {ruta != '/asignaciones' &&
-                        <Link href="/asignaciones">
-                            <Tooltip title="Volver al inicio" arrow placement='left'>
-                                <IconButton sx={{ width: "30px", height: "30px" }}>
-                                    <i className="fi fi-rr-home" style={{ color: "white", fontSize: "15px" }} />
-                                </IconButton>
-                            </Tooltip>
-                        </Link>
+
+                        <Tooltip title="Volver al inicio" arrow placement='left'>
+                            <IconButton onClick={() => router.push("/asignaciones")} sx={{ width: "30px", height: "30px" }}>
+                                <i className="fi fi-rr-home" style={{ color: "white", fontSize: "15px" }} />
+                            </IconButton>
+                        </Tooltip>
+
                     }
                 </Toolbar>
             </AppBar>
