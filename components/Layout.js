@@ -12,7 +12,7 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 import styles from '../styles/Home.module.css'
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-
+import MenuAsignaciones from '../components/asignaciones/MenuAsignaciones';
 
 import { useRecoilValue } from 'recoil';
 import userState from '../Recoil/userState';
@@ -42,16 +42,10 @@ export default function Layout({ children, home = false }) {
 
             <AppBar position="static" sx={{ background: "#5b3c88" }}>
                 <Toolbar>
-                    <IconButton
-                        size="medium"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2, width: "30px", height: "30px" }}
-                    >
-                        <i className="fi fi-rr-menu-dots-vertical" style={{ fontSize: "15px" }} />
-
-                    </IconButton>
+                    {
+                        ruta == '/asignaciones' &&
+                        <MenuAsignaciones />
+                    }
 
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         {ruta == '/matriculados' && 'Matriculados'}
@@ -72,27 +66,7 @@ export default function Layout({ children, home = false }) {
 
             <main>{children}</main>
 
-            <footer style={{
-                background: "#222",
-                position: "fixed",
-                bottom: 0,
-                left: 0,
-                width: "100%",
-                padding: "10px"
-            }} >
-
-                <Box sx={{
-                    margin: "0 auto",
-                    maxWidth: "200px",
-                    textAlign: "center",
-                }} >
-                    <Link href="/condiciones" >
-                        <a className={styles.btnCondiciones}>
-                            Condiciones de uso
-                        </a>
-                    </Link>
-                </Box>
-            </footer>
+            
         </>
     )
 }
