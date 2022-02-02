@@ -24,6 +24,7 @@ export default function Layout({ children, home = false }) {
     const router = useRouter()
     const ruta = router.pathname
 
+
     useEffect(() => {
         if (!user.logeado) {
             router.push('/')

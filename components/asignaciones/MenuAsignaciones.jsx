@@ -5,9 +5,17 @@ import {
     MenuItem,
 } from '@mui/material'
 import { useRouter } from 'next/router'
+import { useRecoilState } from 'recoil';
+import layoutState from '../../Recoil/layoutState';
+
 
 export default function MenuAsignaciones() {
     const [anchorEl, setAnchorEl] = useState(null);
+
+    const [layout, setLayout] = useRecoilState(layoutState);
+
+
+
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -20,6 +28,11 @@ export default function MenuAsignaciones() {
 
     const adminMatriculados = () => {
         Router.push('/matriculados')
+        handleClose()
+    }
+
+    const agregarAsignaciones = () => {
+        setLayout({ ...layout, agregarAsignacionesDialog: true })
         handleClose()
     }
 
@@ -46,7 +59,7 @@ export default function MenuAsignaciones() {
                 }}
             >
                 <MenuItem onClick={adminMatriculados}>Administrar matriculados</MenuItem>
-                <MenuItem onClick={handleClose}>Agregar asignaciones</MenuItem>
+                <MenuItem onClick={agregarAsignaciones}>Agregar asignaciones</MenuItem>
             </Menu>
         </>
     )
