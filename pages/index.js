@@ -162,7 +162,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <Typography variant="h3" sx={{ color: "white", fontFamily: "sans", mb: 2 }}>
+        <Typography variant="h1" sx={{ color: "white", fontFamily: "sans", mb: 2 }}>
           <b>Bienvenido</b>
         </Typography>
 
