@@ -121,7 +121,7 @@ export default function AgregarAsignacionesDialog() {
         if (semana5.asignacion1 == "") {
             asignacionesPorSemana.splice(4, 1)
         }
-        const data = { semanas: asignacionesPorSemana }
+        const data = { semanas: asignacionesPorSemana, asignacionesGeneradas: false }
         const direccionMeses = doc(collection(db, "congregaciones/Del Bosque/meses"), mes);
         await setDoc(direccionMeses, data);
         cerrarDialog()
