@@ -6,8 +6,6 @@ import {
     Paper,
     Typography,
 } from '@mui/material'
-import AgregarAsignacionesDialog from './AgregarAsignacionesDialog';
-import HojaMes from './HojaMes';
 import { useRecoilState } from 'recoil';
 import layoutState from '../../Recoil/layoutState';
 
@@ -16,66 +14,70 @@ import {
     doc,
     getFirestore,
     getDocs,
-    //limitToLast,
+    limitToLast,
     query,
     orderBy,
     deleteDoc,
 } from "firebase/firestore";
 import config from "../../firebase/config";
+import HojaDeAsignaciones from './HojaDeAsignaciones';
+
 const db = getFirestore(config)
 
 
 export default function Asignaciones() {
 
-    const [meses, setMeses] = useState([])
-    const [posicionActual, setPosicionActual] = useState(0)
+    const [mes, setMes] = useState(null)
     const [layout, setLayout] = useRecoilState(layoutState)
+    const [edicion, setEdicion] = useState(false)
 
     const descargarSemanas = async () => {
-
         let mesesDescargados = []
-
-        const q = query(collection(db, `congregaciones/Del Bosque/meses`))
+        const q = query(collection(db, `congregaciones/Del Bosque/meses`), limitToLast(1), orderBy("timeStamp"))
         const n = await getDocs(q);
         n.forEach((doc) => {
-
             const agregar = {
                 mes: doc.id,
                 semanas: doc.data().semanas
             }
             mesesDescargados.push(agregar)
         })
-
-        setMeses(mesesDescargados)
+        if (!n.empty) {
+            setMes(mesesDescargados)
+        }
     }
-
     useEffect(() => {
         descargarSemanas()
     }, [])
 
     return (
         <>
-            {meses.length > 0 &&
-                <HojaMes meses={meses} posicionActual={posicionActual} />
-            }
+
             {
-                meses.length == 0 &&
-                <Box sx={{
-                    m: "10px auto",
-                    background: "#ddd",
-                    borderRadius: "10px",
-                    width: "fit-content",
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center"
-                }} >
-                    <Typography>Aún no hay asignaciones.</Typography>
-                    <Button onClick={() => setLayout({ ...layout, agregarAsignacionesDialog: true })}
-                    >Agregalas ahora</Button>
-                </Box>
+                !edicion &&
+                <>
+                    {
+                        (mes == null) &&
+                        <Box sx={{
+                            m: "10px auto",
+                            background: "#ddd",
+                            borderRadius: "10px",
+                            width: "fit-content",
+                            p: 2,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center"
+                        }} >
+                            <Typography>Aún no hay asignaciones.</Typography>
+                            <Button onClick={() => setEdicion(true)} >Agregar ahora</Button>
+                        </Box>
+                    }
+                </>
             }
-            <AgregarAsignacionesDialog />
+
+            {
+                edicion && <HojaDeAsignaciones />
+            }
         </>
     )
 }
