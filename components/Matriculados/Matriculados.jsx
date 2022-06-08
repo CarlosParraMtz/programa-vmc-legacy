@@ -26,8 +26,6 @@ import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useRecoilState } from 'recoil';
 import matriculadosState from '../../Recoil/matriculadosState';
 
-import DialogEditar from './DialogEditar';
-
 import {
     collection,
     doc,
@@ -52,7 +50,7 @@ const Elemento = ({ data, consultar }) => {
     const borrarMatriculado = async() => {
 
         await deleteDoc(doc(db, `congregaciones/Del Bosque/matriculados`, data.id))
-        consultar()
+        await consultar()
     }
 
 
@@ -103,7 +101,7 @@ const Elemento = ({ data, consultar }) => {
                     <CardActions>
                         <Box sx={{ m: "0 auto" }}>
 
-                            <DialogEditar consultar={consultar} data={data} />
+                            <DialogAgregarUno consultar={consultar} data={data} editar />
 
                             <Button
                                 onClick={borrarMatriculado}
@@ -150,6 +148,28 @@ export default function Matriculados() {
     const [open, setOpen] = useState(false);
     const [matriculados, setMatriculados] = useRecoilState(matriculadosState)
     const [cargando, setCargando] = useState(false)
+
+
+
+    const [nombre, setNombre] = useState("")
+    const [genero, setGenero] = useState("hombre")
+    const [familia, setFamilia] = useState('');
+    const [listaDeFamilias, setListaDeFamilias] = useState([])
+    const [nuevaFamilia, setNuevaFamilia] = useState("")
+
+    const [fechaUltimaAsignacion, setFechaUltimaAsignacion] = useState('2022-01-01')
+    const [ultimaSala, setUltimaSala] = useState("A")
+    const [tipoDeUltimaAsignacion, setTipoDeUltimaAsignacion] = useState('Ayudante')
+
+    const [posiblesAsignaciones, setPosiblesAsignaciones] = useState({
+        "Ayudante": false,
+        "Primera conversación": false,
+        "Revisita": false,
+        "Curso bíblico": false,
+        "Discurso": false,
+        "Lectura": false
+    })
+
 
 
     const handleClickOpen = () => {

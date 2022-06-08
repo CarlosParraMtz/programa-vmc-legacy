@@ -74,7 +74,6 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
     const [listaDeFamilias, setListaDeFamilias] = useState([])
     const [nuevaFamilia, setNuevaFamilia] = useState("")
 
-    const [loading, setLoading] = useState(false)
 
     const [fechaUltimaAsignacion, setFechaUltimaAsignacion] = useState('2022-01-01')
     const [ultimaSala, setUltimaSala] = useState("A")
@@ -89,6 +88,7 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
         "Lectura": false
     })
 
+    const [loading, setLoading] = useState(false)
 
 
     const matriculados = useRecoilValue(matriculadosState);
@@ -246,6 +246,68 @@ export default function DialogAgregarUno({ open, setOpen, consultar }) {
         handleClose();
         setLoading(false)
     }
+
+
+    //* Para editar el matriculado
+    const actualizarMatriculado = async (e) => {
+
+        e.preventDefault()
+        setLoading(true)
+
+
+
+        if (nuevaFamilia != "") {
+            const direccionFamilias = doc(collection(db, "congregaciones/Del Bosque/familias"));
+            await setDoc(direccionFamilias, {
+                familia: nuevaFamilia
+            })
+        }
+
+        function seCreoFamilia() {
+            if (nuevaFamilia != "") {
+                return nuevaFamilia
+            }
+            return familia
+        }
+
+
+        const datosActualizar = {
+            nombre,
+            genero,
+            familia: seCreoFamilia(),
+            fechaUltimaAsignacion,
+            ultimaSala,
+            tipoDeUltimaAsignacion,
+            posiblesAsignaciones,
+        }
+
+        await updateDoc(doc(db, `congregaciones/Del Bosque/matriculados`, data.id), datosActualizar)
+
+
+
+        setNombre('');
+        setGenero('');
+        setFamilia('');
+        setFechaUltimaAsignacion('')
+        setUltimaSala('');
+        setTipoDeUltimaAsignacion('Ayudante')
+        setPosiblesAsignaciones({
+            "Ayudante": false,
+            "Primera conversación": false,
+            "Revisita": false,
+            "Curso bíblico": false,
+            "Discurso": false,
+            "Lectura": false
+        })
+        setAyudantesAnteriores([])
+        setPosiblesAyudantes([])
+        setPosible("")
+
+        consultar();
+        handleClose();
+        setLoading(false)
+    }
+
 
 
     //* Para mostrar la lista de las familias
