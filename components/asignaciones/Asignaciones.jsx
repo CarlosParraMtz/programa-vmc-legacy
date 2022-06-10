@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import {
     Box,
     Button,
+    Grid,
     Paper,
     Typography,
 } from '@mui/material'
@@ -20,7 +21,6 @@ import {
     deleteDoc,
 } from "firebase/firestore";
 import config from "../../firebase/config";
-import HojaDeAsignaciones from './HojaDeAsignaciones';
 
 const db = getFirestore(config)
 
@@ -31,53 +31,16 @@ export default function Asignaciones() {
     const [layout, setLayout] = useRecoilState(layoutState)
     const [edicion, setEdicion] = useState(false)
 
-    const descargarSemanas = async () => {
-        let mesesDescargados = []
-        const q = query(collection(db, `congregaciones/Del Bosque/meses`), limitToLast(1), orderBy("timeStamp"))
-        const n = await getDocs(q);
-        n.forEach((doc) => {
-            const agregar = {
-                mes: doc.id,
-                semanas: doc.data().semanas
-            }
-            mesesDescargados.push(agregar)
-        })
-        if (!n.empty) {
-            setMes(mesesDescargados)
-        }
-    }
-    useEffect(() => {
-        descargarSemanas()
-    }, [])
-
+  
     return (
-        <>
+        <Grid container sx={{maxWidth:'1200px', m:'0 auto'}} >
+            <Grid item xs={12} sm={3} sx={{background:'yellow'}} >
+                Columna de matriculados, familias y configuraciones
+            </Grid>
+            <Grid item xs={12} sm={9} sx={{background:'green'}} >
+                Columna para el componente del mes
+            </Grid>
 
-            {
-                !edicion &&
-                <>
-                    {
-                        (mes == null) &&
-                        <Box sx={{
-                            m: "10px auto",
-                            background: "#ddd",
-                            borderRadius: "10px",
-                            width: "fit-content",
-                            p: 2,
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center"
-                        }} >
-                            <Typography>Aún no hay asignaciones.</Typography>
-                            <Button onClick={() => setEdicion(true)} >Agregar ahora</Button>
-                        </Box>
-                    }
-                </>
-            }
-
-            {
-                edicion && <HojaDeAsignaciones />
-            }
-        </>
+        </Grid>
     )
 }

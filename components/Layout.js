@@ -12,7 +12,6 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 import styles from '../styles/Home.module.css'
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import MenuAsignaciones from '../components/asignaciones/MenuAsignaciones';
 
 import { useRecoilValue } from 'recoil';
 import userState from '../Recoil/userState';
@@ -42,11 +41,8 @@ export default function Layout({ children, home = false }) {
             </Head>
 
             <AppBar position="static" sx={{ background: "#5b3c88" }}>
-                <Toolbar>
-                    {
-                        ruta == '/asignaciones' &&
-                        <MenuAsignaciones />
-                    }
+                <Toolbar sx={{width:'100%', maxWidth:'1200px', m:'0 auto'}} >
+                    
 
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         {ruta == '/matriculados' && 'Matriculados'}
