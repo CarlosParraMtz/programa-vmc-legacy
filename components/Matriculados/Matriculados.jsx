@@ -19,6 +19,7 @@ import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useRecoilState } from 'recoil';
 import matriculadosState from '../../Recoil/matriculadosState';
 import AddReactionIcon from '@mui/icons-material/AddReaction';
+import TarjetaColapsable from './TarjetaColapsable';
 
 
 
@@ -41,56 +42,6 @@ export default function Matriculados() {
     })
 
 
-    const Elemento = ({ data }) => {
-        const [open, setOpen] = useState(false)
-        return (
-            <>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={() => setOpen(!open)}>
-                        <ListItemText primary={<b>{data.nombre}</b>} />
-                        {open ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                </ListItem>
-
-                <Collapse in={open} sx={{
-                    py: (open ? 2 : 0), px: 2, background: '#fafafa', transition: '500ms ',
-                    boxShadow: (open ? 'inset 0px 0px 0px #aaa' : 'inset 0px 3px 10px #444')
-                }} >
-
-                    <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                        <b>Familia:</b> {data.familia}
-                    </Typography>
-
-                    <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
-                        <b>Ultima asignación:</b>
-                    </Typography>
-                    <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                        {data.tipoDeUltimaAsignacion}, el {data.ultimaAsignacion}, en la sala {data.ultimaSala}
-                    </Typography>
-
-                    <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
-                        <b>Se puede asignar a:</b>
-                    </Typography>
-
-                    {data.arrayPosiblesAsignaciones.map((asignacion, index) => <Typography key={index}> {asignacion} </Typography>)}
-
-                    <Box sx={{ display: 'flex', justifyContent: 'center' }} >
-                        <Tooltip title='Eliminar matriculado' placement='top' arrow>
-                            <IconButton size='small' sx={{ background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}>
-                                <DeleteIcon sx={{ color: 'white' }} fontSize='small' />
-                            </IconButton>
-                        </Tooltip>
-                    </Box>
-                </Collapse>
-            </>
-        )
-    }
-
-
-
-
-
-
     return (
         <>
             <List disablePadding >
@@ -102,7 +53,37 @@ export default function Matriculados() {
                 </ListItemButton>
             </List>
             <List sx={{ width: "100%", maxHeight: "390px", overflow: "auto" }} disablePadding>
-                {matriculados.map((matriculado) => <Elemento data={matriculado} key={matriculado.id} />)}
+
+
+                {
+                    matriculados.map((matriculado) => <TarjetaColapsable key={matriculado.id} titulo={matriculado.nombre} >
+                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
+                            <b>Familia:</b> {matriculado.familia}
+                        </Typography>
+
+                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
+                            <b>Ultima asignación:</b>
+                        </Typography>
+                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
+                            {matriculado.tipoDeUltimaAsignacion}, el {matriculado.ultimaAsignacion}, en la sala {matriculado.ultimaSala}
+                        </Typography>
+
+                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
+                            <b>Se puede asignar a:</b>
+                        </Typography>
+
+                        {matriculado.arrayPosiblesAsignaciones.map((asignacion, index) => <Typography key={index}> • {asignacion} </Typography>)}
+
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }} >
+                            <Tooltip title='Eliminar matriculado' placement='top' arrow>
+                                <IconButton size='small' sx={{ background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}>
+                                    <DeleteIcon sx={{ color: 'white' }} fontSize='small' />
+                                </IconButton>
+                            </Tooltip>
+                        </Box>
+                    </TarjetaColapsable>
+                    )
+                }
             </List>
 
             <DialogAgregarUno useOpen={[open, setOpen]} editando={editando} data={datosDialog} />

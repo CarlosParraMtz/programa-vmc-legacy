@@ -23,7 +23,9 @@ export default function Familias() {
                 </ListItemButton>
             </List>
             <List disablePadding>
-
+                {familias.map((familia, i) => (
+                    <div key={i}></div>
+                ))}
             </List>
         </>
     )

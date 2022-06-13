@@ -26,7 +26,7 @@ export default function Layout({ children, home = false }) {
 
     useEffect(() => {
         if (!user.logeado) {
-            router.push('/')
+            router.push('/login')
         }
     }, [user])
 
@@ -44,11 +44,10 @@ export default function Layout({ children, home = false }) {
                 <Toolbar sx={{width:'100%', maxWidth:'1200px', m:'0 auto'}} >
                     
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        {ruta == '/matriculados' && 'Matriculados'}
-                        {ruta == '/asignaciones' && 'Asignaciones'}
+                        {ruta == '/' && 'Asignaciones'}
                     </Typography>
 
-                    {ruta != '/asignaciones' &&
+                    {ruta != '/' &&
 
                         <Tooltip title="Volver al inicio" arrow placement='left'>
                             <IconButton onClick={() => router.push("/asignaciones")} sx={{ width: "30px", height: "30px" }}>
