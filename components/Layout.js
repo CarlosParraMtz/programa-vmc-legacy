@@ -40,10 +40,9 @@ export default function Layout({ children, home = false }) {
                 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css' />
             </Head>
 
-            <AppBar position="static" sx={{ background: "#5b3c88" }}>
+            <AppBar position="static" sx={{ background: "#5b3c88", position:'sticky', top:0, zIndex:1000 }}>
                 <Toolbar sx={{width:'100%', maxWidth:'1200px', m:'0 auto'}} >
                     
-
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         {ruta == '/matriculados' && 'Matriculados'}
                         {ruta == '/asignaciones' && 'Asignaciones'}

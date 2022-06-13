@@ -66,7 +66,10 @@ const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
 }
 
 
-export default function DialogAgregarUno({ open, setOpen, consultar }) {
+export default function DialogAgregarUno({ useOpen, editando, data, consultar }) {
+
+
+    const [open, setOpen] = useOpen;
 
     const [nombre, setNombre] = useState("")
     const [genero, setGenero] = useState("hombre")
