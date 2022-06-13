@@ -26,10 +26,12 @@ import {
 import firebaseApp from '../firebase/config';
 import { useRecoilState } from 'recoil';
 import userState from '../Recoil/userState';
-import matriculadosState from '../Recoil/matriculadosState'
+import matriculadosState from '../Recoil/matriculadosState';
+import familiasState from '../Recoil/familiasState';
 import { useState, useEffect } from 'react'
 
 import descargarMatriculados from '../firebase/descargarMatriculados';
+import descargarFamilias from '../firebase/descargarFamilias'
 
 const BotonGoogle = ({ onClick }) => <Button
 	size="large"
@@ -62,6 +64,7 @@ export default function Login() {
 	const [cargando, setCargando] = useState(false);
 	const [user, setUser] = useRecoilState(userState);
 	const [matriculados, setMatriculados] = useRecoilState(matriculadosState);
+	const [familias, setFamilias] = useRecoilState(familiasState);
 
 
 
@@ -79,7 +82,9 @@ export default function Login() {
 				}
 				setUser(newSesion)
 				const matr = await descargarMatriculados()
+				const fams = await descargarFamilias()
 				setMatriculados(matr)
+				setFamilias(fams)
 			}
 		})
 
@@ -104,13 +109,15 @@ export default function Login() {
 				}
 				setUser(newSesion);
 				const matr = await descargarMatriculados()
+				const fams = await descargarFamilias()
 				setMatriculados(matr)
+				setFamilias(fams)
 			})
 		setCargando(false)
 
 	}
 
-	
+
 
 
 	useEffect(() => {
@@ -125,12 +132,7 @@ export default function Login() {
 		<div className={styles.container}>
 			<div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "#5b3c88", zIndex: "-1" }} />
 
-			<Head>
-				<title>Programa VMC</title>
-				<meta name="description" content="Asignaciones estudiantiles para VMC" />
-				<link rel="icon" href="/favicon.ico" />
-				<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css' />
-			</Head>
+
 
 			<main className={styles.main}>
 				<Typography variant="h3" sx={{ color: "white", fontFamily: "sans", mb: 2 }}>

@@ -314,17 +314,9 @@ export default function DialogAgregarUno({ useOpen, editando, data, consultar })
 
 
     //* Para mostrar la lista de las familias
-    const traerListaDeFamilias = async () => {
-        let lista = []
-        const q = query(collection(db, `congregaciones/Del Bosque/familias`), orderBy("familia"))
-        const n = await getDocs(q);
-        n.forEach((doc) => {
-            lista.push(doc.data().familia)
-        })
-        setListaDeFamilias(lista)
-    }
+   
     useEffect(() => {
-        traerListaDeFamilias()
+   //     traerListaDeFamilias()
     }, [open])
 
 
