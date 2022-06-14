@@ -14,7 +14,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DialogAgregarUno from './DialogMatriculado';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';    
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useRecoilState } from 'recoil';
 import matriculadosState from '../../Recoil/matriculadosState';
@@ -75,6 +75,13 @@ export default function Matriculados() {
                         {matriculado.arrayPosiblesAsignaciones.map((asignacion, index) => <Typography key={index}> • {asignacion} </Typography>)}
 
                         <Box sx={{ display: 'flex', justifyContent: 'center' }} >
+
+                            <Tooltip title='Editar familia' placement='top' arrow>
+                                <IconButton size='small' sx={{ mr: 1, background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}>
+                                    <EditIcon sx={{ color: 'white' }} fontSize='small' />
+                                </IconButton>
+                            </Tooltip>
+
                             <Tooltip title='Eliminar matriculado' placement='top' arrow>
                                 <IconButton size='small' sx={{ background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}>
                                     <DeleteIcon sx={{ color: 'white' }} fontSize='small' />

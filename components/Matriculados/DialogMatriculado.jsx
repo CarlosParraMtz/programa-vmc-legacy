@@ -31,20 +31,10 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import { Delete } from '@mui/icons-material';
 import CommentIcon from '@mui/icons-material/Comment';
-import {
-    collection,
-    setDoc,
-    doc,
-    getFirestore,
-    serverTimestamp,
-    getDocs,
-    query,
-    orderBy,
-    deleteDoc,
-} from "firebase/firestore";
-import config from "../../firebase/config";
-import { useRecoilValue } from 'recoil';
+
+import { useRecoilValue, useRecoilState } from 'recoil';
 import matriculadosState from '../../Recoil/matriculadosState';
+import familiasState from '../../Recoil/familiasState';
 
 
 const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
@@ -66,7 +56,7 @@ const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
 }
 
 
-export default function DialogAgregarUno({ useOpen, editando, data, consultar }) {
+export default function DialogAgregarUno({ useOpen, editando, data }) {
 
 
     const [open, setOpen] = useOpen;
@@ -74,7 +64,6 @@ export default function DialogAgregarUno({ useOpen, editando, data, consultar })
     const [nombre, setNombre] = useState("")
     const [genero, setGenero] = useState("hombre")
     const [familia, setFamilia] = useState('');
-    const [listaDeFamilias, setListaDeFamilias] = useState([])
     const [nuevaFamilia, setNuevaFamilia] = useState("")
 
 
@@ -95,30 +84,56 @@ export default function DialogAgregarUno({ useOpen, editando, data, consultar })
 
 
     const matriculados = useRecoilValue(matriculadosState);
+    const [familias, setFamilias] = useRecoilState(familiasState);
 
     const [ayudantesAnteriores, setAyudantesAnteriores] = useState([])
     const [posiblesAyudantes, setPosiblesAyudantes] = useState([])
     const [posible, setPosible] = useState("")
     const [dialogAgregarAyudante, setDialogAgregarAyudante] = useState(false)
 
+    function vaciarDialog() {
+        setNombre('');
+        setGenero('');
+        setFamilia('');
+        setFechaUltimaAsignacion('2022-01-01')
+        setUltimaSala('A');
+        setTipoDeUltimaAsignacion('Ayudante')
+        setPosiblesAsignaciones({
+            "Ayudante": false,
+            "Primera conversación": false,
+            "Revisita": false,
+            "Curso bíblico": false,
+            "Discurso": false,
+            "Lectura": false
+        })
+        setAyudantesAnteriores([])
+        setPosiblesAyudantes([])
+        setPosible("")
+    }
+
+    function rellenarDialog(data) {
+        setNombre(data.nombre);
+        setGenero(data.genero);
+        setFamilia(data.familia);
+        setFechaUltimaAsignacion(data.fechaUltimaAsignacion)
+        setUltimaSala(data.ultimaSala);
+        setTipoDeUltimaAsignacion(data.tipoDeUltimaAsignacion)
+        setPosiblesAsignaciones(data.posiblesAsignaciones)
+        setAyudantesAnteriores(data.ayudantesAnteriores)
+        setPosiblesAyudantes([])
+        setPosible("")
+
+    }
+
     const obtenerPosiblesAyudantes = () => {
 
-        let todos = []
-        matriculados.forEach((matriculado) => {
-            if (matriculado.genero == genero) {
-                todos.push(matriculado)
-            }
-        })
-
-        let sinPropio = []
-        todos.forEach((cadaUno) => {
-            if (cadaUno.nombre !== nombre) {
-                sinPropio.push(cadaUno.nombre)
-            }
-        })
-
+        const mismoGenero = matriculados.filter(mtr => mtr.genero == genero)
+        const sinElActual = mismoGenero.filter(mtr => mtr.nombre == nombre)
+        // const excluyendoLosQueYaEstan = sinElActual.filter(mtr => {
+        //     ayudantesAnteriores.find(i => i == mtr.nombre)
+        // })
         let sinNombresQueYaEstan = []
-        sinPropio.forEach((cadaUno) => {
+        sinElActual.forEach((cadaUno) => {
             const f = ayudantesAnteriores.find(i => i == cadaUno)
             if (!f) {
                 sinNombresQueYaEstan.push(cadaUno)
@@ -158,168 +173,6 @@ export default function DialogAgregarUno({ useOpen, editando, data, consultar })
 
 
 
-    const handleChange = (event) => {
-        setFamilia(event.target.value);
-    };
-
-    const cambiarTipo = (event) => {
-        setTipoDeUltimaAsignacion(event.target.value);
-    };
-
-    const cambiarUltimaSala = (event) => {
-        setUltimaSala(event.target.value);
-    };
-
-    const cambiarGenero = (event) => {
-        setGenero(event.target.value);
-    };
-
-    const cambiarFechaUltimaAsignacion = e => {
-        setFechaUltimaAsignacion(e.target.value)
-    }
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    //* Para crear matriculado
-    const db = getFirestore(config)
-    const crearMatriculado = async (e) => {
-
-        e.preventDefault()
-        setLoading(true)
-
-
-        const direccionMatriculados = doc(collection(db, "congregaciones/Del Bosque/matriculados"));
-
-        if (nuevaFamilia != "") {
-            const direccionFamilias = doc(collection(db, "congregaciones/Del Bosque/familias"));
-            await setDoc(direccionFamilias, {
-                familia: nuevaFamilia
-            })
-        }
-
-        function seCreoFamilia() {
-            if (nuevaFamilia != "") {
-                return nuevaFamilia
-            }
-            return familia
-        }
-
-
-        await setDoc(direccionMatriculados, {
-            nombre,
-            genero,
-            familia: seCreoFamilia(),
-            fechaUltimaAsignacion,
-            ultimaSala,
-            tipoDeUltimaAsignacion,
-            posiblesAsignaciones,
-            ayudantesAnteriores
-        });
-
-
-
-
-
-
-        setNombre('');
-        setGenero('');
-        setFamilia('');
-        setFechaUltimaAsignacion('2022-01-01')
-        setUltimaSala('A');
-        setTipoDeUltimaAsignacion('Ayudante')
-        setPosiblesAsignaciones({
-            "Ayudante": false,
-            "Primera conversación": false,  
-            "Revisita": false,
-            "Curso bíblico": false,
-            "Discurso": false,
-            "Lectura": false
-        })
-        setAyudantesAnteriores([])
-        setPosiblesAyudantes([])
-        setPosible("")
-
-        consultar();
-        handleClose();
-        setLoading(false)
-    }
-
-
-    //* Para editar el matriculado
-    const actualizarMatriculado = async (e) => {
-
-        e.preventDefault()
-        setLoading(true)
-
-
-
-        if (nuevaFamilia != "") {
-            const direccionFamilias = doc(collection(db, "congregaciones/Del Bosque/familias"));
-            await setDoc(direccionFamilias, {
-                familia: nuevaFamilia
-            })
-        }
-
-        function seCreoFamilia() {
-            if (nuevaFamilia != "") {
-                return nuevaFamilia
-            }
-            return familia
-        }
-
-
-        const datosActualizar = {
-            nombre,
-            genero,
-            familia: seCreoFamilia(),
-            fechaUltimaAsignacion,
-            ultimaSala,
-            tipoDeUltimaAsignacion,
-            posiblesAsignaciones,
-        }
-
-        await updateDoc(doc(db, `congregaciones/Del Bosque/matriculados`, data.id), datosActualizar)
-
-
-
-        setNombre('');
-        setGenero('');
-        setFamilia('');
-        setFechaUltimaAsignacion('')
-        setUltimaSala('');
-        setTipoDeUltimaAsignacion('Ayudante')
-        setPosiblesAsignaciones({
-            "Ayudante": false,
-            "Primera conversación": false,
-            "Revisita": false,
-            "Curso bíblico": false,
-            "Discurso": false,
-            "Lectura": false
-        })
-        setAyudantesAnteriores([])
-        setPosiblesAyudantes([])
-        setPosible("")
-
-        consultar();
-        handleClose();
-        setLoading(false)
-    }
-
-
-
-    //* Para mostrar la lista de las familias
-   
-    useEffect(() => {
-   //     traerListaDeFamilias()
-    }, [open])
-
-
     useEffect(() => {
         if (familia != "nuevaFamilia") {
             setNuevaFamilia('')
@@ -343,7 +196,7 @@ export default function DialogAgregarUno({ useOpen, editando, data, consultar })
 
 
     return (
-        <Dialog open={open} onClose={handleClose} >
+        <Dialog open={open} onClose={() => setOpen(false)} >
             <form>
                 <DialogTitle>Agrega un matriculado</DialogTitle>
                 <DialogContent sx={{ overflow: "auto" }} >
@@ -368,33 +221,25 @@ export default function DialogAgregarUno({ useOpen, editando, data, consultar })
                     />
 
                     <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
-                        <InputLabel id="demo-simple-select-label">Género</InputLabel>
+                        <InputLabel>Género</InputLabel>
                         <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
                             value={genero}
                             label="Género"
-                            onChange={cambiarGenero}
+                            onChange={e => setGenero(e.target.value)}
                         >
-
                             <MenuItem value={"hombre"}>Hombre</MenuItem>
                             <MenuItem value={"mujer"}>Mujer</MenuItem>
-
                         </Select>
                     </FormControl>
 
                     <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
-                        <InputLabel id="demo-simple-select-label">Familia</InputLabel>
+                        <InputLabel>Familia</InputLabel>
                         <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
                             value={familia}
                             label="Familia"
-                            onChange={handleChange}
+                            onChange={e => setFamilia(e.target.value)}
                         >
-                            {
-                                listaDeFamilias.map((familia, index) => <MenuItem key={index} value={familia}>{familia}</MenuItem>)
-                            }
+                            {familias.map((fam) => <MenuItem key={fam.id} value={fam.id}>{fam.apellidos}</MenuItem>)}
                             <MenuItem value={"nuevaFamilia"}>Agregar familia...</MenuItem>
                         </Select>
                     </FormControl>
@@ -427,37 +272,31 @@ export default function DialogAgregarUno({ useOpen, editando, data, consultar })
                         type="date"
                         defaultValue="2022-01-01"
                         fullWidth
-                        onChange={cambiarFechaUltimaAsignacion}
+                        onChange={e => setFechaUltimaAsignacion(e.target.value)}
                         variant="outlined"
                     />
 
                     <Grid container spacing={0} sx={{ width: "100%" }}>
                         <Grid item sm={4} xs={12}>
                             <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
-                                <InputLabel id="demo-simple-select-label">Sala de última asignación</InputLabel>
+                                <InputLabel>Sala de última asignación</InputLabel>
                                 <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
                                     value={ultimaSala}
                                     label="Sala de última asignación"
-                                    onChange={cambiarUltimaSala}
+                                    onChange={e => setUltimaSala(e.target.value)}
                                 >
-
                                     <MenuItem value={"A"}>A</MenuItem>
                                     <MenuItem value={"B"}>B</MenuItem>
-
                                 </Select>
                             </FormControl>
                         </Grid>
                         <Grid item sm={8} xs={12}>
                             <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
-                                <InputLabel id="demo-simple-select-label">Tipo de última asignación</InputLabel>
+                                <InputLabel>Tipo de última asignación</InputLabel>
                                 <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
                                     value={tipoDeUltimaAsignacion}
                                     label="Tipo de última asignación"
-                                    onChange={cambiarTipo}
+                                    onChange={e => setTipoDeUltimaAsignacion(e.target.value)}
                                 >
 
                                     <MenuItem value={"Ayudante"}>Ayudante</MenuItem>
@@ -488,10 +327,8 @@ export default function DialogAgregarUno({ useOpen, editando, data, consultar })
                             </DialogTitle>
                             <DialogContent>
                                 <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
-                                    <InputLabel id="demo-simple-select-label">Ayudante</InputLabel>
+                                    <InputLabel>Ayudante</InputLabel>
                                     <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
                                         value={posible}
                                         label="Ayudante"
                                         onChange={(e) => setPosible(e.target.value)}
@@ -573,7 +410,7 @@ export default function DialogAgregarUno({ useOpen, editando, data, consultar })
                     </Button>
 
                     <Button
-                        onClick={handleClose}
+                        onClick={() => setOpen(false)}
                         sx={{ color: "#5b3c88", "&:hover": { color: "#6b4c88" } }} >
                         cerrar
                     </Button>
