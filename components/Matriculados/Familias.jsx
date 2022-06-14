@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
     Box,
     List,
@@ -16,15 +17,18 @@ import EditIcon from '@mui/icons-material/Edit'
 import familiasState from '../../Recoil/familiasState';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import TarjetaColapsable from './TarjetaColapsable';
+import DialogFamilias from './DialogFamilias';
 
 export default function Familias() {
 
     const [familias, setFamilias] = useRecoilState(familiasState)
+    const [dialogAgregar, setDialogAgregar] = useState(false)
+    const [data, setData] = useState(null)
 
     return (
         <>
             <List disablePadding >
-                <ListItemButton >
+                <ListItemButton onClick={() => setDialogAgregar(true)} >
                     <ListItemIcon sx={{ pl: 2 }} >
                         <GroupAddIcon />
                     </ListItemIcon>
@@ -44,7 +48,12 @@ export default function Familias() {
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }} >
 
                             <Tooltip title='Editar familia' placement='top' arrow>
-                                <IconButton size='small' sx={{ mr:1, background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}>
+                                <IconButton
+                                    onClick={() => {
+                                        setData(fam)
+                                        setDialogAgregar(true)
+                                    }}
+                                    sx={{ mr: 1, background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}>
                                     <EditIcon sx={{ color: 'white' }} fontSize='small' />
                                 </IconButton>
                             </Tooltip>
@@ -59,6 +68,8 @@ export default function Familias() {
                     </TarjetaColapsable>
                 ))}
             </List>
+
+            <DialogFamilias useOpen={[dialogAgregar, setDialogAgregar]} data={data} />
         </>
     )
 }

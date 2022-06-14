@@ -20,6 +20,5 @@ export default async function descargarFamilias() {
             miembros: (doc.data().miembros == undefined ? [] : doc.data.miembros)
         })
     })
-    console.log(lista)
     return lista;
 }
