@@ -36,6 +36,9 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import matriculadosState from '../../Recoil/matriculadosState';
 import familiasState from '../../Recoil/familiasState';
 
+import crearMatriculado from '../../firebase/crearMatriculado'
+import actualizarMatriculado from '../../firebase/actualizarMatriculado'
+
 
 const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
     return (
@@ -56,7 +59,7 @@ const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
 }
 
 
-export default function DialogAgregarUno({ useOpen, editando, data }) {
+export default function DialogAgregarUno({ useOpen, editando = false, data = null }) {
 
 
     const [open, setOpen] = useOpen;
@@ -67,6 +70,7 @@ export default function DialogAgregarUno({ useOpen, editando, data }) {
     const [nuevaFamilia, setNuevaFamilia] = useState("")
 
 
+    const [ultimasAsignaciones, setUltimasAsignaciones] = useState([])
     const [fechaUltimaAsignacion, setFechaUltimaAsignacion] = useState('2022-01-01')
     const [ultimaSala, setUltimaSala] = useState("A")
     const [tipoDeUltimaAsignacion, setTipoDeUltimaAsignacion] = useState('Ayudante')
@@ -122,8 +126,13 @@ export default function DialogAgregarUno({ useOpen, editando, data }) {
         setAyudantesAnteriores(data.ayudantesAnteriores)
         setPosiblesAyudantes([])
         setPosible("")
-
     }
+
+    useEffect(() => {
+        if (data != null) {
+            rellenarDialog(data)
+        }
+    }, [open])
 
     const obtenerPosiblesAyudantes = () => {
 
@@ -139,14 +148,11 @@ export default function DialogAgregarUno({ useOpen, editando, data }) {
                 sinNombresQueYaEstan.push(cadaUno)
             }
         })
-
         setPosiblesAyudantes(sinNombresQueYaEstan)
     }
 
     useEffect(() => {
-
         obtenerPosiblesAyudantes()
-
     }, [dialogAgregarAyudante])
 
     const agregarAyudanteAnterior = (e) => {
@@ -192,6 +198,7 @@ export default function DialogAgregarUno({ useOpen, editando, data }) {
             ...obj
         })
     }
+
 
 
 
