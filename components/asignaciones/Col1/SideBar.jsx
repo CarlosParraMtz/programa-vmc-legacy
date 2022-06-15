@@ -24,13 +24,7 @@ export default function SideBar() {
         return (
             <>
                 <ListItemButton
-                    onClick={() => {
-                        if (pestaña === tab) {
-                            setPestaña(-1)
-                        } else {
-                            setPestaña(tab)
-                        }
-                    }}
+                    onClick={() => { if (pestaña === tab) { setPestaña(-1) } else { setPestaña(tab) } }}
                     selected={pestaña === tab} >
                     <ListItemIcon>
                         {icon}
