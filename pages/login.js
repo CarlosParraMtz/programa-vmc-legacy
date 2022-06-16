@@ -33,6 +33,10 @@ import { useState, useEffect } from 'react'
 import descargarMatriculados from '../firebase/descargarMatriculados';
 import descargarFamilias from '../firebase/descargarFamilias'
 
+import comprobarConfigUsuario from '../firebase/comprobarConfigUsuario'
+
+
+
 const BotonGoogle = ({ onClick }) => <Button
 	size="large"
 	variant="outlined"
@@ -73,18 +77,36 @@ export default function Login() {
 		await onAuthStateChanged(auth, async (usuario) => {
 			if (usuario) {
 
+				let dataCong;
+				const congreLS = localStorage.getItem('user/congregacion')
+				if (congreLS) { dataCong = JSON.parse(congreLS) }
+				else { dataCong = await comprobarConfigUsuario(usuario.email) }
+
 				const newSesion = {
 					logeado: true,
 					uid: usuario.uid,
-					congregacion: "",
+					congregacion: (!dataCong
+						? {
+							nombre: '',
+							ciudad: '',
+							estado: '',
+							pais: ''
+						}
+						: dataCong.congregacion),
 					nombre: usuario.displayName,
 					email: usuario.email
 				}
 				setUser(newSesion)
-				const matr = await descargarMatriculados()
-				const fams = await descargarFamilias()
-				setMatriculados(matr)
-				setFamilias(fams)
+
+				if (newSesion.congregacion.nombre === '') {
+					Router.push('/config')
+				} else {
+					const matr = await descargarMatriculados(usuario.congregacion.nombre)
+					const fams = await descargarFamilias(usuario.congregacion.nombre)
+					setMatriculados(matr)
+					setFamilias(fams)
+					Router.push('/')
+				}
 			}
 		})
 
@@ -100,31 +122,43 @@ export default function Login() {
 			.then(async (result) => {
 				const datosUsuario = result.user;
 
-				const newSesion = {
+				let dataCong;
+				const congreLS = localStorage.getItem('user/congregacion')
+				if (congreLS) { dataCong = JSON.parse(congreLS) }
+				else { dataCong = await comprobarConfigUsuario(datosUsuario.email) }
+
+				const usuario = {
 					logeado: true,
 					uid: datosUsuario.uid,
-					congregacion: "",
+					congregacion: (!dataCong
+						? {
+							nombre: '',
+							ciudad: '',
+							estado: '',
+							pais: ''
+						}
+						: dataCong.congregacion),
 					nombre: datosUsuario.displayName,
 					email: datosUsuario.email
 				}
-				setUser(newSesion);
-				const matr = await descargarMatriculados()
-				const fams = await descargarFamilias()
-				setMatriculados(matr)
-				setFamilias(fams)
+				setUser(usuario);
+
+				if (usuario.congregacion.nombre === '') {
+					Router.push('/config')
+				} else {
+					const matr = await descargarMatriculados(usuario.congregacion.nombre)
+					const fams = await descargarFamilias(usuario.congregacion.nombre)
+					setMatriculados(matr)
+					setFamilias(fams)
+					Router.push('/')
+				}
+
+
+
 			})
 		setCargando(false)
-
 	}
 
-
-
-
-	useEffect(() => {
-		if (user.logeado) {
-			Router.push("/")
-		}
-	}, [user])
 
 
 

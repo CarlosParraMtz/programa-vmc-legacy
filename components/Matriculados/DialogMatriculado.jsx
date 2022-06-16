@@ -196,7 +196,9 @@ export default function DialogAgregarUno({ useOpen, data = null, setData = () =>
         genero,
         ultimaAsignacion,
         ayudantesAnteriores,
-        posiblesAsignaciones
+        posiblesAsignaciones,
+        familia: '',
+        asignacionesAnteriores: []
     }
 
     const guardar = () => {
@@ -280,7 +282,7 @@ export default function DialogAgregarUno({ useOpen, data = null, setData = () =>
                             <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
                                 <InputLabel>Sala de última asignación</InputLabel>
                                 <Select
-                                    value={ultimaSala}
+                                    value={ultimaAsignacion.sala}
                                     label="Sala de última asignación"
                                     onChange={e => {
                                         let ult = { ...ultimaAsignacion }
@@ -297,7 +299,7 @@ export default function DialogAgregarUno({ useOpen, data = null, setData = () =>
                             <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
                                 <InputLabel>Tipo de última asignación</InputLabel>
                                 <Select
-                                    value={tipoDeUltimaAsignacion}
+                                    value={ultimaAsignacion.tipo}
                                     label="Tipo de última asignación"
                                     onChange={e => {
                                         let ult = { ...ultimaAsignacion }
