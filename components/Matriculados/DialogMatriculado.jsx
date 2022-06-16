@@ -6,12 +6,16 @@ import {
     CardContent,
     Divider,
     ListSubheader,
+    Menu,
+    MenuItem,
     Paper,
     TextField,
+    Tooltip,
     Typography,
     Grid,
     CircularProgress,
 } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -19,7 +23,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import List from '@mui/material/List';
@@ -59,22 +62,18 @@ const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
 }
 
 
-export default function DialogAgregarUno({ useOpen, editando = false, data = null }) {
+export default function DialogAgregarUno({ useOpen, data = null, setData = () => { } }) {
 
 
     const [open, setOpen] = useOpen;
 
     const [nombre, setNombre] = useState("")
     const [genero, setGenero] = useState("hombre")
-    const [familia, setFamilia] = useState('');
-    const [nuevaFamilia, setNuevaFamilia] = useState("")
-
-
-    const [ultimasAsignaciones, setUltimasAsignaciones] = useState([])
-    const [fechaUltimaAsignacion, setFechaUltimaAsignacion] = useState('2022-01-01')
-    const [ultimaSala, setUltimaSala] = useState("A")
-    const [tipoDeUltimaAsignacion, setTipoDeUltimaAsignacion] = useState('Ayudante')
-
+    const [ultimaAsignacion, setUltimaAsignacion] = useState({
+        fecha: '2022-01-01',
+        sala: 'A',
+        tipo: 'Ayudante'
+    })
     const [posiblesAsignaciones, setPosiblesAsignaciones] = useState({
         "Ayudante": false,
         "Primera conversación": false,
@@ -84,24 +83,28 @@ export default function DialogAgregarUno({ useOpen, editando = false, data = nul
         "Lectura": false
     })
 
+
+    const [ultimasAsignaciones, setUltimasAsignaciones] = useState([])
+
+
+
     const [loading, setLoading] = useState(false)
 
 
     const matriculados = useRecoilValue(matriculadosState);
-    const [familias, setFamilias] = useRecoilState(familiasState);
 
     const [ayudantesAnteriores, setAyudantesAnteriores] = useState([])
     const [posiblesAyudantes, setPosiblesAyudantes] = useState([])
     const [posible, setPosible] = useState("")
-    const [dialogAgregarAyudante, setDialogAgregarAyudante] = useState(false)
 
     function vaciarDialog() {
         setNombre('');
         setGenero('');
-        setFamilia('');
-        setFechaUltimaAsignacion('2022-01-01')
-        setUltimaSala('A');
-        setTipoDeUltimaAsignacion('Ayudante')
+        setUltimaAsignacion({
+            fecha: '2022-01-01',
+            sala: 'A',
+            tipo: 'Ayudante'
+        })
         setPosiblesAsignaciones({
             "Ayudante": false,
             "Primera conversación": false,
@@ -111,79 +114,56 @@ export default function DialogAgregarUno({ useOpen, editando = false, data = nul
             "Lectura": false
         })
         setAyudantesAnteriores([])
-        setPosiblesAyudantes([])
-        setPosible("")
     }
 
     function rellenarDialog(data) {
         setNombre(data.nombre);
         setGenero(data.genero);
-        setFamilia(data.familia);
-        setFechaUltimaAsignacion(data.fechaUltimaAsignacion)
-        setUltimaSala(data.ultimaSala);
-        setTipoDeUltimaAsignacion(data.tipoDeUltimaAsignacion)
+        setUltimaAsignacion(data.ultimaAsignacion)
         setPosiblesAsignaciones(data.posiblesAsignaciones)
         setAyudantesAnteriores(data.ayudantesAnteriores)
-        setPosiblesAyudantes([])
-        setPosible("")
     }
 
     useEffect(() => {
         if (data != null) {
             rellenarDialog(data)
         }
-    }, [open])
+    }, [open, data])
 
-    const obtenerPosiblesAyudantes = () => {
 
-        const mismoGenero = matriculados.filter(mtr => mtr.genero == genero)
-        const sinElActual = mismoGenero.filter(mtr => mtr.nombre == nombre)
-        // const excluyendoLosQueYaEstan = sinElActual.filter(mtr => {
-        //     ayudantesAnteriores.find(i => i == mtr.nombre)
-        // })
-        let sinNombresQueYaEstan = []
-        sinElActual.forEach((cadaUno) => {
-            const f = ayudantesAnteriores.find(i => i == cadaUno)
-            if (!f) {
-                sinNombresQueYaEstan.push(cadaUno)
-            }
+    const [anchorEl, setAnchorEl] = useState(null);
+    const menuAbierto = Boolean(anchorEl);
+    const abrirMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const cerrarMenu = () => {
+        setAnchorEl(null);
+    };
+
+    const desplegarMenuPosiblesAyudantes = e => {
+        const filtrados = matriculados.filter(mtr => {
+            const f = ayudantesAnteriores.find(a => a.id == mtr.id)
+            if (f || mtr.nombre == nombre || mtr.genero != genero) { return false }
+            return true
         })
-        setPosiblesAyudantes(sinNombresQueYaEstan)
+        setPosiblesAyudantes(filtrados)
+        abrirMenu(e)
     }
 
-    useEffect(() => {
-        obtenerPosiblesAyudantes()
-    }, [dialogAgregarAyudante])
-
-    const agregarAyudanteAnterior = (e) => {
-        e.preventDefault()
+    const agregarAyudanteAnterior = (nombre, id) => {
         let arr = [...ayudantesAnteriores]
-        arr.push(posible)
+        arr.push({ id, nombre })
         setAyudantesAnteriores(arr)
-        setPosible("")
-        obtenerPosiblesAyudantes()
-        cerrarDialog()
-    }
-
-    const cerrarDialog = () => {
-        setPosible("")
-        setDialogAgregarAyudante(false)
+        setPosiblesAyudantes([])
+        cerrarMenu()
     }
 
     const borrarAyudante = (id) => {
         let arr = [...ayudantesAnteriores];
-        arr.splice(id, 1)
+        arr.splice(ayudantesAnteriores.findIndex(a => a.id === id), 1)
         setAyudantesAnteriores(arr)
     }
 
-
-
-
-    useEffect(() => {
-        if (familia != "nuevaFamilia") {
-            setNuevaFamilia('')
-        }
-    }, [familia])
 
 
 
@@ -201,12 +181,49 @@ export default function DialogAgregarUno({ useOpen, editando = false, data = nul
 
 
 
+    const cancelarYCerrar = () => {
+        vaciarDialog()
+        setOpen(false)
+    }
+
+
+
+
+    //* Para operaciones con la base de datos
+
+    const matriculadoData = {
+        nombre,
+        genero,
+        ultimaAsignacion,
+        ayudantesAnteriores,
+        posiblesAsignaciones
+    }
+
+    const guardar = () => {
+        
+    }
+
 
     return (
-        <Dialog open={open} onClose={() => setOpen(false)} >
+        <Dialog open={open} onClose={cancelarYCerrar} fullWidth maxWidth='sm' >
             <form>
-                <DialogTitle>Agrega un matriculado</DialogTitle>
-                <DialogContent sx={{ overflow: "auto" }} >
+                <DialogTitle
+                    sx={{
+                        background: '#5b3c88',
+                        display: 'flex',
+                        alignItems: 'center',
+                        position: 'sticky', top: 0, zIndex: 3
+                    }} >
+                    <Typography sx={{ color: 'white' }} >
+                        Agrega un matriculado
+                    </Typography>
+                    <Tooltip title='Cancelar y cerrar' >
+                        <IconButton size='small' sx={{ ml: 'auto' }} onClick={cancelarYCerrar} >
+                            <CloseIcon sx={{ color: 'white' }} fontSize='small' />
+                        </IconButton>
+                    </Tooltip>
+                </DialogTitle>
+                <DialogContent >
                     <DialogContentText sx={{ textAlign: "center" }}>
                         Agrega todos los datos cuidadosamente para evitar errores en la generación automática de asignaciones.
                     </DialogContentText>
@@ -239,35 +256,6 @@ export default function DialogAgregarUno({ useOpen, editando = false, data = nul
                         </Select>
                     </FormControl>
 
-                    <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
-                        <InputLabel>Familia</InputLabel>
-                        <Select
-                            value={familia}
-                            label="Familia"
-                            onChange={e => setFamilia(e.target.value)}
-                        >
-                            {familias.map((fam) => <MenuItem key={fam.id} value={fam.id}>{fam.apellidos}</MenuItem>)}
-                            <MenuItem value={"nuevaFamilia"}>Agregar familia...</MenuItem>
-                        </Select>
-                    </FormControl>
-
-                    {
-                        familia === "nuevaFamilia" &&
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="name"
-                            label="Nueva familia"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            sx={{ mb: 1 }}
-                            value={nuevaFamilia}
-                            onChange={(e) => setNuevaFamilia(e.target.value)}
-                        />
-                    }
-
-
 
                     <Divider sx={{ mt: 2, mb: 1 }}> Última asignación </Divider>
 
@@ -279,7 +267,11 @@ export default function DialogAgregarUno({ useOpen, editando = false, data = nul
                         type="date"
                         defaultValue="2022-01-01"
                         fullWidth
-                        onChange={e => setFechaUltimaAsignacion(e.target.value)}
+                        onChange={e => {
+                            let ult = { ...ultimaAsignacion }
+                            ult.fecha = e.target.value
+                            setUltimaAsignacion(ult)
+                        }}
                         variant="outlined"
                     />
 
@@ -290,7 +282,11 @@ export default function DialogAgregarUno({ useOpen, editando = false, data = nul
                                 <Select
                                     value={ultimaSala}
                                     label="Sala de última asignación"
-                                    onChange={e => setUltimaSala(e.target.value)}
+                                    onChange={e => {
+                                        let ult = { ...ultimaAsignacion }
+                                        ult.sala = e.target.value
+                                        setUltimaAsignacion(ult)
+                                    }}
                                 >
                                     <MenuItem value={"A"}>A</MenuItem>
                                     <MenuItem value={"B"}>B</MenuItem>
@@ -303,7 +299,11 @@ export default function DialogAgregarUno({ useOpen, editando = false, data = nul
                                 <Select
                                     value={tipoDeUltimaAsignacion}
                                     label="Tipo de última asignación"
-                                    onChange={e => setTipoDeUltimaAsignacion(e.target.value)}
+                                    onChange={e => {
+                                        let ult = { ...ultimaAsignacion }
+                                        ult.tipo = e.target.value
+                                        setUltimaAsignacion(ult)
+                                    }}
                                 >
 
                                     <MenuItem value={"Ayudante"}>Ayudante</MenuItem>
@@ -323,62 +323,33 @@ export default function DialogAgregarUno({ useOpen, editando = false, data = nul
                         </ListSubheader>
                     }>
                         <ListItem dense>
-                            <ListItemButton onClick={() => setDialogAgregarAyudante(true)} >
+                            <ListItemButton onClick={desplegarMenuPosiblesAyudantes} >
                                 <ListItemText primary="Agregar ayudante..." />
                             </ListItemButton>
                         </ListItem>
-
-                        <Dialog open={dialogAgregarAyudante} onClose={cerrarDialog}>
-                            <DialogTitle>
-                                Selecciona un ayudante de la lista:
-                            </DialogTitle>
-                            <DialogContent>
-                                <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
-                                    <InputLabel>Ayudante</InputLabel>
-                                    <Select
-                                        value={posible}
-                                        label="Ayudante"
-                                        onChange={(e) => setPosible(e.target.value)}
-                                    >
-                                        {
-                                            posiblesAyudantes.map((nombre, index) => (
-                                                <MenuItem value={nombre} key={index} >
-                                                    {nombre}
-                                                </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button
-                                    onClick={agregarAyudanteAnterior}
-                                    variant="contained"
-                                    sx={{
-                                        background: "#5b3c88",
-                                        "&:hover": {
-                                            background: "#6b4c88"
-                                        }
-                                    }}
-                                    disabled={posible == "" ? true : false} >
-                                    Agregar
-                                </Button>
-                                <Button onClick={cerrarDialog}>
-                                    Cancelar
-                                </Button>
-                            </DialogActions>
-
-                        </Dialog>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={menuAbierto}
+                            onClose={cerrarMenu}
+                        >
+                            {posiblesAyudantes.map((op, i) => <MenuItem
+                                key={i}
+                                onClick={() => agregarAyudanteAnterior(op.nombre, op.id)}
+                            >
+                                {op.nombre}
+                            </MenuItem>)}
+                        </Menu>
 
                         {
-                            ayudantesAnteriores.map((ayudante, index) => (
-                                <ListItem key={index} dense >
+                            ayudantesAnteriores.map((a) => (
+                                <ListItem key={a.id} dense >
                                     <ListItemIcon>
-                                        <IconButton onClick={() => borrarAyudante(index)} >
+                                        <IconButton onClick={() => borrarAyudante(a.id)} >
                                             <Delete />
                                         </IconButton>
                                     </ListItemIcon>
-                                    <ListItemText primary={ayudante} />
+                                    <ListItemText primary={a.nombre} />
 
                                 </ListItem>
                             ))
