@@ -79,30 +79,22 @@ export default function Login() {
 
 				let dataCong;
 				const congreLS = localStorage.getItem('user/congregacion')
-				if (congreLS) { dataCong = JSON.parse(congreLS) }
+				if (congreLS) { dataCong = JSON.parse(congreLS);}
 				else { dataCong = await comprobarConfigUsuario(usuario.email) }
 
 				const newSesion = {
 					logeado: true,
 					uid: usuario.uid,
-					congregacion: (!dataCong
-						? {
-							nombre: '',
-							ciudad: '',
-							estado: '',
-							pais: ''
-						}
-						: dataCong.congregacion),
+					congregacion: dataCong,
 					nombre: usuario.displayName,
 					email: usuario.email
 				}
 				setUser(newSesion)
-
 				if (newSesion.congregacion.nombre === '') {
-					Router.push('/config')
+					Router.push('/perfil')
 				} else {
-					const matr = await descargarMatriculados(usuario.congregacion.nombre)
-					const fams = await descargarFamilias(usuario.congregacion.nombre)
+					const matr = await descargarMatriculados(newSesion.congregacion.nombre)
+					const fams = await descargarFamilias(newSesion.congregacion.nombre)
 					setMatriculados(matr)
 					setFamilias(fams)
 					Router.push('/')
@@ -130,21 +122,14 @@ export default function Login() {
 				const usuario = {
 					logeado: true,
 					uid: datosUsuario.uid,
-					congregacion: (!dataCong
-						? {
-							nombre: '',
-							ciudad: '',
-							estado: '',
-							pais: ''
-						}
-						: dataCong.congregacion),
+					congregacion: dataCong,
 					nombre: datosUsuario.displayName,
 					email: datosUsuario.email
 				}
 				setUser(usuario);
 
 				if (usuario.congregacion.nombre === '') {
-					Router.push('/config')
+					Router.push('/perfil')
 				} else {
 					const matr = await descargarMatriculados(usuario.congregacion.nombre)
 					const fams = await descargarFamilias(usuario.congregacion.nombre)

@@ -13,7 +13,6 @@ export default async function comprobarConfigUsuario(email) {
     if (docSnap.exists()) {
         localStorage.setItem('user/congregacion', JSON.stringify(docSnap.data().congregacion))
         return docSnap.data().congregacion
-    } else {
-        return false
     }
+    return { nombre: '', ciudad: '', estado: '', pais: '' }
 }
