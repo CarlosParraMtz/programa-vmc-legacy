@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Box,
     Button,
@@ -39,6 +39,8 @@ export default function Perfil({ data = null }) {
     function rellenarDialog(datos) { setCongregacion(datos) }
 
 
+    useEffect(() => { if (data) { rellenarDialog(data) } }, [])
+
     const submit = async (e) => {
         e.preventDefault()
         if (congregacion.nombre === '') {
@@ -51,7 +53,7 @@ export default function Perfil({ data = null }) {
             setErrorCode('ciudad')
             return;
         }
-        if (estado === '') {
+        if (congregacion.estado === '') {
             setError(true)
             setErrorCode('estado')
             return;
@@ -61,20 +63,20 @@ export default function Perfil({ data = null }) {
             setErrorCode('pais')
             return;
         }
-        alert('llegamos')
-        /* 
+
+
         localStorage.setItem('user/configuraciones', JSON.stringify(configuraciones))
         if (data) {
             //TODO: Aquí va la configuración para actualizar el perfil
             alert('Aún no hay forma de actualizar')
         } else {
-            await crearPerfil(user.email, { congregacion, asignaciones: configuraciones })
+            await crearPerfil(user.email, { congregacion, configuraciones })
         }
         setUser({ ...user, congregacion })
         setError(false)
         setErrorCode('')
         Router.push('/')
- */
+
     }
 
 

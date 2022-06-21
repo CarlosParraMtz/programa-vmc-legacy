@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDkR0VszBS9CQl21qji3GRgIVhnWVM6VGc",
+  apiKey: process.env.NEXT_PUBLIC_APIKEY,
   authDomain: "programa-vmc.firebaseapp.com",
   projectId: "programa-vmc",
   storageBucket: "programa-vmc.appspot.com",
