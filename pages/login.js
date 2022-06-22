@@ -93,8 +93,8 @@ export default function Login() {
 				if (newSesion.congregacion.nombre === '') {
 					Router.push('/perfil')
 				} else {
-					const matr = await descargarMatriculados(newSesion.congregacion.nombre)
-					const fams = await descargarFamilias(newSesion.congregacion.nombre)
+					const matr = await descargarMatriculados(newSesion.congregacion)
+					const fams = await descargarFamilias(newSesion.congregacion)
 					setMatriculados(matr)
 					setFamilias(fams)
 					Router.push('/')
@@ -131,8 +131,8 @@ export default function Login() {
 				if (usuario.congregacion.nombre === '') {
 					Router.push('/perfil')
 				} else {
-					const matr = await descargarMatriculados(usuario.congregacion.nombre)
-					const fams = await descargarFamilias(usuario.congregacion.nombre)
+					const matr = await descargarMatriculados(usuario.congregacion)
+					const fams = await descargarFamilias(usuario.congregacion)
 					setMatriculados(matr)
 					setFamilias(fams)
 					Router.push('/')

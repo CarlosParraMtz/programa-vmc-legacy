@@ -1,12 +1,15 @@
 import {
-    collection,
-    setDoc,
     doc,
+    updateDoc,
     getFirestore
 } from "firebase/firestore";
 import config from "./config";
 
-export default async function crearMatriculado(data, id) {
+export default async function crearMatriculado(congregacion, data, id) {
     const db = getFirestore(config)
-    await updateDoc(doc(db, `congregaciones/Del Bosque/matriculados`, id), data)
+    await updateDoc(doc(
+        db,
+        `congregaciones/${congregacion.nombre}-${congregacion.ciudad}-${congregacion.estado}-${congregacion.pais}/matriculados`,
+        id
+    ), data)
 }

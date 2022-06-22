@@ -35,12 +35,15 @@ import IconButton from '@mui/material/IconButton';
 import { Delete } from '@mui/icons-material';
 import CommentIcon from '@mui/icons-material/Comment';
 
+
 import { useRecoilValue, useRecoilState } from 'recoil';
 import matriculadosState from '../../Recoil/matriculadosState';
 import familiasState from '../../Recoil/familiasState';
+import userState from '../../Recoil/userState';
 
 import crearMatriculado from '../../firebase/crearMatriculado'
 import actualizarMatriculado from '../../firebase/actualizarMatriculado'
+import descargarMatriculados from '../../firebase/descargarMatriculados';
 
 
 const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
@@ -62,10 +65,12 @@ const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
 }
 
 
-export default function DialogAgregarUno({ useOpen, data = null, setData = () => { } }) {
+export default function DialogAgregarUno({ useOpen, data = null, actualizarMatriculadoLocal = () => { } }) {
 
 
     const [open, setOpen] = useOpen;
+
+    const user = useRecoilValue(userState)
 
     const [nombre, setNombre] = useState("")
     const [genero, setGenero] = useState("hombre")
@@ -91,7 +96,7 @@ export default function DialogAgregarUno({ useOpen, data = null, setData = () =>
     const [loading, setLoading] = useState(false)
 
 
-    const matriculados = useRecoilValue(matriculadosState);
+    const [matriculados, setMatriculados] = useRecoilState(matriculadosState);
 
     const [ayudantesAnteriores, setAyudantesAnteriores] = useState([])
     const [posiblesAyudantes, setPosiblesAyudantes] = useState([])
@@ -201,8 +206,25 @@ export default function DialogAgregarUno({ useOpen, data = null, setData = () =>
         asignacionesAnteriores: []
     }
 
-    const guardar = () => {
+
+
+    const guardar = async () => {
+        setLoading(true)
+
+        if(data){
+            //TODO: Aquí va la lógica para actualizar matriculado
+            
+            actualizarMatriculadoLocal(data.id)
+        } else {
+            await crearMatriculado(user.congregacion, matriculadoData)
+            const nuevosMtr = await descargarMatriculados(user.congregacion)
+            setMatriculados(nuevosMtr)
+        }
         
+        vaciarDialog()
+        setOpen(false)
+        setLoading(false)
+
     }
 
 
@@ -335,12 +357,20 @@ export default function DialogAgregarUno({ useOpen, data = null, setData = () =>
                             open={menuAbierto}
                             onClose={cerrarMenu}
                         >
-                            {posiblesAyudantes.map((op, i) => <MenuItem
-                                key={i}
-                                onClick={() => agregarAyudanteAnterior(op.nombre, op.id)}
-                            >
-                                {op.nombre}
-                            </MenuItem>)}
+                            {
+                                posiblesAyudantes.map((op, i) => <MenuItem
+                                    key={i}
+                                    onClick={() => agregarAyudanteAnterior(op.nombre, op.id)}
+                                >
+                                    {op.nombre}
+                                </MenuItem>)
+                            }
+                            {
+                                posiblesAyudantes.length === 0 &&
+                                <Typography sx={{ color: '#bbb', p: 1 }} >
+                                    Agregar más matriculados para poder llenar esta lista
+                                </Typography>
+                            }
                         </Menu>
 
                         {
@@ -378,7 +408,7 @@ export default function DialogAgregarUno({ useOpen, data = null, setData = () =>
                 <DialogActions>
 
                     <Button
-                        onClick={crearMatriculado}
+                        onClick={guardar}
                         variant="contained"
                         disabled={loading ? true : false}
                         type="submit"
