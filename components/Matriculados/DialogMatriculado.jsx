@@ -218,15 +218,23 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
     const guardar = async () => {
         setLoading(true)
-
+    /* 
+    *   Si el dialog se llamó desde el botón para crear uno, data es null, y por lo tanto se está creando uno.
+    *   Si se llamó desde el botón de editar matriculado, entonces data es la información de ese matriculado,
+    *   y lo que hará al guardar será una actualización de ese matriculado.
+    */
+   //TODO: Cambiar id generado en firebase por UUID v.4, para poder hacer cambios localmente
         if (data) {
             await actualizarMatriculado(user.data.congregacion, matriculadoData, data.id)
             actualizarMatriculadoLocal(matriculadoData, data.id)
             setData(null)
-        } else {
+        } else { 
             await crearMatriculado(user.data.congregacion, matriculadoData)
-            const nuevosMtr = await descargarMatriculados(user.data.congregacion)
+            const nuevosMtr = await descargarMatriculados(user.data.congregacion) //! descargar matriculados cada vez genera un gasto innecesario de recursos de la base de datos
+            //TODO: Cuando se crea uno, hay que meterlo dentro del Array de matriculados ordenado alfabéticamente por nombre,
+            //TODO: sin volver a consultar a la base de datos. Lo dejo así provisionalmente.
             setMatriculados(nuevosMtr)
+
         }
 
         vaciarDialog()
