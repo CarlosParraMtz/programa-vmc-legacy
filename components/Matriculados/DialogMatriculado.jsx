@@ -45,6 +45,8 @@ import crearMatriculado from '../../firebase/crearMatriculado'
 import actualizarMatriculado from '../../firebase/actualizarMatriculado'
 import descargarMatriculados from '../../firebase/descargarMatriculados';
 
+import { v4 as uuid } from 'uuid'
+
 
 const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
     return (
@@ -208,39 +210,37 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     }
 
 
-    function actualizarMatriculadoLocal(nData, id) {
-        let nuevosMtr = [...matriculados]
-        nuevosMtr.splice(nuevosMtr.findIndex(i => i.id === id), 1, { ...nData, id })
-        setMatriculados(nuevosMtr)
-    }
 
 
 
     const guardar = async () => {
+
         setLoading(true)
-    /* 
-    *   Si el dialog se llamó desde el botón para crear uno, data es null, y por lo tanto se está creando uno.
-    *   Si se llamó desde el botón de editar matriculado, entonces data es la información de ese matriculado,
-    *   y lo que hará al guardar será una actualización de ese matriculado.
-    */
-   //TODO: Cambiar id generado en firebase por UUID v.4, para poder hacer cambios localmente
+
+        /* 
+        *   Si el dialog se llamó desde el botón para crear uno, data es null, y por lo tanto se está creando uno.
+        *   Si se llamó desde el botón de editar matriculado, entonces data es la información de ese matriculado,
+        *   y lo que hará al guardar será una actualización de este.
+        */
+
         if (data) {
             await actualizarMatriculado(user.data.congregacion, matriculadoData, data.id)
-            actualizarMatriculadoLocal(matriculadoData, data.id)
-            setData(null)
-        } else { 
-            await crearMatriculado(user.data.congregacion, matriculadoData)
-            const nuevosMtr = await descargarMatriculados(user.data.congregacion) //! descargar matriculados cada vez genera un gasto innecesario de recursos de la base de datos
-            //TODO: Cuando se crea uno, hay que meterlo dentro del Array de matriculados ordenado alfabéticamente por nombre,
-            //TODO: sin volver a consultar a la base de datos. Lo dejo así provisionalmente.
+            let nuevosMtr = [...matriculados]
+            nuevosMtr.splice(nuevosMtr.findIndex(i => i.id === data.id), 1, { ...matriculadoData, id: data.id })
             setMatriculados(nuevosMtr)
-
+            setData(null)
+        } else {
+            const id = uuid()
+            await crearMatriculado(user.data.congregacion, matriculadoData, id)
+            const nuevosMtr = [...matriculados] //* Se agrega localmente el matriculado para evitar tener que consultar nuevamente a la base de datos.
+            nuevosMtr.push({ ...matriculadoData, id })
+            let nuevoOrden = nuevosMtr.sort((x, y) => x.nombre.localeCompare(y.nombre))
+            setMatriculados(nuevoOrden)
         }
 
         vaciarDialog()
         setOpen(false)
         setLoading(false)
-
     }
 
 
