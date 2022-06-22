@@ -5,7 +5,7 @@ import {
 } from "firebase/firestore";
 import config from "./config";
 
-export default async function crearMatriculado(congregacion, data, id) {
+export default async function actualizarMatriculado(congregacion, data, id) {
     const db = getFirestore(config)
     await updateDoc(doc(
         db,

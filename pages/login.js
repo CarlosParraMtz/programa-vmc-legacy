@@ -85,16 +85,16 @@ export default function Login() {
 				const newSesion = {
 					logeado: true,
 					uid: usuario.uid,
-					congregacion: dataCong,
+					data: dataCong,
 					nombre: usuario.displayName,
 					email: usuario.email
 				}
 				setUser(newSesion)
-				if (newSesion.congregacion.nombre === '') {
+				if (newSesion.data.congregacion.nombre === '') {
 					Router.push('/perfil')
 				} else {
-					const matr = await descargarMatriculados(newSesion.congregacion)
-					const fams = await descargarFamilias(newSesion.congregacion)
+					const matr = await descargarMatriculados(newSesion.data.congregacion)
+					const fams = await descargarFamilias(newSesion.data.congregacion)
 					setMatriculados(matr)
 					setFamilias(fams)
 					Router.push('/')
@@ -122,17 +122,17 @@ export default function Login() {
 				const usuario = {
 					logeado: true,
 					uid: datosUsuario.uid,
-					congregacion: dataCong,
+					data: dataCong,
 					nombre: datosUsuario.displayName,
 					email: datosUsuario.email
 				}
 				setUser(usuario);
 
-				if (usuario.congregacion.nombre === '') {
+				if (usuario.data.congregacion.nombre === '') {
 					Router.push('/perfil')
 				} else {
-					const matr = await descargarMatriculados(usuario.congregacion)
-					const fams = await descargarFamilias(usuario.congregacion)
+					const matr = await descargarMatriculados(usuario.data.congregacion)
+					const fams = await descargarFamilias(usuario.data.congregacion)
 					setMatriculados(matr)
 					setFamilias(fams)
 					Router.push('/')

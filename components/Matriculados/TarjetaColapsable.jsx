@@ -1,5 +1,6 @@
-import {useState} from 'react'
+import { useState } from 'react'
 import {
+    Box,
     Collapse,
     ListItem,
     ListItemButton,
@@ -8,7 +9,7 @@ import {
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 
-export default function TarjetaColapsable({children, titulo}) {
+export default function TarjetaColapsable({ children, titulo }) {
     const [open, setOpen] = useState(false)
     return (
         <>
@@ -20,10 +21,12 @@ export default function TarjetaColapsable({children, titulo}) {
             </ListItem>
 
             <Collapse in={open} sx={{
-                py: (open ? 2 : 0), px: 2, background: '#fafafa', transition: '500ms ',
+                px: 2, background: '#fafafa', transition: '500ms ',
                 boxShadow: (open ? 'inset 0px 0px 0px #aaa' : 'inset 0px 3px 10px #444')
             }} >
-               {children}
+                <Box sx={{ width: '100%', height: '100%', pb: (open ? 2 : 0), pt:2 }} >
+                    {children}
+                </Box>
             </Collapse>
         </>
     )

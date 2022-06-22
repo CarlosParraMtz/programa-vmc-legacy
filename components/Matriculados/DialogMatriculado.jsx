@@ -65,8 +65,9 @@ const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
 }
 
 
-export default function DialogAgregarUno({ useOpen, data = null, actualizarMatriculadoLocal = () => { } }) {
+export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
+    const [data, setData] = useData
 
     const [open, setOpen] = useOpen;
 
@@ -90,7 +91,6 @@ export default function DialogAgregarUno({ useOpen, data = null, actualizarMatri
 
 
     const [ultimasAsignaciones, setUltimasAsignaciones] = useState([])
-
 
 
     const [loading, setLoading] = useState(false)
@@ -187,6 +187,7 @@ export default function DialogAgregarUno({ useOpen, data = null, actualizarMatri
 
 
     const cancelarYCerrar = () => {
+        if (data) { setData(null) }
         vaciarDialog()
         setOpen(false)
     }
@@ -207,20 +208,27 @@ export default function DialogAgregarUno({ useOpen, data = null, actualizarMatri
     }
 
 
+    function actualizarMatriculadoLocal(nData, id) {
+        let nuevosMtr = [...matriculados]
+        nuevosMtr.splice(nuevosMtr.findIndex(i => i.id === id), 1, { ...nData, id })
+        setMatriculados(nuevosMtr)
+    }
+
+
 
     const guardar = async () => {
         setLoading(true)
 
-        if(data){
-            //TODO: Aquí va la lógica para actualizar matriculado
-            
-            actualizarMatriculadoLocal(data.id)
+        if (data) {
+            await actualizarMatriculado(user.data.congregacion, matriculadoData, data.id)
+            actualizarMatriculadoLocal(matriculadoData, data.id)
+            setData(null)
         } else {
-            await crearMatriculado(user.congregacion, matriculadoData)
-            const nuevosMtr = await descargarMatriculados(user.congregacion)
+            await crearMatriculado(user.data.congregacion, matriculadoData)
+            const nuevosMtr = await descargarMatriculados(user.data.congregacion)
             setMatriculados(nuevosMtr)
         }
-        
+
         vaciarDialog()
         setOpen(false)
         setLoading(false)
@@ -420,7 +428,7 @@ export default function DialogAgregarUno({ useOpen, data = null, actualizarMatri
                     </Button>
 
                     <Button
-                        onClick={() => setOpen(false)}
+                        onClick={cancelarYCerrar}
                         sx={{ color: "#5b3c88", "&:hover": { color: "#6b4c88" } }} >
                         cerrar
                     </Button>

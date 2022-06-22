@@ -1,10 +1,20 @@
 import { atom } from "recoil";
 const userState = atom({
-    key:"userState",
+    key: "userState",
     default: {
         logeado: false,
         uid: "",
-        congregacion:"",        
+        data: {
+            configuraciones: {
+                salas: 2
+            },
+            congregacion: {
+                nombre: '',
+                ciudad: '',
+                estado: '',
+                pais: ''
+            }
+        },
         nombre: "",
         email: ""
     }

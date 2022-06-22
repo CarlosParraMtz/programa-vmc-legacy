@@ -14,12 +14,14 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DialogAgregarUno from './DialogMatriculado';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';    
+import DeleteIcon from '@mui/icons-material/Delete';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import matriculadosState from '../../Recoil/matriculadosState';
+import userState from '../../Recoil/userState';
 import AddReactionIcon from '@mui/icons-material/AddReaction';
 import TarjetaColapsable from './TarjetaColapsable';
+import eliminarMatriculado from '../../firebase/eliminarMatriculado';
 
 
 
@@ -27,20 +29,21 @@ export default function Matriculados() {
 
     const [open, setOpen] = useState(false);
     const [matriculados, setMatriculados] = useRecoilState(matriculadosState)
-    const [cargando, setCargando] = useState(false)
+    const [loading, setLoading] = useState(false)
 
-    const [editando, setEditando] = useState()
     const [datosDialog, setDatosDialog] = useState(null)
 
-    const [posiblesAsignaciones, setPosiblesAsignaciones] = useState({
-        "Ayudante": false,
-        "Primera conversación": false,
-        "Revisita": false,
-        "Curso bíblico": false,
-        "Discurso": false,
-        "Lectura": false
-    })
+    const user = useRecoilValue(userState)
 
+    async function borrarMtr(id) {
+        setLoading(true)
+        await eliminarMatriculado(user.data.congregacion, id)
+        let nuevosMtr = [...matriculados]
+        nuevosMtr.splice(nuevosMtr.findIndex(i => i.id === id), 1)
+        setMatriculados(nuevosMtr)
+        setLoading(false)
+        //TODO: Falta agregar lo que hace cuando está en loading
+    }
 
     return (
         <>
@@ -57,43 +60,62 @@ export default function Matriculados() {
 
                 {
                     matriculados.map((matriculado) => <TarjetaColapsable key={matriculado.id} titulo={matriculado.nombre} >
-                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                            <b>Familia:</b> {matriculado.familia}
-                        </Typography>
+                        {matriculado.familia != '' &&
+                            <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
+                                <b>Familia:</b> {matriculado.familia}
+                            </Typography>
+                        }
 
                         <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
                             <b>Ultima asignación:</b>
                         </Typography>
                         <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                            {matriculado.tipoDeUltimaAsignacion}, el {matriculado.ultimaAsignacion}, en la sala {matriculado.ultimaSala}
+                            {matriculado.ultimaAsignacion.tipo}, el {matriculado.ultimaAsignacion.fecha}, en la sala {matriculado.ultimaAsignacion.sala}
                         </Typography>
 
                         <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
                             <b>Se puede asignar a:</b>
                         </Typography>
 
-                        {matriculado.arrayPosiblesAsignaciones.map((asignacion, index) => <Typography key={index}> • {asignacion} </Typography>)}
+                        {matriculado.posiblesAsignaciones['Lectura'] && <Typography> • Lectura </Typography>}
+                        {matriculado.posiblesAsignaciones['Ayudante'] && <Typography> • Ayudante </Typography>}
+                        {matriculado.posiblesAsignaciones['Primera conversación'] && <Typography> • Primera conversación </Typography>}
+                        {matriculado.posiblesAsignaciones['Revisita'] && <Typography> • Revisita </Typography>}
+                        {matriculado.posiblesAsignaciones['Curso bíblico'] && <Typography> • Curso bíblico </Typography>}
+                        {matriculado.posiblesAsignaciones['Discurso'] && <Typography> • Discurso </Typography>}
 
                         <Box sx={{ display: 'flex', justifyContent: 'center' }} >
 
-                            <Tooltip title='Editar familia' placement='top' arrow>
-                                <IconButton size='small' sx={{ mr: 1, background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}>
+                            <Tooltip title='Editar matriculado' placement='top' arrow>
+                                <IconButton
+                                    onClick={() => {
+                                        setDatosDialog(matriculado);
+                                        setOpen(true)
+                                    }}
+                                    size='small'
+                                    sx={{ mr: 1, background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}
+                                >
                                     <EditIcon sx={{ color: 'white' }} fontSize='small' />
                                 </IconButton>
                             </Tooltip>
 
                             <Tooltip title='Eliminar matriculado' placement='top' arrow>
-                                <IconButton size='small' sx={{ background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}>
+                                <IconButton
+                                    onClick={() => borrarMtr(matriculado.id)}
+                                    size='small'
+                                    sx={{ background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}
+                                >
                                     <DeleteIcon sx={{ color: 'white' }} fontSize='small' />
                                 </IconButton>
                             </Tooltip>
                         </Box>
-                    </TarjetaColapsable>
-                    )
+                    </TarjetaColapsable>)
                 }
+
+                <DialogAgregarUno useOpen={[open, setOpen]} useData={[datosDialog, setDatosDialog]} />
+
             </List>
 
-            <DialogAgregarUno useOpen={[open, setOpen]} editando={editando} data={datosDialog} />
         </>
     )
 }
