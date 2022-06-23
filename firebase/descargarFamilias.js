@@ -7,17 +7,20 @@ import {
 } from "firebase/firestore";
 import config from "./config";
 
-export default async function descargarFamilias() {
+export default async function descargarFamilias(congregacion) {
     const db = getFirestore(config)
 
     let lista = []
-    const q = query(collection(db, `congregaciones/Del Bosque/familias`), orderBy("familia"))
+    const q = query(collection(
+        db,
+        `congregaciones/${congregacion.nombre}-${congregacion.ciudad}-${congregacion.estado}-${congregacion.pais}/familias`
+        ), orderBy("apellidos"))
     const n = await getDocs(q);
     n.forEach((doc) => {
         lista.push({
             id: doc.id,
             apellidos: doc.data().familia,
-            miembros: (doc.data().miembros == undefined ? [] : doc.data.miembros)
+            miembros: doc.data().miembros
         })
     })
     return lista;

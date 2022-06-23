@@ -21,9 +21,6 @@ export default async function descargarMatriculados(congregacion) {
         }
         matriculadosDescargados.push(agregar)
     })
-
-
     const nuevoOrden = matriculadosDescargados.sort((x, y) => x.nombre.localeCompare(y.nombre))
-console.log(nuevoOrden)
     return nuevoOrden;
 }

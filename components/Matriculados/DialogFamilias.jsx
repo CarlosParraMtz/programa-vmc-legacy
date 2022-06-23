@@ -11,13 +11,14 @@ import {
     TextField,
     Tooltip,
     Typography
-} from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
-import AddIcon from '@mui/icons-material/Add'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { useRecoilValue } from 'recoil'
-import matriculadosState from '../../Recoil/matriculadosState'
-import SaveIcon from '@mui/icons-material/Save'
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useRecoilValue } from 'recoil';
+import matriculadosState from '../../Recoil/matriculadosState';
+import SaveIcon from '@mui/icons-material/Save';
+import { v4 as uuid } from 'uuid';
 
 
 export default function DialogFamilias({ useOpen, useData = [null, null] }) {
@@ -76,6 +77,13 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
         cerrarMenu()
     }
 
+
+    //* El objeto que se prepara para enviarse
+    const objFamilia = {
+        apellidos,
+        miembros
+    }
+
     const guardar = () => {
         if (apellidos === '') {
             setError(true)
@@ -84,7 +92,7 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
         }
 
 
-        if(data){
+        if (data) {
             //TODO: Actualizar familia
         } else {
             //TODO: Crear familia
