@@ -20,16 +20,18 @@ import matriculadosState from '../../Recoil/matriculadosState'
 import SaveIcon from '@mui/icons-material/Save'
 
 
-export default function DialogFamilias({ useOpen, data }) {
+export default function DialogFamilias({ useOpen, useData = [null, null] }) {
 
 
     const [open, setOpen] = useOpen;
     const [apellidos, setApellidos] = useState('')
-    const [miembros, setMiembros] = useState([{ id: 1, nombre: 'carlos' }])
+    const [miembros, setMiembros] = useState([])
 
     const matriculados = useRecoilValue(matriculadosState)
     const [opciones, setOpciones] = useState([])
 
+    const [error, setError] = useState(false)
+    const [errorCode, setErrorCode] = useState('')
 
     const [anchorEl, setAnchorEl] = useState(null);
     const menuAbierto = Boolean(anchorEl);
@@ -60,7 +62,7 @@ export default function DialogFamilias({ useOpen, data }) {
     const desplegarMenuIntegrantes = (e) => {
         let filtrados = matriculados.filter(mtr => {
             const f = miembros.find(m => m.id == mtr.id)
-            if (f || mtr.familia !== '' ) { return false }
+            if (f || mtr.familia !== '') { return false }
             return true
         })
         setOpciones(filtrados)
@@ -75,7 +77,25 @@ export default function DialogFamilias({ useOpen, data }) {
     }
 
     const guardar = () => {
-//TODO: Aquí se agrega la parte de actualizar a los matriculados para que tengan la misma familia
+        if (apellidos === '') {
+            setError(true)
+            setErrorCode('apellido')
+            return;
+        }
+
+
+        if(data){
+            //TODO: Actualizar familia
+        } else {
+            //TODO: Crear familia
+        }
+
+        //TODO: Se deben tomar todos los miembros de la familia y a cada uno agregarle los apellidos, tanto en DB como local, sin volver a consultar DB
+
+        vaciarDialog()
+        setError(false)
+        setErrorCode('')
+        setOpen(false)
     }
 
     const cancelar = () => {
@@ -99,11 +119,14 @@ export default function DialogFamilias({ useOpen, data }) {
                         size='small'
                         label='Apellidos'
                         value={apellidos}
+                        color={(error && errorCode === 'apellido') ? 'error' : 'primary'}
+                        helperText={(error && errorCode === 'apellido') ? 'Este campo no puede quedar vacío' : ''}
+                        focused={(error && errorCode === 'apellido')}
                         onChange={e => setApellidos(e.target.value)}
                         fullWidth
                         autoFocus
                     />
-                    <Box sx={{border:'solid 1px #'}} >
+                    <Box sx={{ border: 'solid 1px #' }} >
                         <Typography><b>Integrantes:</b></Typography>
                         <List sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
 
@@ -147,6 +170,11 @@ export default function DialogFamilias({ useOpen, data }) {
                                 >
                                     {op.nombre}
                                 </MenuItem>)}
+                                {opciones.length === 0 && <Box sx={{ p: 1, maxWidth: '300px', color: '#888' }} >
+                                    <Typography><strong>No hay más opciones para agregar.</strong></Typography>
+                                    <Typography><strong>Agrega más matriculados o elimina un miembro de otra familia</strong></Typography>
+                                </Box>
+                                }
                             </Menu>
                         </List>
                     </Box>
