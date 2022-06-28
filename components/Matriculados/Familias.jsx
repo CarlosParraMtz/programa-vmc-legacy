@@ -9,7 +9,9 @@ import {
     Tooltip,
     Typography
 } from '@mui/material';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import userState from '../../Recoil/userState';
+import matriculadosState from '../../Recoil/matriculadosState';
 
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
@@ -19,11 +21,38 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import TarjetaColapsable from './TarjetaColapsable';
 import DialogFamilias from './DialogFamilias';
 
+import eliminarFamilia from '../../firebase/eliminarFamilia';
+import eliminarMatriculado from '../../firebase/eliminarMatriculado';
+
 export default function Familias() {
 
-    const [familias, setFamilias] = useRecoilState(familiasState)
-    const [dialogAgregar, setDialogAgregar] = useState(false)
-    const [data, setData] = useState(null)
+    const [familias, setFamilias] = useRecoilState(familiasState);
+    const [dialogAgregar, setDialogAgregar] = useState(false);
+    const [data, setData] = useState(null);
+    const [matriculados, setMatriculados] = useRecoilState(matriculadosState);
+    const user = useRecoilValue(userState);
+    const [loading, setLoading] = useState(false);
+
+    async function borrarFam(id) {
+        setLoading(true)
+        await eliminarFamilia(user.data.congregacion, id)
+        let nuevasFam = [...familias]
+        let nuevosMtr = [...matriculados]
+
+        const eliminando = nuevasFam.find(i=>i.id===id)
+        eliminando.miembros.forEach(async (miembro)=>{
+            await eliminarMatriculado(user.data.congregacion, miembro.id)
+            nuevosMtr.splice(nuevosMtr.findIndex(i=>i.id===miembro.id), 1)
+        })
+
+        nuevasFam.splice(nuevasFam.findIndex(i => i.id === id), 1)
+        setFamilias(nuevasFam)
+        setMatriculados(nuevosMtr)
+
+
+        setLoading(false)
+        //TODO: Falta agregar lo que hace cuando está en loading
+    }
 
     return (
         <>
@@ -42,7 +71,7 @@ export default function Familias() {
                             <b>Miembros:</b>
                         </Typography>
 
-                        {fam.miembros.map((ind, index) => <Typography key={index}> • {ind} </Typography>)}
+                        {fam.miembros.map(ind => <Typography key={ind.id}> • {ind.nombre} </Typography>)}
                         {fam.miembros.length === 0 && <Typography sx={{ color: '#888' }} ><b>No hay matriculados enlistados en esta familia.</b></Typography>}
 
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }} >
@@ -58,8 +87,12 @@ export default function Familias() {
                                 </IconButton>
                             </Tooltip>
 
-                            <Tooltip title='Eliminar familia con todos sus matriculados' placement='top' arrow>
-                                <IconButton size='small' sx={{ background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}>
+                            <Tooltip title='Eliminar familia con todos sus integrantes (¡Esta acción no se puede deshacer!)' placement='top' arrow>
+                                <IconButton
+                                    onClick={()=>borrarFam(fam.id)}
+                                    size='small'
+                                    sx={{ background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}
+                                >
                                     <DeleteIcon sx={{ color: 'white' }} fontSize='small' />
                                 </IconButton>
                             </Tooltip>
@@ -69,7 +102,7 @@ export default function Familias() {
                 ))}
             </List>
 
-            <DialogFamilias useOpen={[dialogAgregar, setDialogAgregar]} data={data} />
+            <DialogFamilias useOpen={[dialogAgregar, setDialogAgregar]} useData={[data, setData]} />
         </>
     )
 }

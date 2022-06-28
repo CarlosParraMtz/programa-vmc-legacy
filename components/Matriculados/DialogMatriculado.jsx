@@ -93,13 +93,9 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
 
     const [ultimasAsignaciones, setUltimasAsignaciones] = useState([])
-
-
+    
     const [loading, setLoading] = useState(false)
-
-
     const [matriculados, setMatriculados] = useRecoilState(matriculadosState);
-
     const [ayudantesAnteriores, setAyudantesAnteriores] = useState([])
     const [posiblesAyudantes, setPosiblesAyudantes] = useState([])
     const [posible, setPosible] = useState("")

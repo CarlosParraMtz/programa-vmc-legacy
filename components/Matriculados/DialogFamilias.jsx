@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Box,
     Button,
@@ -15,20 +15,32 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import matriculadosState from '../../Recoil/matriculadosState';
+import userState from '../../Recoil/userState';
+import familiasState from '../../Recoil/familiasState';
 import SaveIcon from '@mui/icons-material/Save';
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from 'uuid'
+import crearFamilia from '../../firebase/crearfamilia';
+import actualizarFamilia from '../../firebase/actualizarFamilia';
+import actualizarMatriculado from '../../firebase/actualizarMatriculado';
+
 
 
 export default function DialogFamilias({ useOpen, useData = [null, null] }) {
 
 
     const [open, setOpen] = useOpen;
+    const [data, setData] = useData;
+
     const [apellidos, setApellidos] = useState('')
     const [miembros, setMiembros] = useState([])
 
-    const matriculados = useRecoilValue(matriculadosState)
+    const [matriculados, setMatriculados] = useRecoilState(matriculadosState)
+    const [familias, setFamilias] = useRecoilState(familiasState)
+
+    const user = useRecoilValue(userState)
+
     const [opciones, setOpciones] = useState([])
 
     const [error, setError] = useState(false)
@@ -53,6 +65,14 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
         setApellidos('')
         setMiembros([])
     }
+
+    useEffect(() => {
+        if (data != null) {
+            rellenarDialog(data)
+        }
+    }, [open, data])
+
+
 
     function eliminarMiembro(id) {
         let nuevosMiembros = [...miembros]
@@ -84,21 +104,43 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
         miembros
     }
 
-    const guardar = () => {
+    const guardar = async () => {
         if (apellidos === '') {
             setError(true)
             setErrorCode('apellido')
             return;
         }
 
+        let nuevosMtr = [...matriculados]
+        let nuevasFam = [...familias]
 
         if (data) {
-            //TODO: Actualizar familia
+            await actualizarFamilia(user.data.congregacion, objFamilia, data.id)
+            let datoAnterior = nuevasFam.find(fam => fam.id === data.id)
+            datoAnterior.miembros.forEach(async (miembro) => {
+                const seConserva = objFamilia.miembros.find(i => i.id === miembro.id)
+                if (!seConserva) {
+                    let nuevoMtr = { ...miembro, familia: '' };
+                    await actualizarMatriculado(user.data.congregacion, nuevoMtr, miembro.id)
+                    nuevosMtr.splice(nuevosMtr.findIndex(mtr => mtr.id === miembro.id), 1, nuevoMtr)
+                }
+            })
+            nuevasFam.splice(nuevasFam.findIndex(i => i.id === data.id), 1, { ...objFamilia, id: data.id })
+            setFamilias(nuevasFam)
+            setData(null)
         } else {
-            //TODO: Crear familia
+            const id = uuid()
+            await crearFamilia(user.data.congregacion, objFamilia, id)
+            const nuevasFam = [...familias]
+            nuevasFam.push({ ...objFamilia, id })
+            let nuevoOrden = nuevasFam.sort((x, y) => x.apellidos.localeCompare(y.apellidos))
+            setFamilias(nuevoOrden)
         }
 
-        //TODO: Se deben tomar todos los miembros de la familia y a cada uno agregarle los apellidos, tanto en DB como local, sin volver a consultar DB
+        //TODO: Falta actualizar la familia de los matriculados que se agregaron a la familia que se está creando/editando
+
+
+        setMatriculados(nuevosMtr)
 
         vaciarDialog()
         setError(false)
