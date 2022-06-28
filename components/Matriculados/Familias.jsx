@@ -40,7 +40,7 @@ export default function Familias() {
         let nuevosMtr = [...matriculados]
 
         const eliminando = nuevasFam.find(i=>i.id===id)
-        eliminando.miembros.forEach(async (miembro)=>{
+        await eliminando.miembros.forEach(async (miembro)=>{
             await eliminarMatriculado(user.data.congregacion, miembro.id)
             nuevosMtr.splice(nuevosMtr.findIndex(i=>i.id===miembro.id), 1)
         })

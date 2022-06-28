@@ -114,10 +114,11 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
         let nuevosMtr = [...matriculados]
         let nuevasFam = [...familias]
 
+        //* Aquí se actualiza la información acerca de la familia
         if (data) {
             await actualizarFamilia(user.data.congregacion, objFamilia, data.id)
             let datoAnterior = nuevasFam.find(fam => fam.id === data.id)
-            datoAnterior.miembros.forEach(async (miembro) => {
+            await datoAnterior.miembros.forEach(async (miembro) => {
                 const seConserva = objFamilia.miembros.find(i => i.id === miembro.id)
                 if (!seConserva) {
                     let nuevoMtr = { ...miembro, familia: '' };
@@ -131,22 +132,32 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
         } else {
             const id = uuid()
             await crearFamilia(user.data.congregacion, objFamilia, id)
-            const nuevasFam = [...familias]
             nuevasFam.push({ ...objFamilia, id })
             let nuevoOrden = nuevasFam.sort((x, y) => x.apellidos.localeCompare(y.apellidos))
             setFamilias(nuevoOrden)
         }
 
-        //TODO: Falta actualizar la familia de los matriculados que se agregaron a la familia que se está creando/editando
+
+        //* Aquí se actualiza la data de los matriculados que fueron agregados a esta familia
+        const mtrEnEstaFamilia = nuevosMtr.filter((mtr) => {
+            const encontrado = objFamilia.miembros.find(miembro => miembro.id === mtr.id)
+            if (encontrado) { return true }
+            return false
+        })
+        await mtrEnEstaFamilia.forEach(async mtr=>{
+            const nuevoObj = {...mtr, familia: apellidos}
+            await actualizarMatriculado(user.data.congregacion, nuevoObj, mtr.id)
+            nuevosMtr.splice(nuevosMtr.findIndex(i=>i.id===mtr.id), 1, nuevoObj)
+        })
 
 
         setMatriculados(nuevosMtr)
-
         vaciarDialog()
         setError(false)
         setErrorCode('')
         setOpen(false)
     }
+
 
     const cancelar = () => {
         vaciarDialog()
