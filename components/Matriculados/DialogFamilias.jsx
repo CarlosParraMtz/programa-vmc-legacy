@@ -114,18 +114,33 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
         let nuevosMtr = [...matriculados]
         let nuevasFam = [...familias]
 
+        let mtrParaEnviar = []
+
+        objFamilia.miembros.forEach(miembroActual => {
+            const miembroEvaluado = nuevosMtr.find(m => m.id === miembroActual.id)
+            let mtrActualizar = { ...miembroEvaluado, familia: apellidos }
+            nuevosMtr.splice(nuevosMtr.findIndex(m => m.id === miembroActual.id), 1, mtrActualizar)
+            mtrParaEnviar.push(mtrActualizar)
+        })
+
+        if (data) {
+            data.miembros.forEach((miembroAnterior) => {
+                const seConserva = objFamilia.miembros.find(miembroActual => miembroActual.id === miembroAnterior.id)
+                const miembroEvaluado = nuevosMtr.find(m => m.id === miembroAnterior.id)
+                if (!seConserva) {
+                    let nuevoMtr = { ...miembroEvaluado, familia: '' };
+                    nuevosMtr.splice(edicionMtr.findIndex(mtr => mtr.id === miembroAnterior.id), 1, nuevoMtr)
+                    mtrParaEnviar.push(nuevoMtr)
+                }
+            })
+        }
+
+        setMatriculados(nuevosMtr)
+
+
         //* Aquí se actualiza la información acerca de la familia
         if (data) {
             await actualizarFamilia(user.data.congregacion, objFamilia, data.id)
-            let datoAnterior = nuevasFam.find(fam => fam.id === data.id)
-            await datoAnterior.miembros.forEach(async (miembro) => {
-                const seConserva = objFamilia.miembros.find(i => i.id === miembro.id)
-                if (!seConserva) {
-                    let nuevoMtr = { ...miembro, familia: '' };
-                    await actualizarMatriculado(user.data.congregacion, nuevoMtr, miembro.id)
-                    nuevosMtr.splice(nuevosMtr.findIndex(mtr => mtr.id === miembro.id), 1, nuevoMtr)
-                }
-            })
             nuevasFam.splice(nuevasFam.findIndex(i => i.id === data.id), 1, { ...objFamilia, id: data.id })
             setFamilias(nuevasFam)
             setData(null)
@@ -138,24 +153,17 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
         }
 
 
-        //* Aquí se actualiza la data de los matriculados que fueron agregados a esta familia
-        const mtrEnEstaFamilia = nuevosMtr.filter((mtr) => {
-            const encontrado = objFamilia.miembros.find(miembro => miembro.id === mtr.id)
-            if (encontrado) { return true }
-            return false
-        })
-        await mtrEnEstaFamilia.forEach(async mtr=>{
-            const nuevoObj = {...mtr, familia: apellidos}
-            await actualizarMatriculado(user.data.congregacion, nuevoObj, mtr.id)
-            nuevosMtr.splice(nuevosMtr.findIndex(i=>i.id===mtr.id), 1, nuevoObj)
+        //* Aquí se actualiza la data  en la DB de los matriculados que fueron agregados a esta familia
+        mtrParaEnviar.forEach(async mtr=>{
+            await actualizarMatriculado(user.data.congregacion, mtr, mtr.id)
         })
 
 
-        setMatriculados(nuevosMtr)
         vaciarDialog()
         setError(false)
         setErrorCode('')
         setOpen(false)
+        
     }
 
 

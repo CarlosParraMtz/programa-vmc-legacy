@@ -19,7 +19,7 @@ export default async function descargarFamilias(congregacion) {
     n.forEach((doc) => {
         lista.push({
             id: doc.id,
-            apellidos: doc.data().familia,
+            apellidos: doc.data().apellidos,
             miembros: doc.data().miembros
         })
     })
