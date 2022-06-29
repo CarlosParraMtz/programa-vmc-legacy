@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
     Box,
-    Button,
     Chip,
     Dialog, DialogActions, DialogContent, DialogTitle,
     IconButton,
@@ -12,6 +11,7 @@ import {
     Tooltip,
     Typography
 } from '@mui/material';
+import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -32,6 +32,7 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
 
     const [open, setOpen] = useOpen;
     const [data, setData] = useData;
+    const [loading, setLoading] = useState(false)
 
     const [apellidos, setApellidos] = useState('')
     const [miembros, setMiembros] = useState([])
@@ -110,19 +111,16 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
             setErrorCode('apellido')
             return;
         }
-
+        setLoading(true)
         let nuevosMtr = [...matriculados]
         let nuevasFam = [...familias]
-
         let mtrParaEnviar = []
-
         objFamilia.miembros.forEach(miembroActual => {
             const miembroEvaluado = nuevosMtr.find(m => m.id === miembroActual.id)
             let mtrActualizar = { ...miembroEvaluado, familia: apellidos }
             nuevosMtr.splice(nuevosMtr.findIndex(m => m.id === miembroActual.id), 1, mtrActualizar)
             mtrParaEnviar.push(mtrActualizar)
         })
-
         if (data) {
             data.miembros.forEach((miembroAnterior) => {
                 const seConserva = objFamilia.miembros.find(miembroActual => miembroActual.id === miembroAnterior.id)
@@ -134,9 +132,7 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
                 }
             })
         }
-
         setMatriculados(nuevosMtr)
-
 
         //* Aquí se actualiza la información acerca de la familia
         if (data) {
@@ -152,18 +148,16 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
             setFamilias(nuevoOrden)
         }
 
-
         //* Aquí se actualiza la data  en la DB de los matriculados que fueron agregados a esta familia
-        mtrParaEnviar.forEach(async mtr=>{
+        mtrParaEnviar.forEach(async mtr => {
             await actualizarMatriculado(user.data.congregacion, mtr, mtr.id)
         })
-
 
         vaciarDialog()
         setError(false)
         setErrorCode('')
         setOpen(false)
-        
+        setLoading(false)
     }
 
 
@@ -250,14 +244,15 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
                 </Stack>
             </DialogContent>
             <DialogActions>
-                <Button
+                <LoadingButton
                     variant='contained'
                     sx={{ background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}
                     onClick={guardar}
+                    loading={loading}
                     startIcon={<SaveIcon sx={{ color: 'white' }} />}
                 >
                     Guardar
-                </Button>
+                </LoadingButton>
             </DialogActions>
         </Dialog>
     )
