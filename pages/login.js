@@ -78,17 +78,21 @@ export default function Login() {
 
 				let dataCong;
 				const congreLS = localStorage.getItem('user/congregacion')
-				if (congreLS) { dataCong = JSON.parse(congreLS);}
+				if (congreLS) { dataCong = JSON.parse(congreLS); }
 				else { dataCong = await comprobarConfigUsuario(usuario.email) }
 
 				const newSesion = {
 					logeado: true,
 					uid: usuario.uid,
-					data: dataCong,
+					data: {
+						config: {},
+						congregacion: dataCong
+					},
 					nombre: usuario.displayName,
 					email: usuario.email
 				}
 				setUser(newSesion)
+				console.log(newSesion)
 				if (newSesion.data.congregacion.nombre === '') {
 					Router.push('/perfil')
 				} else {
@@ -121,11 +125,16 @@ export default function Login() {
 				const usuario = {
 					logeado: true,
 					uid: datosUsuario.uid,
-					data: dataCong,
+					data: {
+						config: {},
+						congregacion: dataCong
+					},
 					nombre: datosUsuario.displayName,
 					email: datosUsuario.email
 				}
 				setUser(usuario);
+
+				console.log(usuario)
 
 				if (usuario.data.congregacion.nombre === '') {
 					Router.push('/perfil')
