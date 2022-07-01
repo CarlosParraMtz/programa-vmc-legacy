@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import Menu from '../components/Inicio/Menu'
 import Typography from '@mui/material/Typography'
 import {
 	Box,
