@@ -16,8 +16,14 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import userState from '../Recoil/userState';
 
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import DialogSideBar from './asignaciones/Col1/DialogSideBar';
 
-export default function Layout({ children, home = false }) {
+export default function Layout({ children }) {
+
+    const theme = useTheme();
+	const esLG = useMediaQuery(theme.breakpoints.up('lg'));
 
     const user = useRecoilValue(userState)
     const router = useRouter()
@@ -29,6 +35,8 @@ export default function Layout({ children, home = false }) {
             router.push('/login')
         }
     }, [user])
+
+    
 
     return (
         <>
@@ -43,6 +51,10 @@ export default function Layout({ children, home = false }) {
             <AppBar position="static" sx={{ background: "#5b3c88", position:'sticky', top:0, zIndex:1000 }}>
                 <Toolbar sx={{width:'100%', maxWidth:'1200px', m:'0 auto'}} >
                     
+                    {
+                        (ruta === '/' && !esLG) && <DialogSideBar />
+                    }
+
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         {ruta == '/' && 'Asignaciones'}
                     </Typography>

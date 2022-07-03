@@ -55,7 +55,7 @@ export default function Matriculados() {
                     <ListItemText primary='Agregar uno' />
                 </ListItemButton>
             </List>
-            <List sx={{ width: "100%", maxHeight: "390px", overflow: "auto" }} disablePadding>
+            <List sx={{ width: "100%", maxHeight: "100%", overflow: "auto" }} disablePadding>
 
 
                 {

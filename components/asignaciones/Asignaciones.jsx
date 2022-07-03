@@ -1,34 +1,27 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router'
-import {
-    Box,
-    Button,
-    Grid,
-    Paper,
-    Typography,
-} from '@mui/material'
-import { useRecoilState } from 'recoil';
-import Tablero from '../Tablero/Index'
-
+import { Box, } from '@mui/material'
+import Tablero from '../Tablero/Tablero'
 import SideBar from './Col1/SideBar';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 
 export default function Asignaciones() {
 
-    const [mes, setMes] = useState(null)
-    const [edicion, setEdicion] = useState(false)
-
+    const theme = useTheme();
+    const esLG = useMediaQuery(theme.breakpoints.up('lg'));
 
     return (
-        <Grid container sx={{ maxWidth: '1200px', m: '0 auto' }} >
-            <Grid item xs={12} sm={3} sx={{ background: 'yellow' }} >
-                <SideBar />
-            </Grid>
-            <Grid item xs={12} sm={9} sx={{ background: '#f8f8f8' }} >
+        <Box container sx={{ maxWidth: '1200px', m: '0 auto', display: 'flex', alignItems: 'start' }} >
+            {esLG &&
+                <Box sx={{ width: '350px' }} >
+                    <SideBar />
+                </Box>
+            }
+            <Box sx={{ background: '#f8f8f8' }} >
                 <Tablero />
-            </Grid>
+            </Box>
 
-        </Grid>
+        </Box>
     )
 }

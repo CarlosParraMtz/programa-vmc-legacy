@@ -25,7 +25,8 @@ export default function SideBar() {
             <>
                 <ListItemButton
                     onClick={() => { if (pestaña === tab) { setPestaña(-1) } else { setPestaña(tab) } }}
-                    selected={pestaña === tab} >
+                    selected={pestaña === tab}
+                >
                     <ListItemIcon>
                         {icon}
                     </ListItemIcon>
@@ -40,24 +41,24 @@ export default function SideBar() {
 
 
     return (
-        <Box sx={{ width: '100%', background: '#ddd' }} >
-            <List disablePadding >
 
-                <SideTab tab={0} texto='Matriculados' icon={<AccountCircleIcon />} >
-                    <Matriculados />
-                </SideTab>
+        <List disablePadding sx={{ width: '100%', background: '#ddd' }} >
 
-                <SideTab tab={1} texto='Familias' icon={<PeopleAltIcon />} >
-                    <Familias />
-                </SideTab>
+            <SideTab tab={0} texto='Matriculados' icon={<AccountCircleIcon />} >
+                <Matriculados />
+            </SideTab>
 
-                <SideTab tab={2} texto='Configuración' icon={<SettingsIcon />} >
-                    Configuraciones
-                </SideTab>
+            <SideTab tab={1} texto='Familias' icon={<PeopleAltIcon />} >
+                <Familias />
+            </SideTab>
+
+            <SideTab tab={2} texto='Configuración' icon={<SettingsIcon />} >
+                Configuraciones
+            </SideTab>
 
 
 
-            </List>
-        </Box>
+        </List>
+
     )
 }
