@@ -1,31 +1,27 @@
 import Head from 'next/head'
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import HomeIcon from '@mui/icons-material/Home';
-import Link from 'next/link';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
-import styles from '../styles/Home.module.css'
+import Tooltip from '@mui/material/Tooltip';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import userState from '../Recoil/userState';
 
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DialogSideBar from './asignaciones/Col1/DialogSideBar';
+import logout from '../firebase/logout';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 export default function Layout({ children }) {
 
     const theme = useTheme();
-	const esMD = useMediaQuery(theme.breakpoints.up('md'));
+    const esMD = useMediaQuery(theme.breakpoints.up('md'));
 
-    const user = useRecoilValue(userState)
+    const [user, setUser] = useRecoilState(userState)
     const router = useRouter()
     const ruta = router.pathname
 
@@ -36,7 +32,25 @@ export default function Layout({ children }) {
         }
     }, [user])
 
-    
+    const hacerLogout = () => {
+        logout()
+        setUser({
+            logeado: false,
+            uid: "",
+            data: {
+                congregacion: {
+                    id: '',
+                    nombre: '',
+                    ciudad: '',
+                    estado: '',
+                    pais: ''
+                }
+            },
+            nombre: "",
+            email: ""
+        })
+        localStorage.clear()
+    }
 
     return (
         <>
@@ -48,9 +62,9 @@ export default function Layout({ children }) {
                 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css' />
             </Head>
 
-            <AppBar position="static" sx={{ background: "#5b3c88", position:'sticky', top:0, zIndex:1000 }}>
-                <Toolbar sx={{width:'100%', maxWidth:'1200px', m:'0 auto'}} >
-                    
+            <AppBar position="static" sx={{ background: "#5b3c88", position: 'sticky', top: 0, zIndex: 1000 }}>
+                <Toolbar sx={{ width: '100%', maxWidth: '1200px', m: '0 auto' }} >
+
                     {
                         (ruta === '/' && !esMD) && <DialogSideBar />
                     }
@@ -59,21 +73,18 @@ export default function Layout({ children }) {
                         {ruta == '/' && 'Asignaciones'}
                     </Typography>
 
-                    {ruta != '/' &&
-
-                        <Tooltip title="Volver al inicio" arrow placement='left'>
-                            <IconButton onClick={() => router.push("/asignaciones")} sx={{ width: "30px", height: "30px" }}>
-                                <i className="fi fi-rr-home" style={{ color: "white", fontSize: "15px" }} />
-                            </IconButton>
-                        </Tooltip>
-
-                    }
+                   
+                    <Tooltip title="Cerrar sesión" arrow placement='left'>
+                        <IconButton onClick={hacerLogout}>
+                            <LogoutIcon sx={{color:'white'}} />
+                        </IconButton>
+                    </Tooltip>
                 </Toolbar>
             </AppBar>
 
             <main>{children}</main>
 
-            
+
         </>
     )
 }

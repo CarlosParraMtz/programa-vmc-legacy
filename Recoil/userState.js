@@ -5,10 +5,8 @@ const userState = atom({
         logeado: false,
         uid: "",
         data: {
-            configuraciones: {
-                salas: 2
-            },
             congregacion: {
+                id:'',
                 nombre: '',
                 ciudad: '',
                 estado: '',
