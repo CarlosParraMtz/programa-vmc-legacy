@@ -13,7 +13,7 @@ export default async function descargarFamilias(congregacion) {
     let lista = []
     const q = query(collection(
         db,
-        `congregaciones/${congregacion.nombre}-${congregacion.ciudad}-${congregacion.estado}-${congregacion.pais}/familias`
+        `congregaciones/${congregacion}/familias`
         ), orderBy("apellidos"))
     const n = await getDocs(q);
     n.forEach((doc) => {
