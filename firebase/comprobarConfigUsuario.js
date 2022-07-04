@@ -11,8 +11,11 @@ export default async function comprobarConfigUsuario(email) {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        localStorage.setItem('user/congregacion', JSON.stringify(docSnap.data().congregacion))
-        return docSnap.data().congregacion
+
+        const objCong = { ...docSnap.data().congregacion }
+
+        localStorage.setItem('user/congregacion', JSON.stringify(objCong))
+        return objCong
     }
-    return { nombre: '', ciudad: '', estado: '', pais: '' }
+    return { nombre: '', ciudad: '', estado: '', pais: '', id: '' }
 }

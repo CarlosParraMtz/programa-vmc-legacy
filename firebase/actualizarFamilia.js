@@ -9,7 +9,7 @@ export default async function actualizarFamilia(congregacion, data, id) {
     const db = getFirestore(config)
     await updateDoc(doc(
         db,
-        `congregaciones/${congregacion.nombre}-${congregacion.ciudad}-${congregacion.estado}-${congregacion.pais}/familias`,
+        `congregaciones/${congregacion}/familias`,
         id
     ), data)
 }

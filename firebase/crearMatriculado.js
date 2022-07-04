@@ -10,7 +10,7 @@ export default async function crearMatriculado(congregacion, data, id) {
     const db = getFirestore(config)
     await setDoc(doc(
         db,
-        `congregaciones/${congregacion.nombre}-${congregacion.ciudad}-${congregacion.estado}-${congregacion.pais}/matriculados`,
+        `congregaciones/${congregacion}/matriculados`,
         id
     ), data)
 }

@@ -10,7 +10,7 @@ export default async function crearFamilia(congregacion, data, id) {
     const db = getFirestore(config)
     await setDoc(doc(
         db,
-        `congregaciones/${congregacion.nombre}-${congregacion.ciudad}-${congregacion.estado}-${congregacion.pais}/familias`,
+        `congregaciones/${congregacion}/familias`,
         id
     ), data)
 }

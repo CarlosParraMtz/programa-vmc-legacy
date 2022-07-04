@@ -13,7 +13,7 @@ export default function TarjetaColapsable({ children, titulo }) {
     const [open, setOpen] = useState(false)
     return (
         <>
-            <ListItem disablePadding dense>
+            <ListItem disablePadding>
                 <ListItemButton onClick={() => setOpen(!open)}>
                     <ListItemText primary={<b>{titulo}</b>} />
                     {open ? <ExpandLess /> : <ExpandMore />}

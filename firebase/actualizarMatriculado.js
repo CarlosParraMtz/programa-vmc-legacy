@@ -9,7 +9,7 @@ export default async function actualizarMatriculado(congregacion, data, id) {
     const db = getFirestore(config)
     await updateDoc(doc(
         db,
-        `congregaciones/${congregacion.nombre}-${congregacion.ciudad}-${congregacion.estado}-${congregacion.pais}/matriculados`,
+        `congregaciones/${congregacion}/matriculados`,
         id
     ), data)
 }

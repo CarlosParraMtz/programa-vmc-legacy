@@ -12,15 +12,6 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from
 
 import {
 	getFirestore,
-	collection,
-	doc,
-	setDoc,
-	getDoc,
-	getDocs,
-	updateDoc,
-	query,
-	limitToLast,
-	orderBy,
 } from "firebase/firestore";
 import firebaseApp from '../firebase/config';
 import { useRecoilState } from 'recoil';
@@ -60,7 +51,6 @@ const BotonGoogle = ({ onClick }) => <Button
 
 export default function Login() {
 
-	const db = getFirestore(firebaseApp);
 	const auth = getAuth(firebaseApp);
 	const googleProvider = new GoogleAuthProvider();
 
@@ -92,9 +82,9 @@ export default function Login() {
 					email: usuario.email
 				}
 				setUser(newSesion)
-				console.log(newSesion)
+
 				if (newSesion.data.congregacion.nombre === '') {
-					Router.push('/perfil')
+					Router.push('/nuevo-usuario')
 				} else {
 					const matr = await descargarMatriculados(newSesion.data.congregacion)
 					const fams = await descargarFamilias(newSesion.data.congregacion)
@@ -134,10 +124,8 @@ export default function Login() {
 				}
 				setUser(usuario);
 
-				console.log(usuario)
-
 				if (usuario.data.congregacion.nombre === '') {
-					Router.push('/perfil')
+					Router.push('/nuevo-usuario')
 				} else {
 					const matr = await descargarMatriculados(usuario.data.congregacion)
 					const fams = await descargarFamilias(usuario.data.congregacion)

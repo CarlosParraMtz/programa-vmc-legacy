@@ -13,11 +13,12 @@ import {
 import SaveIcon from '@mui/icons-material/Save';
 import { useRecoilState } from 'recoil';
 import userState from '../../Recoil/userState';
-import crearPerfil from '../../firebase/crearPerfil';
+import crearCongregacion from '../../firebase/crearCongregacion';
+import actualizarPerfil from '../../firebase/actualizarPerfil';
 import { useRouter } from 'next/router';
 import HelpIcon from '@mui/icons-material/Help';
 
-export default function Perfil({ data = null }) {
+export default function Perfil() {
 
     const [user, setUser] = useRecoilState(userState)
     const [congregacion, setCongregacion] = useState({
@@ -26,20 +27,13 @@ export default function Perfil({ data = null }) {
         estado: '',
         pais: ''
     })
-    const [configuraciones, setConfiguraciones] = useState({
-        salas: 2
-    })
+ 
 
     const [error, setError] = useState(false)
     const [errorCode, setErrorCode] = useState('')
 
     const Router = useRouter()
 
-    function vaciarDialog() { setCongregacion({ nombre: '', ciudad: '', estado: '', pais: '' }) }
-    function rellenarDialog(datos) { setCongregacion(datos) }
-
-
-    useEffect(() => { if (data) { rellenarDialog(data) } }, [])
 
     const submit = async (e) => {
         e.preventDefault()
@@ -65,20 +59,18 @@ export default function Perfil({ data = null }) {
         }
 
 
-        localStorage.setItem('user/configuraciones', JSON.stringify(configuraciones))
-        if (data) {
-            //TODO: Aquí va la configuración para actualizar el perfil
-            alert('Aún no hay forma de actualizar')
-        } else {
-            await crearPerfil(user.email, { congregacion, configuraciones })
-        }
-        setUser({ ...user, congregacion })
+        const id = await crearCongregacion(congregacion)
+        const congInfo = { ...congregacion, id: id }
+        console.log(congInfo)
+        await actualizarPerfil(user.email, congInfo, configuraciones)
+        setUser({ ...user, congregacion: congInfo })
+
+
         setError(false)
         setErrorCode('')
         Router.push('/')
 
     }
-
 
     return (
         <form onSubmit={submit} >
@@ -155,31 +147,7 @@ export default function Perfil({ data = null }) {
                         <HelpIcon fontSize='small' sx={{ color: '#bbb', mr: 1 }} />
                     </Tooltip>
 
-                    <Typography><strong>Cantidad de salas por defecto:</strong></Typography>
-
-                    <Box sx={{ display: 'flex', justifyContent: 'center', width: 'fit-content', ml: 'auto' }} >
-                        <ToggleButtonGroup
-                            value={configuraciones.salas}
-                            exclusive
-                            onChange={(_, n) => {
-                                let na = { ...configuraciones }
-                                na.salas = n
-                                setConfiguraciones(na)
-                            }}
-                        >
-                            <ToggleButton value={1}>
-                                <Typography><strong>1</strong></Typography>
-                            </ToggleButton>
-                            <ToggleButton value={2}>
-                                <Typography><strong>2</strong></Typography>
-
-                            </ToggleButton>
-                            <ToggleButton value={3}>
-                                <Typography><strong>3</strong></Typography>
-
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-                    </Box>
+                    
                 </Box>
 
 

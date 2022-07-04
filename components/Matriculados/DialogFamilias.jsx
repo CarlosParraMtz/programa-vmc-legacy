@@ -136,13 +136,13 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
 
         //* Aquí se actualiza la información acerca de la familia
         if (data) {
-            await actualizarFamilia(user.data.congregacion, objFamilia, data.id)
+            await actualizarFamilia(user.data.congregacion.id, objFamilia, data.id)
             nuevasFam.splice(nuevasFam.findIndex(i => i.id === data.id), 1, { ...objFamilia, id: data.id })
             setFamilias(nuevasFam)
             setData(null)
         } else {
             const id = uuid()
-            await crearFamilia(user.data.congregacion, objFamilia, id)
+            await crearFamilia(user.data.congregacion.id, objFamilia, id)
             nuevasFam.push({ ...objFamilia, id })
             let nuevoOrden = nuevasFam.sort((x, y) => x.apellidos.localeCompare(y.apellidos))
             setFamilias(nuevoOrden)
@@ -150,7 +150,7 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
 
         //* Aquí se actualiza la data  en la DB de los matriculados que fueron agregados a esta familia
         mtrParaEnviar.forEach(async mtr => {
-            await actualizarMatriculado(user.data.congregacion, mtr, mtr.id)
+            await actualizarMatriculado(user.data.congregacion.id, mtr, mtr.id)
         })
 
         vaciarDialog()
