@@ -92,20 +92,18 @@ export default function Matriculados() {
                                         setDatosDialog(matriculado);
                                         setOpen(true)
                                     }}
-                                    size='small'
                                     sx={{ mr: 1, background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}
                                 >
-                                    <EditIcon sx={{ color: 'white' }} fontSize='small' />
+                                    <EditIcon sx={{ color: 'white' }} />
                                 </IconButton>
                             </Tooltip>
 
                             <Tooltip title='Eliminar matriculado' placement='top' arrow>
                                 <IconButton
                                     onClick={() => borrarMtr(matriculado.id)}
-                                    size='small'
                                     sx={{ background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}
                                 >
-                                    <DeleteIcon sx={{ color: 'white' }} fontSize='small' />
+                                    <DeleteIcon sx={{ color: 'white' }}  />
                                 </IconButton>
                             </Tooltip>
                         </Box>

@@ -42,6 +42,7 @@ export default function DialogSideBar() {
                 open={open}
                 onClose={handleClose}
                 TransitionComponent={Transition}
+                sx={{maxWidth:'420px'}}
             >
                 <AppBar sx={{ position: 'relative', background: "#5b3c88" }}>
                     <Toolbar>

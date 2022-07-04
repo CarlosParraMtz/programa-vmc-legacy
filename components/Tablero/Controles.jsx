@@ -22,7 +22,7 @@ export default function Controles() {
         <Box sx={{ background: '#ddd', display: 'flex', mb: 1 }} >
             <Tooltip title='Mes anterior' >
                 <span>
-                    <IconButton sx={btnStyle}>
+                    <IconButton sx={btnStyle} size='large' >
                         <ArrowBackIcon />
                     </IconButton>
                 </span>
@@ -30,7 +30,7 @@ export default function Controles() {
 
             <Tooltip title='Mes siguiente' >
                 <span>
-                    <IconButton sx={btnStyle}>
+                    <IconButton sx={btnStyle} size='large' >
                         <ArrowForwardIcon />
                     </IconButton>
                 </span>
@@ -38,7 +38,7 @@ export default function Controles() {
 
             <Tooltip title='Agregar mes' >
                 <span>
-                    <IconButton sx={btnStyle}>
+                    <IconButton sx={btnStyle} size='large'>
                         <AddIcon />
                     </IconButton>
                 </span>
@@ -46,7 +46,7 @@ export default function Controles() {
 
             <Tooltip title='Borrar mes' >
                 <span>
-                    <IconButton sx={btnStyle}>
+                    <IconButton sx={btnStyle} size='large' >
                         <DeleteIcon />
                     </IconButton>
                 </span>

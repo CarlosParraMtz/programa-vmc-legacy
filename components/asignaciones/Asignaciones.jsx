@@ -9,12 +9,12 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 export default function Asignaciones() {
 
     const theme = useTheme();
-    const esLG = useMediaQuery(theme.breakpoints.up('lg'));
+    const esMD = useMediaQuery(theme.breakpoints.up('md'));
 
     return (
         <Box container sx={{ maxWidth: '1200px', m: '0 auto', display: 'flex', alignItems: 'start' }} >
-            {esLG &&
-                <Box sx={{ width: '350px' }} >
+            {esMD &&
+                <Box sx={{ minWidth: '300px' }} >
                     <SideBar />
                 </Box>
             }
