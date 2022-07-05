@@ -73,12 +73,13 @@ export default function Layout({ children }) {
                         {ruta == '/' && 'Asignaciones'}
                     </Typography>
 
-                   
-                    <Tooltip title="Cerrar sesión" arrow placement='left'>
-                        <IconButton onClick={hacerLogout}>
-                            <LogoutIcon sx={{color:'white'}} />
-                        </IconButton>
-                    </Tooltip>
+                    {user.logeado &&
+                        <Tooltip title="Cerrar sesión" arrow placement='left'>
+                            <IconButton onClick={hacerLogout}>
+                                <LogoutIcon sx={{ color: 'white' }} />
+                            </IconButton>
+                        </Tooltip>
+                    }
                 </Toolbar>
             </AppBar>
 

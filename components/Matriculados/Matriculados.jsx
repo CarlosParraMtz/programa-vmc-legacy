@@ -37,7 +37,7 @@ export default function Matriculados() {
 
     async function borrarMtr(id) {
         setLoading(true)
-        await eliminarMatriculado(user.data.congregacion, id)
+        await eliminarMatriculado(user.data.congregacion.id, id)
         let nuevosMtr = [...matriculados]
         nuevosMtr.splice(nuevosMtr.findIndex(i => i.id === id), 1)
         setMatriculados(nuevosMtr)

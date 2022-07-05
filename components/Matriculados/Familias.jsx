@@ -35,13 +35,13 @@ export default function Familias() {
 
     async function borrarFam(id) {
         setLoading(true)
-        await eliminarFamilia(user.data.congregacion, id)
+        await eliminarFamilia(user.data.congregacion.id, id)
         let nuevasFam = [...familias]
         let nuevosMtr = [...matriculados]
 
         const eliminando = nuevasFam.find(i=>i.id===id)
         await eliminando.miembros.forEach(async (miembro)=>{
-            await eliminarMatriculado(user.data.congregacion, miembro.id)
+            await eliminarMatriculado(user.data.congregacion.id, miembro.id)
             nuevosMtr.splice(nuevosMtr.findIndex(i=>i.id===miembro.id), 1)
         })
 
