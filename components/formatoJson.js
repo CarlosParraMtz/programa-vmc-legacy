@@ -6,15 +6,16 @@ let mes = {
             asignaciones: [
                 {
                     tipo: 'lectura',
-                    asignados: [
-                        {
-                            asignado: 'Fulano',
-                            ayudante: ''
-                        },
-                        {
-                            asignado: 'Tito',
-                            ayudante: ''
-                        }
+                    descripcion: '',
+                    asignacionesPorSalas: [
+                        [
+                            "Nombre de asignado",
+                            "nombre de ayudante"
+                        ],
+                        [
+                            "Nombre de asignado",
+                            "nombre de ayudante"
+                        ]
                     ]
                 }
             ]
