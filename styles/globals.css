@@ -14,3 +14,9 @@ a {
 * {
   box-sizing: border-box;
 }
+
+
+#tablero {
+  max-height: calc(100vh - 130px);
+  overflow: auto;
+}

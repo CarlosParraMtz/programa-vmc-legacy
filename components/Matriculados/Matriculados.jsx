@@ -15,13 +15,14 @@ import AddIcon from '@mui/icons-material/Add';
 import DialogAgregarUno from './DialogMatriculado';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import matriculadosState from '../../Recoil/matriculadosState';
+import familiasState from '../../Recoil/familiasState';
 import userState from '../../Recoil/userState';
 import AddReactionIcon from '@mui/icons-material/AddReaction';
 import TarjetaColapsable from './TarjetaColapsable';
 import eliminarMatriculado from '../../firebase/eliminarMatriculado';
+import actualizarFamilia from '../../firebase/actualizarFamilia';
 
 
 
@@ -29,6 +30,7 @@ export default function Matriculados() {
 
     const [open, setOpen] = useState(false);
     const [matriculados, setMatriculados] = useRecoilState(matriculadosState)
+    const [familias, setFamilias] = useRecoilState(familiasState)
     const [loading, setLoading] = useState(false)
 
     const [datosDialog, setDatosDialog] = useState(null)
@@ -39,8 +41,22 @@ export default function Matriculados() {
         setLoading(true)
         await eliminarMatriculado(user.data.congregacion.id, id)
         let nuevosMtr = [...matriculados]
+        const borrado = nuevosMtr.find(i => i.id === id)
         nuevosMtr.splice(nuevosMtr.findIndex(i => i.id === id), 1)
         setMatriculados(nuevosMtr)
+
+        if (borrado.familia != '') {
+            let nuevasFamilias = [...familias]
+            const fb = nuevasFamilias.find(fam => fam.apellidos === borrado.familia)
+            let familiaDelBorrado = [ ...fb.miembros ]
+            familiaDelBorrado.splice(familiaDelBorrado.findIndex(m => m.id === borrado.id), 1)
+            let nuevaFamDelBorrado = {...fb, miembros: familiaDelBorrado}
+            nuevasFamilias.splice(
+                nuevasFamilias.findIndex(f => f.id === nuevaFamDelBorrado.id), 1, nuevaFamDelBorrado
+            )
+            setFamilias(nuevasFamilias)
+            await actualizarFamilia(user.data.congregacion.id, nuevaFamDelBorrado, nuevaFamDelBorrado.id)
+        }
         setLoading(false)
         //TODO: Falta agregar lo que hace cuando está en loading
     }
@@ -103,7 +119,7 @@ export default function Matriculados() {
                                     onClick={() => borrarMtr(matriculado.id)}
                                     sx={{ background: "#5b3c88", "&:hover": { background: "#6b4c88" } }}
                                 >
-                                    <DeleteIcon sx={{ color: 'white' }}  />
+                                    <DeleteIcon sx={{ color: 'white' }} />
                                 </IconButton>
                             </Tooltip>
                         </Box>

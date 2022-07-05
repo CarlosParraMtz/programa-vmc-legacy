@@ -30,28 +30,18 @@ export default function Tablero() {
 
 	const [data, setData] = useState({
 		periodo: 'Julio 2022',
-		fechas: [
-			{
-				fecha: '07-07-2022',
-				asignaciones: [
-					{
-						tipo: 'lectura',
-						descripcion: '',
-						asignacionesPorSalas: [
-							[
-								"Nombre de asignado",
-								"nombre de ayudante"
-							],
-							[
-								"Nombre de asignado",
-								"nombre de ayudante"
-							]
-						]
-					}
-				]
-			}
-		]
+		fechas: []
 	})
+
+
+	const agregarFecha = () => {
+		let _data = { ...data }
+		_data.fechas.push({
+			fecha: '07-07-22',
+			asignaciones: []
+		})
+		setData(_data)
+	}
 
 
 	return (
@@ -59,7 +49,7 @@ export default function Tablero() {
 			<Controles />
 
 
-			<Box sx={{ width: '100%', p: 2 }} >
+			<Box sx={{ width: '100%', p: 2 }} id="tablero" >
 				<Stack spacing={2} >
 
 
@@ -71,7 +61,11 @@ export default function Tablero() {
 
 
 					{
-						data.fechas.map((fecha, index) => <FechaDeAsignaciones key={index} />)
+						data.fechas.map((fecha, indexFechas) => <FechaDeAsignaciones
+							key={indexFechas}
+							useData={[data, setData]}
+							indexFechas={indexFechas}
+						/>)
 					}
 
 
@@ -84,8 +78,9 @@ export default function Tablero() {
 								background: '#cfcfcf',
 								"&:hover": { background: '#c7c7c7' }
 							}}
+							onClick={agregarFecha}
 						>
-							<AddIcon />
+							<AddIcon sx={{ mr: 1 }} />
 							<Typography sx={{ color: '#555' }} ><b>Agregar fecha de asignaciones</b></Typography>
 						</Button>
 					</Box>
