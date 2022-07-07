@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Box, Button, IconButton, Input, Stack, Typography } from '@mui/material'
+import { Box, Button, IconButton, Stack, TextField, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -10,26 +10,49 @@ import { useEffect } from 'react';
 
 export default function Tablero() {
 
-	const [data, setData] = useState({ periodo: 'Julio 2022', fechas: [] })
+	const [data, setData] = useState({
+		periodo: '',
+		fechas: [],
+		id: '',
+		timestamp: ''
+	})
 	const [editando, setEditando] = useState(false)
 	const [periodo, setPeriodo] = useState('')
 
 
+
+	//* Estas dos funciones actualizan la data cuando el usuario cambia las
+	//* opciones en el tablero.
 	const agregarFecha = () => {
+		setEditando(true)
 		let _data = { ...data }
-		_data.fechas.push({ fecha: '07-07-22', asignaciones: [] })
+		_data.fechas.push({ fecha: '2022-07-01', asignaciones: [] })
 		setData(_data)
 	}
-
 	const cambiarPeriodo = () => {
 		let _data = { ...data, periodo }
 		setData(_data)
 	}
 
+
+
+
+	//* Estas acciones ocurren cada vez que data es actualizado desde aquí,
+	//* o desde cualquiera de los hijos de este componente.
 	useEffect(() => {
-		setPeriodo(data.periodo)
+		setPeriodo(data.periodo);
+		localStorage.setItem('periodo/data', JSON.stringify(data));
 	}, [data])
 
+
+	
+
+	//* Esto ocurre cada vez que el componente es cargado por primera vez,
+	//* por ejemplo, cada vez que el usuario abre o actualiza la página.
+	useEffect(() => {
+		const dataLS = localStorage.getItem('periodo/data')
+		if (dataLS) { setData(JSON.parse(dataLS)) }
+	}, [])
 
 	return (
 		<>
@@ -42,18 +65,37 @@ export default function Tablero() {
 				<Stack spacing={2} >
 					{
 						editando
-							? <Input type='text' sx={{ maxWidth: '400px' }} value={periodo} onChange={e => setPeriodo(e.target.value)} onBlur={cambiarPeriodo} />
-							: <Box sx={{display:'flex'}}>
-							<Typography variant='h4' ><strong>{data.periodo}</strong></Typography>
-							<IconButton onClick={()=>setEditando(true)} >
-								<EditIcon />
-							</IconButton>
+							? <TextField
+								type='text'
+								sx={{ maxWidth: '400px' }}
+								value={periodo}
+								onChange={e => setPeriodo(e.target.value)}
+								onBlur={cambiarPeriodo}
+								label='Periodo'
+								autoFocus
+								variant='standard'
+								placeholder='Ej. Julio 2022, Julio y agosto 2022, etc.'
+							/>
+							: <Box sx={{ display: 'flex' }}>
+								<Typography variant='h4' ><strong>{data.periodo === '' ? 'Periodo sin título' : data.periodo}</strong></Typography>
+								<IconButton onClick={() => setEditando(true)} >
+									<EditIcon />
+								</IconButton>
 							</Box>
 					}
 
 
 
-					{data.fechas.map((fecha, indexFechas) => <FechaDeAsignaciones key={indexFechas} useData={[data, setData]} indexFechas={indexFechas} />)}
+					{
+						data.fechas.map((fecha, indexFechas) => (
+							<FechaDeAsignaciones
+								key={indexFechas}
+								useData={[data, setData]}
+								indexFechas={indexFechas}
+								useEditando={[editando, setEditando]}
+							/>
+						))
+					}
 
 					<Box sx={{ width: '100%' }} >
 						<Button

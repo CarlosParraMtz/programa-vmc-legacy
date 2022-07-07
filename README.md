@@ -1,34 +1,22 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+__Esta aplicación aún está en desarrollo__
+# Generación automática de agenda de asignaciones para la reunión VMC
 
-## Getting Started
+Esta aplicación es una herramienta de ayuda para los
+Testigos de Jehová, con el objetivo de que el encargado
+de crear la agenda de asignaciones pueda ejecutar de forma
+automática todas las tareas relacionadas con ello.
 
-First, run the development server:
+## Funciones implementadas o en desarrollo ahora mismo
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Además de la generación automática para las agendas de las
+congregaciones en sus salas principales y auxiliares, estas
+son las cosas que se planean implementar en un futuro:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Generación automática de la página impresa que se pone en el tablero de anuncios
+- Generación de formatos individuales que se entregan personalmente a cada asignado
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Contacto
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Si necesitas contactarme para algo relacionado con el uso de esta aplicación puedes
+[enviarme un mensaje de WhatsApp](https://wa.me/522281259898) o un
+[correo eléctrónico](mailto:carrrlos.parrra@gmail.com?Subject=Te%20contacto%20desde%20el%20github%20de%20Programa%20VMC%20App).
