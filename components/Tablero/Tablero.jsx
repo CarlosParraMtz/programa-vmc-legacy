@@ -7,17 +7,31 @@ import Controles from './Controles';
 import FechaDeAsignaciones from './FechaDeAsignaciones';
 import { useEffect } from 'react';
 
+import { useRecoilValue } from 'recoil';
+import userState from '../../Recoil/userState'
+
+import descargarUltimoPeriodo from '../../firebase/descargarUltimoPeriodo';
+import eliminarPeriodo from '../../firebase/eliminarPeriodo';
+import descargarPeriodos from '../../firebase/descargarPeriodos';
+
 
 export default function Tablero() {
 
-	const [data, setData] = useState({
-		periodo: '',
-		fechas: [],
-		id: '',
-		timestamp: ''
-	})
+	const user = useRecoilValue(userState)
+
+	const dataInicial = { periodo: '', fechas: [], id: '', timestamp: '' }
+	const [data, setData] = useState({ ...dataInicial })
+	const [dataOld, setDataOld] = useState({ ...dataInicial })
+
 	const [editando, setEditando] = useState(false)
+
 	const [periodo, setPeriodo] = useState('')
+
+	const [dialogConfirmaEliminar, setDialogConfirmaEliminar] = useState(false)
+	const [dialogListaPeriodos, setDialogListaPeriodos] = useState(false)
+	const [listaDePeriodos, setListaDePeriodos] = useState([])
+
+
 
 
 
@@ -45,19 +59,114 @@ export default function Tablero() {
 	}, [data])
 
 
-	
+
 
 	//* Esto ocurre cada vez que el componente es cargado por primera vez,
 	//* por ejemplo, cada vez que el usuario abre o actualiza la página.
 	useEffect(() => {
 		const dataLS = localStorage.getItem('periodo/data')
 		if (dataLS) { setData(JSON.parse(dataLS)) }
+		else { obtenerUltimoPeriodo() }
+
+		const dataOldLS = localStorage.getItem('periodo/data_old')
+		if (dataOldLS) { setDataOld(JSON.parse(dataOldLS)) }
+
+		const editandoLS = localStorage.getItem('periodo/editando')
+		if (editandoLS) { setEditando(JSON.parse(editandoLS)) }
 	}, [])
+
+
+
+
+
+	//* Acciones en la base de datos
+
+	async function obtenerUltimoPeriodo() {
+		const ultimaData = await descargarUltimoPeriodo(user.data.congregacion.id);
+		if (ultimaData) { setData(ultimaData) }
+		else {
+			setData({ ...dataInicial });
+			setEditando(true);
+		}
+	}
+
+	async function obtenerPeriodos() {
+		const periodos = await descargarPeriodos(user.data.congregacion.id)
+		setListaDePeriodos([...periodos])
+	}
+
+	async function eliminarPeriodo() {}
+
+
+
+
+
+
+
+	//* Comportamiento de los botones de la barra de herramientas
+
+	const activarEdicion = () => {
+		setDataOld({ ...data })
+		localStorage.setItem('periodo/data_old', JSON.stringify({ ...data }))
+		setEditando(true)
+		localStorage.setItem('periodo/editando', JSON.stringify(true))
+	}
+
+	const agregarPeriodo = () => {
+		activarEdicion()
+		setData({ ...dataInicial })
+	}
+
+	const borrarPeriodo = () => { setDialogConfirmaEliminar(true) }
+
+	const verListaDePeriodos = () => {
+		obtenerPeriodos()
+		setDialogListaPeriodos(true)
+	}
+
+	const cancelarEdicion = () => {
+		setData({ ...dataOld })
+		localStorage.setItem('periodo/data', JSON.stringify({ ...dataOld }))
+		setEditando(false)
+		localStorage.setItem('periodo/editando', JSON.stringify(false))
+		setDataOld({ ...dataInicial })
+		localStorage.setItem('periodo/data_old', JSON.stringify({ ...dataInicial }))
+	}
+
+	const generarAsignaciones = () => { }
+
+	const guardar = async () => {}
+
+ //TODO falta escribir el resto de las funciones
+
+
+
+
+
+
+
+	//* Comportamiento de botones en dialogs
+	const confirmaEliminar = () => { }
+
+	const cerrarDialogConfirmaEliminar = () => { }
+
+
+	const abrirPeriodo = (id) => { }
+
+	const cerrarDialogListaPeriodos = () => { }
+
+
+
+
+
+
 
 	return (
 		<>
 			<Controles
 				useEditando={[editando, setEditando]}
+				funciones={[agregarPeriodo, activarEdicion, borrarPeriodo,
+					guardar, cancelarEdicion, generarAsignaciones, verListaDePeriodos]}
 			/>
 
 
@@ -78,7 +187,7 @@ export default function Tablero() {
 							/>
 							: <Box sx={{ display: 'flex' }}>
 								<Typography variant='h4' ><strong>{data.periodo === '' ? 'Periodo sin título' : data.periodo}</strong></Typography>
-								<IconButton onClick={() => setEditando(true)} >
+								<IconButton onClick={activarEdicion} >
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -93,6 +202,7 @@ export default function Tablero() {
 								useData={[data, setData]}
 								indexFechas={indexFechas}
 								useEditando={[editando, setEditando]}
+								activarEdicion={activarEdicion}
 							/>
 						))
 					}

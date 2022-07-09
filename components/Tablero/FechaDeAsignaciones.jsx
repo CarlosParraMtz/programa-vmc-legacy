@@ -21,7 +21,7 @@ import configState from '../../Recoil/configState'
 
 import Asignaciones from './Asignaciones';
 
-export default function FechaDeAsignaciones({ useData, indexFechas, useEditando }) {
+export default function FechaDeAsignaciones({ useData, indexFechas, useEditando, activarEdicion }) {
 
     const [data, setData] = useData
     //* En este componente estamos en data.fechas[indexFechas]
@@ -58,7 +58,7 @@ export default function FechaDeAsignaciones({ useData, indexFechas, useEditando 
     //* Esto es para la parte de agregar una asignación en esta fecha
     const config = useRecoilValue(configState)
     const agregarAsignacion = () => {
-        setEditando(true)
+        activarEdicion()
         let dataN = { ...data }
         let salas = []
         for (var i = 0; i < config.salas; i++) { salas.push({ asignados: [""] }) }

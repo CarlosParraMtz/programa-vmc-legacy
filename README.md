@@ -1,12 +1,12 @@
-__Esta aplicación aún está en desarrollo__
-# Generación automática de agenda de asignaciones para la reunión VMC
+_Esta aplicación aún está en desarrollo_
+## Generación automática de agenda de asignaciones para la reunión VMC
 
 Esta aplicación es una herramienta de ayuda para los
 Testigos de Jehová, con el objetivo de que el encargado
 de crear la agenda de asignaciones pueda ejecutar de forma
 automática todas las tareas relacionadas con ello.
 
-## Funciones implementadas o en desarrollo ahora mismo
+### Funciones implementadas o en desarrollo ahora mismo
 
 Además de la generación automática para las agendas de las
 congregaciones en sus salas principales y auxiliares, estas
@@ -15,7 +15,7 @@ son las cosas que se planean implementar en un futuro:
 - Generación automática de la página impresa que se pone en el tablero de anuncios
 - Generación de formatos individuales que se entregan personalmente a cada asignado
 
-## Contacto
+### Contacto
 
 Si necesitas contactarme para algo relacionado con el uso de esta aplicación puedes
 [enviarme un mensaje de WhatsApp](https://wa.me/522281259898) o un
