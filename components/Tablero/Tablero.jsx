@@ -13,6 +13,8 @@ import userState from '../../Recoil/userState'
 import descargarUltimoPeriodo from '../../firebase/descargarUltimoPeriodo';
 import eliminarPeriodo from '../../firebase/eliminarPeriodo';
 import descargarPeriodos from '../../firebase/descargarPeriodos';
+import actualizarPeriodo from '../../firebase/actualizarPeriodo';
+import crearPeriodo from '../../firebase/crearPeriodo';
 
 
 export default function Tablero() {
@@ -35,8 +37,8 @@ export default function Tablero() {
 
 
 
-	//* Estas dos funciones actualizan la data cuando el usuario cambia las
-	//* opciones en el tablero.
+	//* Estas dos funciones actualizan la data cuando el usuario cambia los
+	//* campos de entrada en este componente.
 	const agregarFecha = () => {
 		setEditando(true)
 		let _data = { ...data }
@@ -49,14 +51,6 @@ export default function Tablero() {
 	}
 
 
-
-
-	//* Estas acciones ocurren cada vez que data es actualizado desde aquí,
-	//* o desde cualquiera de los hijos de este componente.
-	useEffect(() => {
-		setPeriodo(data.periodo);
-		localStorage.setItem('periodo/data', JSON.stringify(data));
-	}, [data])
 
 
 
@@ -79,6 +73,24 @@ export default function Tablero() {
 
 
 
+
+
+	//* Estas acciones ocurren cada vez que data es actualizado desde aquí,
+	//* o desde cualquiera de los hijos de este componente.
+	useEffect(() => {
+		setPeriodo(data.periodo);
+		localStorage.setItem('periodo/data', JSON.stringify(data));
+	}, [data])
+
+
+
+
+
+
+
+
+
+
 	//* Acciones en la base de datos
 
 	async function obtenerUltimoPeriodo() {
@@ -95,7 +107,29 @@ export default function Tablero() {
 		setListaDePeriodos([...periodos])
 	}
 
-	async function eliminarPeriodo() {}
+	async function confirmaBorrarPeriodo() {
+		await eliminarPeriodo(user.data.congregacion.id, data.id)
+	}
+
+	async function obtenerUnPeriodo() { } //TODO
+
+	async function guardarOActualizar() {
+		//* Se evalúa si el periodo actual ya tiene un ID. 
+		//* Si no es así, se crea un nuevo registro en la base de datos,
+		//* y al ejecutar la función, esta retorna el id y su marca de 
+		//* tiempo, que se agrega a la copia local del registro.
+		//* Si sí tiene un ID, entonces se actualiza el registro que se
+		//* acaba de guardar.
+		//TODO: terminar esta función
+		if (data.id === '') {
+			//* Se va a crear un periodo
+			const res = await crearPeriodo(user.data.congregacion.id, data)
+			let _data = { ...data, id: res.id, timestamp: res.timestamp }
+			setData(_data)
+		} else {
+			//* Se va a actualizar el periodo
+		}
+	}
 
 
 
@@ -135,9 +169,16 @@ export default function Tablero() {
 
 	const generarAsignaciones = () => { }
 
-	const guardar = async () => {}
+	const guardar = () => {
+		setEditando(false)
+		localStorage.setItem('periodo/editando', JSON.stringify(false))
+		setDataOld({ ...data })
+		localStorage.setItem('periodo/data_old', JSON.stringify({ ...data }))
 
- //TODO falta escribir el resto de las funciones
+		guardarOActualizar()
+	}
+
+
 
 
 
