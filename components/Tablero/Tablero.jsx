@@ -1,5 +1,19 @@
 import { useState } from 'react'
-import { Box, Button, IconButton, Stack, TextField, Typography } from '@mui/material'
+import {
+	Box,
+	Button,
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogActions,
+	IconButton,
+	List,
+	ListItemButton,
+	ListItemText,
+	Stack,
+	TextField,
+	Typography
+} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -126,8 +140,10 @@ export default function Tablero() {
 			const res = await crearPeriodo(user.data.congregacion.id, data)
 			let _data = { ...data, id: res.id, timestamp: res.timestamp }
 			setData(_data)
+			localStorage.setItem('periodo/data', JSON.stringify(_data))
 		} else {
 			//* Se va a actualizar el periodo
+			await actualizarPeriodo(user.data.congregacion.id, { ...data }, data.id)
 		}
 	}
 
@@ -167,8 +183,6 @@ export default function Tablero() {
 		localStorage.setItem('periodo/data_old', JSON.stringify({ ...dataInicial }))
 	}
 
-	const generarAsignaciones = () => { }
-
 	const guardar = () => {
 		setEditando(false)
 		localStorage.setItem('periodo/editando', JSON.stringify(false))
@@ -176,6 +190,12 @@ export default function Tablero() {
 		localStorage.setItem('periodo/data_old', JSON.stringify({ ...data }))
 
 		guardarOActualizar()
+	}
+
+
+	const generarAsignaciones = () => { 
+		console.log('generando!')
+		const mtr = [...matriculados]
 	}
 
 
@@ -192,9 +212,13 @@ export default function Tablero() {
 	const cerrarDialogConfirmaEliminar = () => { }
 
 
-	const abrirPeriodo = (id) => { }
+	const abrirPeriodo = (periodo) => {
+		setData({ ...periodo })
+		setDataOld({ ...periodo })
+		setDialogListaPeriodos(false)
+	}
 
-	const cerrarDialogListaPeriodos = () => { }
+	const cerrarDialogListaPeriodos = () => { setDialogListaPeriodos(false) }
 
 
 
@@ -266,6 +290,36 @@ export default function Tablero() {
 
 				</Stack>
 			</Box>
+
+
+
+
+
+
+			<Dialog open={dialogListaPeriodos} onClose={cerrarDialogListaPeriodos} >
+				<DialogTitle sx={{ background: '#5b3c88', color: 'white' }} >
+					Seleccionar periodo para revisar:
+				</DialogTitle>
+				<DialogContent>
+					<List>
+						{
+							listaDePeriodos.map(periodo => (
+								<ListItemButton key={periodo.id}
+									onClick={() => abrirPeriodo(periodo)}
+									disabled={data.id === periodo.id}
+								>
+									<ListItemText
+										primary={<b>{periodo.periodo}</b>}
+										secondary={data.id === periodo.id ? "Periodo actual" : ""}
+									/>
+								</ListItemButton>
+							))
+						}
+					</List>
+				</DialogContent>
+
+			</Dialog>
+
 		</>
 	)
 }
