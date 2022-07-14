@@ -45,9 +45,9 @@ export default function Sala({ indexFechas, indexAsignacion, indexSala, useData 
                 </Grid>
 
                 {
-                    data.fechas[indexFechas].asignaciones[indexAsignacion].salas[indexSala].asignados.map((asignado, index) => (
+                    data.fechas[indexFechas].asignaciones[indexAsignacion].salas[indexSala].asignados.map((asignado) => (
                         <Grid
-                            key={index}
+                            key={asignado.id}
                             item
                             lg={12}
                             sm={data.fechas[indexFechas].asignaciones[indexAsignacion].salas[indexSala].length === 1 ? 8 : 4}
@@ -55,18 +55,16 @@ export default function Sala({ indexFechas, indexAsignacion, indexSala, useData 
                         >
 
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', background: '#fff', p: 0.7, pl: 1 }} >
-                                {asignado != ''
-                                    ? <>
-                                        <Typography >
-                                            {asignado}
-                                        </Typography>
 
-                                        <IconButton sx={{ ml: 'auto' }} size='small' >
-                                            <EditIcon />
-                                        </IconButton>
-                                    </>
-                                    : <>...</>
-                                }
+                                <Typography >
+                                    {asignado.nombre}
+                                </Typography>
+
+                                <IconButton sx={{ ml: 'auto' }} size='small' >
+                                    <EditIcon />
+                                </IconButton>
+
+
                             </Box>
 
                         </Grid>

@@ -11,5 +11,5 @@ export default async function actualizarMatriculado(congregacion, data, id) {
         db,
         `congregaciones/${congregacion}/matriculados`,
         id
-    ), data)
+    ), {...data, id})
 }

@@ -84,7 +84,7 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
     const desplegarMenuIntegrantes = (e) => {
         let filtrados = matriculados.filter(mtr => {
             const f = miembros.find(m => m.id == mtr.id)
-            if (f || mtr.familia !== '') { return false }
+            if (f || mtr.familia.id !== '') { return false }
             return true
         })
         setOpciones(filtrados)
@@ -99,6 +99,11 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
     }
 
 
+
+
+    
+
+
     //* El objeto que se prepara para enviarse
     const objFamilia = {
         apellidos,
@@ -111,28 +116,42 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
             setErrorCode('apellido')
             return;
         }
+
+
+
         setLoading(true)
         let nuevosMtr = [...matriculados]
         let nuevasFam = [...familias]
         let mtrParaEnviar = []
+        const id = uuid()
+
+
+
+
         objFamilia.miembros.forEach(miembroActual => {
             const miembroEvaluado = nuevosMtr.find(m => m.id === miembroActual.id)
-            let mtrActualizar = { ...miembroEvaluado, familia: apellidos }
+            let mtrActualizar = { ...miembroEvaluado, familia: {apellidos, id:(data ? data.id : id )} }
             nuevosMtr.splice(nuevosMtr.findIndex(m => m.id === miembroActual.id), 1, mtrActualizar)
             mtrParaEnviar.push(mtrActualizar)
         })
+
+
+
         if (data) {
             data.miembros.forEach((miembroAnterior) => {
                 const seConserva = objFamilia.miembros.find(miembroActual => miembroActual.id === miembroAnterior.id)
                 const miembroEvaluado = nuevosMtr.find(m => m.id === miembroAnterior.id)
                 if (!seConserva) {
-                    let nuevoMtr = { ...miembroEvaluado, familia: '' };
+                    let nuevoMtr = { ...miembroEvaluado, familia: {apellidos:'', id:''} };
                     nuevosMtr.splice(edicionMtr.findIndex(mtr => mtr.id === miembroAnterior.id), 1, nuevoMtr)
                     mtrParaEnviar.push(nuevoMtr)
                 }
             })
         }
         setMatriculados(nuevosMtr)
+
+
+
 
         //* Aquí se actualiza la información acerca de la familia
         if (data) {
@@ -141,7 +160,6 @@ export default function DialogFamilias({ useOpen, useData = [null, null] }) {
             setFamilias(nuevasFam)
             setData(null)
         } else {
-            const id = uuid()
             await crearFamilia(user.data.congregacion.id, objFamilia, id)
             nuevasFam.push({ ...objFamilia, id })
             let nuevoOrden = nuevasFam.sort((x, y) => x.apellidos.localeCompare(y.apellidos))

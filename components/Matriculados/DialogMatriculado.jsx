@@ -201,7 +201,10 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
         ultimaAsignacion,
         ayudantesAnteriores,
         posiblesAsignaciones,
-        familia: '',
+        familia: {
+            apellidos: '',
+            id: ''
+        },
         asignacionesAnteriores: []
     }
 

@@ -44,7 +44,7 @@ export default function Asignaciones({ useData, indexFechas, indexAsignacion, us
 
     const agregarSala = () => {
         let dataN = { ...data }
-        dataN.fechas[indexFechas].asignaciones[indexAsignacion].salas.push({ asignados: [""] })
+        dataN.fechas[indexFechas].asignaciones[indexAsignacion].salas.push({ asignados: [] })
         setData(dataN)
     }
 

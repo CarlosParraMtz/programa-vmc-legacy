@@ -45,12 +45,12 @@ export default function Matriculados() {
         nuevosMtr.splice(nuevosMtr.findIndex(i => i.id === id), 1)
         setMatriculados(nuevosMtr)
 
-        if (borrado.familia != '') {
+        if (borrado.familia.id != '') {
             let nuevasFamilias = [...familias]
-            const fb = nuevasFamilias.find(fam => fam.apellidos === borrado.familia)
-            let familiaDelBorrado = [ ...fb.miembros ]
+            const fb = nuevasFamilias.find(fam => fam.id === borrado.familia.id)
+            let familiaDelBorrado = [...fb.miembros]
             familiaDelBorrado.splice(familiaDelBorrado.findIndex(m => m.id === borrado.id), 1)
-            let nuevaFamDelBorrado = {...fb, miembros: familiaDelBorrado}
+            let nuevaFamDelBorrado = { ...fb, miembros: familiaDelBorrado }
             nuevasFamilias.splice(
                 nuevasFamilias.findIndex(f => f.id === nuevaFamDelBorrado.id), 1, nuevaFamDelBorrado
             )
@@ -60,6 +60,20 @@ export default function Matriculados() {
         setLoading(false)
         //TODO: Falta agregar lo que hace cuando está en loading
     }
+
+
+
+    //* Esto convierte la fecha en un texto fácil de leer
+    const formatoFecha = (fecha) => {
+        let date = new Date(fecha)
+        date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
+        const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"]
+        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
+            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+        return `${dias[date.getDay()]} ${date.getDate()} de ${meses[date.getMonth()]} de ${date.getFullYear()}`
+    }
+
+
 
     return (
         <>
@@ -76,9 +90,9 @@ export default function Matriculados() {
 
                 {
                     matriculados.map((matriculado) => <TarjetaColapsable key={matriculado.id} titulo={matriculado.nombre} >
-                        {matriculado.familia != '' &&
+                        {matriculado.familia.id != '' &&
                             <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                                <b>Familia:</b> {matriculado.familia}
+                                <b>Familia:</b> {matriculado.familia.apellidos}
                             </Typography>
                         }
 
@@ -86,7 +100,7 @@ export default function Matriculados() {
                             <b>Ultima asignación:</b>
                         </Typography>
                         <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                            {matriculado.ultimaAsignacion.tipo}, el {matriculado.ultimaAsignacion.fecha}, en la sala {matriculado.ultimaAsignacion.sala}
+                            {matriculado.ultimaAsignacion.tipo}, el {formatoFecha(matriculado.ultimaAsignacion.fecha)}, en la sala {matriculado.ultimaAsignacion.sala}
                         </Typography>
 
                         <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>

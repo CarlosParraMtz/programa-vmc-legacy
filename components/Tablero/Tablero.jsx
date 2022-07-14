@@ -23,6 +23,7 @@ import { useEffect } from 'react';
 
 import { useRecoilValue } from 'recoil';
 import userState from '../../Recoil/userState'
+import matriculadosState from '../../Recoil/matriculadosState'
 
 import descargarUltimoPeriodo from '../../firebase/descargarUltimoPeriodo';
 import eliminarPeriodo from '../../firebase/eliminarPeriodo';
@@ -47,6 +48,7 @@ export default function Tablero() {
 	const [dialogListaPeriodos, setDialogListaPeriodos] = useState(false)
 	const [listaDePeriodos, setListaDePeriodos] = useState([])
 
+	const matriculados = useRecoilValue(matriculadosState)
 
 
 
@@ -56,7 +58,7 @@ export default function Tablero() {
 	const agregarFecha = () => {
 		setEditando(true)
 		let _data = { ...data }
-		_data.fechas.push({ fecha: '2022-07-01', asignaciones: [] })
+		_data.fechas.push({ fecha: '2022-07-01', asignaciones: [], familias: [] })
 		setData(_data)
 	}
 	const cambiarPeriodo = () => {
@@ -193,9 +195,57 @@ export default function Tablero() {
 	}
 
 
-	const generarAsignaciones = () => { 
-		console.log('generando!')
-		const mtr = [...matriculados]
+	const generarAsignaciones = () => {
+
+		const matriculadosSO = [...matriculados]
+		const mtrs = matriculadosSO.sort((x, y) => x.ultimaAsignacion.fecha.localeCompare(y.ultimaAsignacion.fecha))
+
+
+
+		let d = { ...data }
+		d.fechas.forEach(fecha => {
+			fecha.asignaciones.forEach(asignacion => {
+				asignacion.salas.forEach(sala => {
+
+					//* Aquí va la lógica principal del programa.
+					//* Este bloque ocurre en cada una de las salas.
+
+					switch (asignacion.tipo) {
+						case "Lectura":
+							if (sala.asignados.length != 0) { return }
+
+							let asignado = mtrs.find(mtr => {
+								const famEncontrada = fecha.familias.find(fml => fml.id === mtr.familia.id)
+								if (
+									mtr.posiblesAsignaciones["Lectura"] &&
+									(
+										!famEncontrada
+										|| mtr.familia.apellidos === ''
+									)
+								) { return true; }
+							})
+
+							fecha.familias.push(asignado.familia)
+							sala.asignados.push({ nombre: asignado.nombre, id: asignado.id })
+
+							break;
+						case "Primera conversación":
+							break;
+						case "Revisita":
+							break;
+						case "Curso bíblico":
+							break;
+						case "Discurso":
+							break;
+					}
+
+				})
+			})
+		})
+
+		setData(d)
+
+
 	}
 
 

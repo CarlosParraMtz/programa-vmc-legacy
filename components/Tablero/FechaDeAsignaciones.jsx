@@ -61,7 +61,7 @@ export default function FechaDeAsignaciones({ useData, indexFechas, useEditando,
         activarEdicion()
         let dataN = { ...data }
         let salas = []
-        for (var i = 0; i < config.salas; i++) { salas.push({ asignados: [""] }) }
+        for (var i = 0; i < config.salas; i++) { salas.push({ asignados: [] }) }
         dataN.fechas[indexFechas].asignaciones.push({ tipo: '', descripcion: '', salas })
         setData(dataN)
     }
