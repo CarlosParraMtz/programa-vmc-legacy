@@ -47,6 +47,8 @@ import descargarMatriculados from '../../firebase/descargarMatriculados';
 
 import { v4 as uuid } from 'uuid'
 
+import obtenerDiaDeHoy from '../../functions/obtenerDiaDeHoy';
+
 
 const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
     return (
@@ -93,7 +95,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
 
     const [ultimasAsignaciones, setUltimasAsignaciones] = useState([])
-    
+
     const [loading, setLoading] = useState(false)
     const [matriculados, setMatriculados] = useRecoilState(matriculadosState);
     const [ayudantesAnteriores, setAyudantesAnteriores] = useState([])
@@ -215,13 +217,11 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     const guardar = async () => {
 
         setLoading(true)
-
         /* 
         *   Si el dialog se llamó desde el botón para crear uno, data es null, y por lo tanto se está creando uno.
         *   Si se llamó desde el botón de editar matriculado, entonces data es la información de ese matriculado,
         *   y lo que hará al guardar será una actualización de este.
         */
-
         if (data) {
             await actualizarMatriculado(user.data.congregacion.id, matriculadoData, data.id)
             let nuevosMtr = [...matriculados]
@@ -242,6 +242,8 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
         setLoading(false)
     }
 
+
+  
 
     return (
         <Dialog open={open} onClose={cancelarYCerrar} fullWidth maxWidth='sm' >
@@ -304,7 +306,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                         id="name"
                         label="Fecha de última asignación"
                         type="date"
-                        defaultValue="2022-01-01"
+                        defaultValue={obtenerDiaDeHoy()}
                         fullWidth
                         onChange={e => {
                             let ult = { ...ultimaAsignacion }

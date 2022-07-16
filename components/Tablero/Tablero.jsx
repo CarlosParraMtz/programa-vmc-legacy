@@ -30,6 +30,7 @@ import eliminarPeriodo from '../../firebase/eliminarPeriodo';
 import descargarPeriodos from '../../firebase/descargarPeriodos';
 import actualizarPeriodo from '../../firebase/actualizarPeriodo';
 import crearPeriodo from '../../firebase/crearPeriodo';
+import obtenerDiaDeHoy from '../../functions/obtenerDiaDeHoy';
 
 
 export default function Tablero() {
@@ -52,20 +53,20 @@ export default function Tablero() {
 
 
 
-
 	//* Estas dos funciones actualizan la data cuando el usuario cambia los
 	//* campos de entrada en este componente.
 	const agregarFecha = () => {
-		setEditando(true)
+		
+		activarEdicion()
+
 		let _data = { ...data }
-		_data.fechas.push({ fecha: '2022-07-01', asignaciones: [], familias: [] })
+		_data.fechas.push({ fecha: (obtenerDiaDeHoy()), asignaciones: [], familias: [] })
 		setData(_data)
 	}
 	const cambiarPeriodo = () => {
 		let _data = { ...data, periodo }
 		setData(_data)
 	}
-
 
 
 

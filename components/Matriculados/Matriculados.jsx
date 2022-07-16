@@ -67,10 +67,7 @@ export default function Matriculados() {
     const formatoFecha = (fecha) => {
         let date = new Date(fecha)
         date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
-        const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"]
-        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
-            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
-        return `${dias[date.getDay()]} ${date.getDate()} de ${meses[date.getMonth()]} de ${date.getFullYear()}`
+        return date.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
     }
 
 
