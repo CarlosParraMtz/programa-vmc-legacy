@@ -72,6 +72,22 @@ export default function Matriculados() {
 
 
 
+
+    function noPuedePasarAsignaciones(m) {
+        if (
+            !m.posiblesAsignaciones['Lectura'] &&
+            !m.posiblesAsignaciones['Ayudante'] &&
+            !m.posiblesAsignaciones['Primera conversación'] &&
+            !m.posiblesAsignaciones['Revisita'] &&
+            !m.posiblesAsignaciones['Curso bíblico'] &&
+            !m.posiblesAsignaciones['Discurso']
+        ) { return true }
+        return false
+    }
+
+
+
+
     return (
         <>
             <List disablePadding >
@@ -82,7 +98,7 @@ export default function Matriculados() {
                     <ListItemText primary='Agregar uno' />
                 </ListItemButton>
             </List>
-            <List sx={{ width: "100%", maxHeight: "100%", overflow: "auto" }} disablePadding>
+            <List sx={{ width: "100%", maxHeight: "calc(100vh - 256px)", overflow: "auto" }} disablePadding>
 
 
                 {
@@ -99,19 +115,36 @@ export default function Matriculados() {
                         <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
                             {matriculado.ultimaAsignacion.tipo}, el {formatoFecha(matriculado.ultimaAsignacion.fecha)}, en la sala {matriculado.ultimaAsignacion.sala}
                         </Typography>
+                        {noPuedePasarAsignaciones(matriculado)
+                            ? <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
+                                <b>No puede pasar asignaciones</b>
+                            </Typography>
+                            : <>
+                                <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
+                                    <b>Se puede asignar a:</b>
+                                </Typography>
 
-                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
-                            <b>Se puede asignar a:</b>
-                        </Typography>
+                                {matriculado.posiblesAsignaciones['Lectura'] && <Typography> • Lectura </Typography>}
+                                {matriculado.posiblesAsignaciones['Ayudante'] && <Typography> • Ayudante </Typography>}
+                                {matriculado.posiblesAsignaciones['Primera conversación'] && <Typography> • Primera conversación </Typography>}
+                                {matriculado.posiblesAsignaciones['Revisita'] && <Typography> • Revisita </Typography>}
+                                {matriculado.posiblesAsignaciones['Curso bíblico'] && <Typography> • Curso bíblico </Typography>}
+                                {matriculado.posiblesAsignaciones['Discurso'] && <Typography> • Discurso </Typography>}
+                            </>
+                        }
+                        {
+                            matriculado.observaciones != '' &&
+                            <>
+                                <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
+                                    <b>Observaciones:</b>
+                                </Typography>
+                                <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }} component='p' >
+                                    {matriculado.observaciones}
+                                </Typography>
+                            </>
+                        }
 
-                        {matriculado.posiblesAsignaciones['Lectura'] && <Typography> • Lectura </Typography>}
-                        {matriculado.posiblesAsignaciones['Ayudante'] && <Typography> • Ayudante </Typography>}
-                        {matriculado.posiblesAsignaciones['Primera conversación'] && <Typography> • Primera conversación </Typography>}
-                        {matriculado.posiblesAsignaciones['Revisita'] && <Typography> • Revisita </Typography>}
-                        {matriculado.posiblesAsignaciones['Curso bíblico'] && <Typography> • Curso bíblico </Typography>}
-                        {matriculado.posiblesAsignaciones['Discurso'] && <Typography> • Discurso </Typography>}
-
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }} >
+                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }} >
 
                             <Tooltip title='Editar matriculado' placement='top' arrow>
                                 <IconButton

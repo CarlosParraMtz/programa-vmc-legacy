@@ -56,9 +56,7 @@ export default function Tablero() {
 	//* Estas dos funciones actualizan la data cuando el usuario cambia los
 	//* campos de entrada en este componente.
 	const agregarFecha = () => {
-		
 		activarEdicion()
-
 		let _data = { ...data }
 		_data.fechas.push({ fecha: (obtenerDiaDeHoy()), asignaciones: [], familias: [] })
 		setData(_data)

@@ -92,6 +92,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
         "Discurso": false,
         "Lectura": false
     })
+    const [observaciones, setObservaciones] = useState('')
 
 
     const [ultimasAsignaciones, setUltimasAsignaciones] = useState([])
@@ -207,7 +208,8 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
             apellidos: '',
             id: ''
         },
-        asignacionesAnteriores: []
+        asignacionesAnteriores: [],
+        observaciones
     }
 
 
@@ -243,7 +245,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     }
 
 
-  
+
 
     return (
         <Dialog open={open} onClose={cancelarYCerrar} fullWidth maxWidth='sm' >
@@ -421,7 +423,21 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
 
 
+
+                    <Divider sx={{ mt: 2, mb: 1 }}> Observaciones </Divider>
+
+
+                    <TextField
+                        multiline
+                        rows={4}
+                        fullWidth
+                        value={observaciones}
+                        onChange={e => setObservaciones(e.target.value)}
+                        placeholder='Limitaciones, razones por las que no ha pasado, etc...'
+                    />
+
                 </DialogContent>
+
                 <DialogActions>
 
                     <Button

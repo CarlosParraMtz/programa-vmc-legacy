@@ -14,7 +14,7 @@ export default function Asignaciones() {
     return (
         <Box container sx={{ maxWidth: '1200px', m: '0 auto', display: 'flex', alignItems: 'start' }} >
             {esMD &&
-                <Box sx={{ minWidth: '300px' }} >
+                <Box sx={{ minWidth: '300px', maxWidth:'300px' }} >
                     <SideBar />
                 </Box>
             }
