@@ -23,6 +23,7 @@ import AddReactionIcon from '@mui/icons-material/AddReaction';
 import TarjetaColapsable from './TarjetaColapsable';
 import eliminarMatriculado from '../../firebase/eliminarMatriculado';
 import actualizarFamilia from '../../firebase/actualizarFamilia';
+import WarningIcon from '@mui/icons-material/Warning';
 
 
 
@@ -102,7 +103,18 @@ export default function Matriculados() {
 
 
                 {
-                    matriculados.map((matriculado) => <TarjetaColapsable key={matriculado.id} titulo={matriculado.nombre} >
+                    matriculados.map((matriculado) => <TarjetaColapsable
+                        key={matriculado.id}
+                        titulo={
+                            <span
+                                style={{ display: 'flex', alignItems: 'center' }}
+                            >
+                                {noPuedePasarAsignaciones(matriculado) && <WarningIcon sx={{mr:1, color:'red'}} fontSize='small' />}
+                                {matriculado.nombre}
+                            </span>
+                        }
+                        advertencia={noPuedePasarAsignaciones(matriculado)}
+                    >
                         {matriculado.familia.id != '' &&
                             <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
                                 <b>Familia:</b> {matriculado.familia.apellidos}
@@ -116,7 +128,7 @@ export default function Matriculados() {
                             {matriculado.ultimaAsignacion.tipo}, el {formatoFecha(matriculado.ultimaAsignacion.fecha)}, en la sala {matriculado.ultimaAsignacion.sala}
                         </Typography>
                         {noPuedePasarAsignaciones(matriculado)
-                            ? <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
+                            ? <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5, color:'red' }}>
                                 <b>No puede pasar asignaciones</b>
                             </Typography>
                             : <>

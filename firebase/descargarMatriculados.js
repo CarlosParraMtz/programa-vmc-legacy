@@ -17,7 +17,8 @@ export default async function descargarMatriculados(congregacion) {
             familia: doc.data().familia,
             ultimaAsignacion: doc.data().ultimaAsignacion,
             posiblesAsignaciones: doc.data().posiblesAsignaciones,
-            ayudantesAnteriores: doc.data().ayudantesAnteriores
+            ayudantesAnteriores: doc.data().ayudantesAnteriores,
+            observaciones: doc.data().observaciones
         }
         matriculadosDescargados.push(agregar)
     })
