@@ -1,4 +1,8 @@
+//* Módulos
 import { useState, useEffect } from 'react'
+import { useRecoilValue, useRecoilState } from 'recoil';
+
+//* Material UI
 import {
     Box,
     Collapse,
@@ -12,18 +16,23 @@ import {
     Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import DialogAgregarUno from './DialogMatriculado';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import AddReactionIcon from '@mui/icons-material/AddReaction';
+import WarningIcon from '@mui/icons-material/Warning';
+
+//* Componentes
+import DialogAgregarUno from './DialogMatriculado';
+import TarjetaColapsable from './TarjetaColapsable';
+
+//* Recoil atoms
 import matriculadosState from '../../Recoil/matriculadosState';
 import familiasState from '../../Recoil/familiasState';
 import userState from '../../Recoil/userState';
-import AddReactionIcon from '@mui/icons-material/AddReaction';
-import TarjetaColapsable from './TarjetaColapsable';
+
+//* Funciones
 import eliminarMatriculado from '../../firebase/eliminarMatriculado';
 import actualizarFamilia from '../../firebase/actualizarFamilia';
-import WarningIcon from '@mui/icons-material/Warning';
 
 
 
@@ -75,15 +84,14 @@ export default function Matriculados() {
 
 
     function noPuedePasarAsignaciones(m) {
-        if (
+        return (
             !m.posiblesAsignaciones['Lectura'] &&
             !m.posiblesAsignaciones['Ayudante'] &&
             !m.posiblesAsignaciones['Primera conversación'] &&
             !m.posiblesAsignaciones['Revisita'] &&
             !m.posiblesAsignaciones['Curso bíblico'] &&
             !m.posiblesAsignaciones['Discurso']
-        ) { return true }
-        return false
+        );
     }
 
 

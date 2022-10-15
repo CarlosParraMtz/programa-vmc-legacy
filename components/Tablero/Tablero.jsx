@@ -1,4 +1,8 @@
-import { useState } from 'react'
+//* Módulos
+import { useState, useEffect } from 'react'
+import { useRecoilValue } from 'recoil';
+
+//* Material UI
 import {
 	Box,
 	Button,
@@ -17,20 +21,22 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 
+//* Componentes
 import Controles from './Controles';
 import FechaDeAsignaciones from './FechaDeAsignaciones';
-import { useEffect } from 'react';
 
-import { useRecoilValue } from 'recoil';
+//* Recoil
 import userState from '../../Recoil/userState'
 import matriculadosState from '../../Recoil/matriculadosState'
 
+//* Funciones
 import descargarUltimoPeriodo from '../../firebase/descargarUltimoPeriodo';
 import eliminarPeriodo from '../../firebase/eliminarPeriodo';
 import descargarPeriodos from '../../firebase/descargarPeriodos';
 import actualizarPeriodo from '../../firebase/actualizarPeriodo';
 import crearPeriodo from '../../firebase/crearPeriodo';
 import obtenerDiaDeHoy from '../../functions/obtenerDiaDeHoy';
+import construirAsignaciones from './functions/construirAsignaciones';
 
 
 export default function Tablero() {
@@ -50,6 +56,11 @@ export default function Tablero() {
 	const [listaDePeriodos, setListaDePeriodos] = useState([])
 
 	const matriculados = useRecoilValue(matriculadosState)
+
+	//* Estas propiedades crean una lista de matriculados que se han asignado
+	//* en el periodo, pero que aún no se han guardado en la base de datos.
+	const [asignadosSinGuardar, setAsignadosSinGuardar] = useState([]);
+	const [asignadosSinGuardarOld, setAsignadosSinGuardarOld] = useState(null);
 
 
 
@@ -159,6 +170,10 @@ export default function Tablero() {
 	const activarEdicion = () => {
 		setDataOld({ ...data })
 		localStorage.setItem('periodo/data_old', JSON.stringify({ ...data }))
+
+		setAsignadosSinGuardarOld([...asignadosSinGuardar]);
+		localStorage.setItem("periodo/asignadosSinGuardar", JSON.stringify([...asignadosSinGuardar]))
+
 		setEditando(true)
 		localStorage.setItem('periodo/editando', JSON.stringify(true))
 	}
@@ -178,13 +193,24 @@ export default function Tablero() {
 	const cancelarEdicion = () => {
 		setData({ ...dataOld })
 		localStorage.setItem('periodo/data', JSON.stringify({ ...dataOld }))
+
+		setAsignadosSinGuardar(asignadosSinGuardarOld === null ? [] : [...asignadosSinGuardarOld]);
+		localStorage.setItem("periodo/asignadosSinGuardar", JSON.stringify(asignadosSinGuardarOld === null ? [] : [...asignadosSinGuardarOld]))
+
+		setAsignadosSinGuardarOld(null);
+		localStorage.setItem("periodo/asignadosSinGuardarOld", JSON.stringify(null))
+
 		setEditando(false)
 		localStorage.setItem('periodo/editando', JSON.stringify(false))
+
 		setDataOld({ ...dataInicial })
 		localStorage.setItem('periodo/data_old', JSON.stringify({ ...dataInicial }))
 	}
 
 	const guardar = () => {
+
+		actualizarMatriculados(mtrSinGuardar, user)
+
 		setEditando(false)
 		localStorage.setItem('periodo/editando', JSON.stringify(false))
 		setDataOld({ ...data })
@@ -196,55 +222,10 @@ export default function Tablero() {
 
 	const generarAsignaciones = () => {
 
-		const matriculadosSO = [...matriculados]
-		const mtrs = matriculadosSO.sort((x, y) => x.ultimaAsignacion.fecha.localeCompare(y.ultimaAsignacion.fecha))
+		const r = construirAsignaciones(matriculados, data)
 
-
-
-		let d = { ...data }
-		d.fechas.forEach(fecha => {
-			fecha.asignaciones.forEach(asignacion => {
-				asignacion.salas.forEach(sala => {
-
-					//* Aquí va la lógica principal del programa.
-					//* Este bloque ocurre en cada una de las salas.
-
-					switch (asignacion.tipo) {
-						case "Lectura":
-							if (sala.asignados.length != 0) { return }
-
-							let asignado = mtrs.find(mtr => {
-								const famEncontrada = fecha.familias.find(fml => fml.id === mtr.familia.id)
-								if (
-									mtr.posiblesAsignaciones["Lectura"] &&
-									(
-										!famEncontrada
-										|| mtr.familia.apellidos === ''
-									)
-								) { return true; }
-							})
-
-							fecha.familias.push(asignado.familia)
-							sala.asignados.push({ nombre: asignado.nombre, id: asignado.id })
-
-							break;
-						case "Primera conversación":
-							break;
-						case "Revisita":
-							break;
-						case "Curso bíblico":
-							break;
-						case "Discurso":
-							break;
-					}
-
-				})
-			})
-		})
-
-		setData(d)
-
-
+		setData(r.data);
+		setAsignadosSinGuardar(r.mtrSinGuardar);
 	}
 
 

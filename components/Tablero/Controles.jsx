@@ -80,21 +80,24 @@ export default function Controles({ useEditando, funciones }) {
                                     </IconButton>
                                 </span>
                             </Tooltip>
+
+                            <Tooltip title='Generar asignaciones' >
+                                <span>
+                                    <IconButton
+                                        onClick={generarAsignaciones}
+                                        sx={{ ...estiloBtn, ...btnStyle }}
+                                        size='large'
+                                    >
+                                        <NoteIcon sx={{ color: 'white' }} />
+                                    </IconButton>
+                                </span>
+                            </Tooltip>
+
                         </>
                     )
             }
 
-            <Tooltip title='Generar asignaciones' >
-                <span>
-                    <IconButton
-                        onClick={generarAsignaciones}
-                        sx={{ ...estiloBtn, ...btnStyle }}
-                        size='large'
-                    >
-                        <NoteIcon sx={{ color: 'white' }} />
-                    </IconButton>
-                </span>
-            </Tooltip>
+
 
 
         </Box>

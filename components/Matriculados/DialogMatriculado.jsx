@@ -1,52 +1,52 @@
-import { useState, useEffect } from 'react'
+//* Módulos
+import { useState, useEffect } from 'react';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { v4 as uuid } from 'uuid';
+
+//* Material UI
 import {
     Button,
     Card,
     CardHeader,
     CardContent,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Divider,
+    FormControl,
+    InputLabel,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
     ListSubheader,
     Menu,
     MenuItem,
     Paper,
+    Select,
     TextField,
     Tooltip,
     Typography,
     Grid,
     CircularProgress,
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Checkbox from '@mui/material/Checkbox';
+import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import { Delete } from '@mui/icons-material';
 import CommentIcon from '@mui/icons-material/Comment';
 
-
-import { useRecoilValue, useRecoilState } from 'recoil';
+//* Recoil atoms
 import matriculadosState from '../../Recoil/matriculadosState';
 import familiasState from '../../Recoil/familiasState';
 import userState from '../../Recoil/userState';
 
+//* Funciones
 import crearMatriculado from '../../firebase/crearMatriculado'
 import actualizarMatriculado from '../../firebase/actualizarMatriculado'
-import descargarMatriculados from '../../firebase/descargarMatriculados';
-
-import { v4 as uuid } from 'uuid'
-
 import obtenerDiaDeHoy from '../../functions/obtenerDiaDeHoy';
 
 
