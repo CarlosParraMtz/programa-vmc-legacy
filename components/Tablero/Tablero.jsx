@@ -37,6 +37,8 @@ import actualizarPeriodo from '../../firebase/actualizarPeriodo';
 import crearPeriodo from '../../firebase/crearPeriodo';
 import obtenerDiaDeHoy from '../../functions/obtenerDiaDeHoy';
 import construirAsignaciones from './functions/construirAsignaciones';
+import actualizarMatriculados from './functions/actualizarMatriculados';
+
 
 
 export default function Tablero() {
@@ -194,6 +196,8 @@ export default function Tablero() {
 		setData({ ...dataOld })
 		localStorage.setItem('periodo/data', JSON.stringify({ ...dataOld }))
 
+		setAsignadosSinGuardar([])
+
 		setAsignadosSinGuardar(asignadosSinGuardarOld === null ? [] : [...asignadosSinGuardarOld]);
 		localStorage.setItem("periodo/asignadosSinGuardar", JSON.stringify(asignadosSinGuardarOld === null ? [] : [...asignadosSinGuardarOld]))
 
@@ -209,7 +213,8 @@ export default function Tablero() {
 
 	const guardar = () => {
 
-		actualizarMatriculados(mtrSinGuardar, user)
+		actualizarMatriculados(asignadosSinGuardar, user)
+		setAsignadosSinGuardar([])
 
 		setEditando(false)
 		localStorage.setItem('periodo/editando', JSON.stringify(false))
@@ -302,21 +307,23 @@ export default function Tablero() {
 						))
 					}
 
-					<Box sx={{ width: '100%' }} >
-						<Button
-							sx={{
-								display: 'flex', alignItems: 'center', justifyContent: 'center',
-								width: '100%', height: '100%',
-								color: '#555',
-								background: '#cfcfcf',
-								"&:hover": { background: '#c7c7c7' }
-							}}
-							onClick={agregarFecha}
-						>
-							<AddIcon sx={{ mr: 1 }} />
-							<Typography sx={{ color: '#555' }} ><b>Agregar fecha de asignaciones</b></Typography>
-						</Button>
-					</Box>
+					{editando &&
+						<Box sx={{ width: '100%' }} >
+							<Button
+								sx={{
+									display: 'flex', alignItems: 'center', justifyContent: 'center',
+									width: '100%', height: '100%',
+									color: '#555',
+									background: '#cfcfcf',
+									"&:hover": { background: '#c7c7c7' }
+								}}
+								onClick={agregarFecha}
+							>
+								<AddIcon sx={{ mr: 1 }} />
+								<Typography sx={{ color: '#555' }} ><b>Agregar fecha de asignaciones</b></Typography>
+							</Button>
+						</Box>
+					}
 
 				</Stack>
 			</Box>

@@ -69,18 +69,17 @@ export default function construirAsignaciones(matriculados, data) {
                             else return false;
                         })
 
- 
+
                         let ayudantePC = mtrs.find(mtr => {
                             const famEncontrada = fecha.familias.find(fml => fml.id === mtr.familia.id);
                             const yaEstaAsignado = intentaEncontrarMtrEnAsignadosSinGuardar(mtr);
-                            const yaFueSuAyudante = asignadoPC.ayudantesAnteriores.find(ayudanteAnterior => ayudanteAnterior.id === mtr.id);
-                            console.log(asignadoPC)
-                            
+                            const yaFueSuAyudante = asignadoPC.ayudantesAnteriores.find(
+                                ayudanteAnterior => ayudanteAnterior.id === mtr.id);
                             const esDelMismoGenero = asignadoPC.genero === mtr.genero;
                             if (
                                 mtr.posiblesAsignaciones["Ayudante"] &&
                                 mtr.ultimaAsignacion.sala !== obtenerSalaNum(mtr.ultimaAsignacion.sala) &&
-                                (mtr.ultimaAsignacion.tipo !== "Ayudante"||(
+                                (mtr.ultimaAsignacion.tipo !== "Ayudante" || (
                                     !mtr.posiblesAsignaciones["Primera conversación"] &&
                                     !mtr.posiblesAsignaciones["Revisita"] &&
                                     !mtr.posiblesAsignaciones["Curso bíblico"]
@@ -89,9 +88,9 @@ export default function construirAsignaciones(matriculados, data) {
                                 !yaFueSuAyudante &&
                                 esDelMismoGenero &&
                                 (!famEncontrada || mtr.familia.apellidos === '')
-                            ) { 
-                                console.log(mtr)
-                                return true; }
+                            ) {
+                                return true;
+                            }
                             else return false;
                         })
 
@@ -141,11 +140,11 @@ export default function construirAsignaciones(matriculados, data) {
                             const famEncontrada = fecha.familias.find(fml => fml.id === mtr.familia.id);
                             const yaEstaAsignado = intentaEncontrarMtrEnAsignadosSinGuardar(mtr);
                             const yaFueSuAyudante = asignadoR.ayudantesAnteriores.find(ayudanteAnterior => ayudanteAnterior.id === mtr.id)
-                            const esDelMismoGenero = asignadoPC.genero === mtr.genero;
+                            const esDelMismoGenero = asignadoR.genero === mtr.genero;
                             if (
                                 mtr.posiblesAsignaciones["Ayudante"] &&
                                 mtr.ultimaAsignacion.sala !== obtenerSalaNum(mtr.ultimaAsignacion.sala) &&
-                                (mtr.ultimaAsignacion.tipo !== "Ayudante"||(
+                                (mtr.ultimaAsignacion.tipo !== "Ayudante" || (
                                     !mtr.posiblesAsignaciones["Primera conversación"] &&
                                     !mtr.posiblesAsignaciones["Revisita"] &&
                                     !mtr.posiblesAsignaciones["Curso bíblico"]
@@ -202,11 +201,11 @@ export default function construirAsignaciones(matriculados, data) {
                             const famEncontrada = fecha.familias.find(fml => fml.id === mtr.familia.id);
                             const yaEstaAsignado = intentaEncontrarMtrEnAsignadosSinGuardar(mtr);
                             const yaFueSuAyudante = asignadoCB.ayudantesAnteriores.find(ayudanteAnterior => ayudanteAnterior.id === mtr.id);
-                            const esDelMismoGenero = asignadoPC.genero === mtr.genero;
+                            const esDelMismoGenero = asignadoCB.genero === mtr.genero;
                             if (
                                 mtr.posiblesAsignaciones["Ayudante"] &&
                                 mtr.ultimaAsignacion.sala !== obtenerSalaNum(mtr.ultimaAsignacion.sala) &&
-                                (mtr.ultimaAsignacion.tipo !== "Ayudante"||(
+                                (mtr.ultimaAsignacion.tipo !== "Ayudante" || (
                                     !mtr.posiblesAsignaciones["Primera conversación"] &&
                                     !mtr.posiblesAsignaciones["Revisita"] &&
                                     !mtr.posiblesAsignaciones["Curso bíblico"]
@@ -227,7 +226,9 @@ export default function construirAsignaciones(matriculados, data) {
                                 sala: obtenerSala(salaNum),
                                 tipo: "Revisita"
                             },
-                            ayudantesAnteriores: [...asignadoCB.ayudantesAnteriores].concat({ nombre: ayudanteCB.nombre, id: ayudanteCB.id })
+                            ayudantesAnteriores: [...asignadoCB.ayudantesAnteriores].concat(
+                                { nombre: ayudanteCB.nombre, id: ayudanteCB.id }
+                            )
                         });
 
                         agregarAsignacion({

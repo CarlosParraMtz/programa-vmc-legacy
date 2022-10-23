@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 
 //* Material UI
 import {
+    Box,
     Button,
     Card,
     CardHeader,
@@ -300,8 +301,11 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                     </FormControl>
 
 
-                    <Divider sx={{ mt: 2, mb: 1 }}> Última asignación </Divider>
+                    <Divider sx={{ mt: 2, mb: 1 }}> Asignaciones recientes </Divider>
 
+                    <Box sx={{background:"#f0f0f0", borderRadius:"5px", p:1}}>
+
+                    </Box>
 
                     <TextField
                         margin="dense"
@@ -336,6 +340,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                                 </Select>
                             </FormControl>
                         </Grid>
+
                         <Grid item sm={8} xs={12}>
                             <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
                                 <InputLabel>Tipo de última asignación</InputLabel>

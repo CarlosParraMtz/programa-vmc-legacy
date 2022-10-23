@@ -12,12 +12,14 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from '@mui/icons-material/Delete';
 
-export default function Sala({ indexFechas, indexAsignacion, indexSala, useData }) {
+export default function Sala({ indexFechas, indexAsignacion, indexSala, useData, useEditando }) {
 
-    const [data, setData] = useData
+    const [data, setData] = useData;
     //* Aquí es data.fechas[indexFechas].asignaciones[indexAsignacion].salas[indexSala]
+
+    const [editando, setEditando] = useEditando;
 
     function nombrarSala() {
         const a = { 0: 'Sala A', 1: 'Sala B', 2: 'Sala C' }
@@ -38,9 +40,12 @@ export default function Sala({ indexFechas, indexAsignacion, indexSala, useData 
                         <Typography sx={{ textAlign: 'left' }} >
                             <strong>{nombrarSala()}</strong>
                         </Typography>
-                        <IconButton sx={{ ml: 'auto' }} size='small' onClick={eliminarSala} >
-                            <CloseIcon />
-                        </IconButton>
+                        {
+                            editando &&
+                            <IconButton sx={{ ml: 'auto' }} size='small' onClick={eliminarSala} >
+                                <CloseIcon fontSize="small" />
+                            </IconButton>
+                        }
                     </Box>
                 </Grid>
 
@@ -60,15 +65,26 @@ export default function Sala({ indexFechas, indexAsignacion, indexSala, useData 
                                     {asignado.nombre}
                                 </Typography>
 
-                                <IconButton sx={{ ml: 'auto' }} size='small' >
-                                    <EditIcon />
-                                </IconButton>
-
+                                {
+                                    editando &&
+                                    <IconButton sx={{ ml: 'auto' }} size='small' >
+                                        <EditIcon fontSize="small" />
+                                    </IconButton>
+                                }
 
                             </Box>
 
                         </Grid>
                     ))
+                }
+
+                {
+                    data.fechas[indexFechas].asignaciones[indexAsignacion].salas[indexSala].asignados.length === 0 &&
+                    <Box sx={{display:"flex", justifyContent:"center", width:"100%"}} >
+                        <Typography sx={{ textAlign: "center", color: "#444" }} >
+                            <b>No asignado</b>
+                        </Typography>
+                    </Box>
                 }
 
             </Grid>

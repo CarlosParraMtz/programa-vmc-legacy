@@ -1,4 +1,8 @@
+//* Módulos
 import { useState, useEffect } from 'react'
+import { useTheme } from '@mui/material/styles';
+
+//* Material UI
 import {
     Box,
     Button,
@@ -15,9 +19,10 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
-import Sala from './Sala';
-import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+
+//* Componentes
+import Sala from './Sala';
 
 export default function Asignaciones({ useData, indexFechas, indexAsignacion, useEditando }) {
 
@@ -72,19 +77,20 @@ export default function Asignaciones({ useData, indexFechas, indexAsignacion, us
     return (
         <Grid container sx={{ background: '#e7e7e7', p: 1, borderRadius: '8px', justifyContent: 'start', mb: 1 }} >
             <Grid item lg={tableLG} sm={tableSM} xs={tableXS} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: '3px', p: 0.5 }} >
-                <Box sx={{ p: 1, background: '#cfcfcf', width: '100%', height: '100%', display: 'flex', alignItems: 'start', justifyContent: 'center' }} >
+                <Box sx={{ p: 1, background: '#cfcfcf', width: '100%', height: '100%', display: 'flex', alignItems: 'start', justifyContent: 'left' }} >
 
 
                     {editando
                         ? <Box sx={{ display: 'flex', flexDirection: 'column' }} >
-                            <FormControl fullWidth>
+                            <FormControl fullWidth size="small" >
                                 <InputLabel>Tipo</InputLabel>
                                 <Select
                                     value={tipo}
                                     label="Tipo"
                                     onChange={e => setTipo(e.target.value)}
                                     onBlur={cambiarTipo}
-                                    sx={{ maxWidth: (esLG ? '140px' : '200px' ) }}
+                                    size="small"
+                                    sx={{ maxWidth: (esLG ? '140px' : '200px') }}
                                 >
                                     <MenuItem value={"Lectura"}>Lectura</MenuItem>
                                     <MenuItem value={"Primera conversación"}>Primera conversación</MenuItem>
@@ -106,20 +112,31 @@ export default function Asignaciones({ useData, indexFechas, indexAsignacion, us
 
 
                         : <Box sx={{ display: 'flex', flexDirection: 'column' }} >
-                        <Typography sx={{ ml: 1 }} >
-                            <strong>
-                                {data.fechas[indexFechas].asignaciones[indexAsignacion].tipo}
-                            </strong>
-                        </Typography>
-                        <Typography sx={{ ml: 1 }} >
-                                {data.fechas[indexFechas].asignaciones[indexAsignacion].descripcion}
-                        </Typography>
+                            <Typography sx={{ ml: 1 }} >
+                                <strong>
+                                    {
+                                        data.fechas[indexFechas].asignaciones[indexAsignacion].tipo === ''
+                                            ? "Sin título"
+                                            : data.fechas[indexFechas].asignaciones[indexAsignacion].tipo
+                                    }
+                                </strong>
+                            </Typography>
+                            <Typography sx={{ ml: 1 }} >
+                                {
+                                    data.fechas[indexFechas].asignaciones[indexAsignacion].descripcion == ""
+                                        ? "Sin descripción"
+                                        : data.fechas[indexFechas].asignaciones[indexAsignacion].descripcion
+                                }
+                            </Typography>
                         </Box>
                     }
 
-                    <IconButton sx={{ ml: 'auto' }} size='small' onClick={borrarAsignacion} >
-                        <CloseIcon />
-                    </IconButton>
+                    {
+                        editando &&
+                        <IconButton sx={{ ml: 'auto' }} size='small' onClick={borrarAsignacion} >
+                            <CloseIcon fontSize="small" />
+                        </IconButton>
+                    }
 
                 </Box>
             </Grid>
@@ -132,6 +149,7 @@ export default function Asignaciones({ useData, indexFechas, indexAsignacion, us
                         indexAsignacion={indexAsignacion}
                         indexSala={index}
                         useData={useData}
+                        useEditando={useEditando}
                     />
                 ))
             }
@@ -139,7 +157,7 @@ export default function Asignaciones({ useData, indexFechas, indexAsignacion, us
 
 
             {
-                data.fechas[indexFechas].asignaciones[indexAsignacion].salas.length < 3 &&
+                data.fechas[indexFechas].asignaciones[indexAsignacion].salas.length < 3 && editando &&
                 <Grid item lg={tableLG} sm={tableSM} xs={tableXS} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '3px', p: 0.5 }} >
                     <Button
                         sx={{

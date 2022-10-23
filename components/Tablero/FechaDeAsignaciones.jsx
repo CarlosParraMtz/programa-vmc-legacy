@@ -1,4 +1,8 @@
+//* Módulos
 import { useState, useEffect } from 'react'
+import { useRecoilValue } from 'recoil';
+
+//* Material UI
 import {
     Box,
     Button,
@@ -15,11 +19,14 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
-import { useRecoilValue } from 'recoil';
+
+//* Componentes
+import Asignaciones from './Asignaciones';
+
+//* Recoil
 import configState from '../../Recoil/configState'
 
 
-import Asignaciones from './Asignaciones';
 
 export default function FechaDeAsignaciones({ useData, indexFechas, useEditando, activarEdicion }) {
 
@@ -58,7 +65,6 @@ export default function FechaDeAsignaciones({ useData, indexFechas, useEditando,
     //* Esto es para la parte de agregar una asignación en esta fecha
     const config = useRecoilValue(configState)
     const agregarAsignacion = () => {
-        activarEdicion()
         let dataN = { ...data }
         let salas = []
         for (var i = 0; i < config.salas; i++) { salas.push({ asignados: [] }) }
@@ -96,10 +102,31 @@ export default function FechaDeAsignaciones({ useData, indexFechas, useEditando,
                     />)
                 }
 
+                {
+                    data.fechas[indexFechas].asignaciones.length === 0 &&
+                    <Typography sx={{ color: "#444", textAlign: "center" }} >
+                        <b>
+                            No hay asignaciones programadas.
+                            {
+                                !editando &&
+                                <>
+                                    {" Puede"}
+                                    <span onClick={activarEdicion} style={{ color: "#5b3c88", cursor: "pointer" }} >
+                                        {" activar el modo de edición para agregar una."}
+                                    </span>
+                                </>
+                            }
+                        </b>
+                    </Typography>
+                }
 
-                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }} >
-                    <Chip onClick={agregarAsignacion} label={<b>Agregar asignación</b>} icon={<HistoryEduIcon />} sx={{ m: '0 auto', width: '100%' }} />
-                </Box>
+                {
+                    editando &&
+                    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }} >
+                        <Chip onClick={agregarAsignacion} label={<b>Agregar asignación</b>} icon={<HistoryEduIcon />} sx={{ m: '0 auto', width: '100%' }} />
+                    </Box>
+                }
+
 
             </Box>
         </Box>
