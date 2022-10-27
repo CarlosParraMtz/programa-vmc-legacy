@@ -18,6 +18,7 @@ import {
     DialogTitle,
     Divider,
     FormControl,
+    IconButton,
     InputLabel,
     List,
     ListItem,
@@ -29,6 +30,7 @@ import {
     MenuItem,
     Paper,
     Select,
+    Stack,
     TextField,
     Tooltip,
     Typography,
@@ -36,7 +38,8 @@ import {
     CircularProgress,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
-import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import { Delete } from '@mui/icons-material';
 import CommentIcon from '@mui/icons-material/Comment';
 
@@ -49,6 +52,11 @@ import userState from '../../Recoil/userState';
 import crearMatriculado from '../../firebase/crearMatriculado'
 import actualizarMatriculado from '../../firebase/actualizarMatriculado'
 import obtenerDiaDeHoy from '../../functions/obtenerDiaDeHoy';
+import obtenerTextoFecha from '../../functions/obtenerTextoFecha';
+
+//* Componentes
+import DialogAgregarAsignacionReciente from './DialogAgregarAsignacionReciente';
+import AsignacionReciente from './AsignacionReciente';
 
 
 const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
@@ -97,12 +105,14 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
 
     const [ultimasAsignaciones, setUltimasAsignaciones] = useState([])
+    const [dialogAgregarAsignacionOpen, setDialogAgregarAsignacionOpen] = useState(false)
 
     const [loading, setLoading] = useState(false)
     const [matriculados, setMatriculados] = useRecoilState(matriculadosState);
     const [ayudantesAnteriores, setAyudantesAnteriores] = useState([])
     const [posiblesAyudantes, setPosiblesAyudantes] = useState([])
     const [posible, setPosible] = useState("")
+    const [ayudantesDialog, setAyudantesDialog] = useState([])
 
     function vaciarDialog() {
         setNombre('');
@@ -246,6 +256,18 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     }
 
 
+    const buscarAcompañante = (id) => {
+        const a = matriculados.find(mtr => mtr.id === id);
+        return a.nombre;
+    }
+
+
+
+    function UltimasAsign() {
+        
+    }
+
+
 
 
     return (
@@ -301,11 +323,48 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                     </FormControl>
 
 
+
+
+
+
+
+
+
                     <Divider sx={{ mt: 2, mb: 1 }}> Asignaciones recientes </Divider>
 
-                    <Box sx={{background:"#f0f0f0", borderRadius:"5px", p:1}}>
+                    <Box sx={{ background: "#f0f0f0", borderRadius: "5px", p: 1 }}>
+                        <List>
+                            <ListItemButton onClick={() => {
+                                const a = matriculados.filter(mtr => !(mtr.nombre == nombre || mtr.genero != genero))
+                                setAyudantesDialog(a)
+                                setDialogAgregarAsignacionOpen(true)
+                            }}>
+                                <ListItemText primary="Añadir asignación..." />
+                            </ListItemButton>
+                            {
+                                ultimasAsignaciones.map((asignacion, i) => (
+                                    <AsignacionReciente 
+                                        key={i}
+                                        asignacion={asignacion}
+                                        i={i}
+                                        ayudantesDialog={ayudantesDialog}
+                                        useUltimasAsignaciones={[ultimasAsignaciones, setUltimasAsignaciones]}
+                                        buscarAcompañante={buscarAcompañante}
+                                    />
+                                ))
+                            }
 
+
+                        </List>
                     </Box>
+
+                    <DialogAgregarAsignacionReciente
+                        useOpen={[dialogAgregarAsignacionOpen, setDialogAgregarAsignacionOpen]}
+                        ayudantes={ayudantesDialog}
+                        useUltimasAsignaciones={[ultimasAsignaciones, setUltimasAsignaciones]}
+                    />
+
+
 
                     <TextField
                         margin="dense"
@@ -411,6 +470,23 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                             ))
                         }
                     </List>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
