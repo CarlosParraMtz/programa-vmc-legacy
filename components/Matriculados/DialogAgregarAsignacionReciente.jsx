@@ -1,5 +1,8 @@
 //* Módulos
 import { useState, useEffect } from 'react';
+import {useRecoilValue} from 'recoil'
+
+import matriculadosState from '../../Recoil/matriculadosState';
 
 //* Material UI
 import {
@@ -24,7 +27,12 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import obtenerDiaDeHoy from '../../functions/obtenerDiaDeHoy';
 
 
-export default function DialogAgregarAsignacionReciente({ useOpen, ayudantes, useUltimasAsignaciones, editar = null }) {
+export default function DialogAgregarAsignacionReciente({ 
+    useOpen, 
+    ayudantes, 
+    useUltimasAsignaciones, 
+    useAyudantesAnteriores,
+    editar = null }) {
 
     const emptyForm = {
         tipo: "",
@@ -35,6 +43,8 @@ export default function DialogAgregarAsignacionReciente({ useOpen, ayudantes, us
     const [open, setOpen] = useOpen;
     const [asignacion, setAsignacion] = useState(emptyForm)
     const [ultimasAsignaciones, setUltimasAsignaciones] = useUltimasAsignaciones;
+    const [ayudantesAnteriores, setAyudantesAnteriores] = useAyudantesAnteriores;
+
 
 
 
@@ -53,10 +63,10 @@ export default function DialogAgregarAsignacionReciente({ useOpen, ayudantes, us
 
     const guardar = () => {
         let ua = [...ultimasAsignaciones];
-
         if (editar != null) { ua.splice(editar.index, 1, asignacion) }
         else { ua.push(asignacion); }
-        setUltimasAsignaciones(ua)
+        const uao = ua.sort((x, y) => y.fecha.localeCompare(x.fecha));
+        setUltimasAsignaciones(uao)
         cerrar();
     }
 
@@ -147,13 +157,16 @@ export default function DialogAgregarAsignacionReciente({ useOpen, ayudantes, us
             </DialogContent>
             <DialogActions>
                 <Tooltip title="Regresar" placement='top' arrow >
-                    <IconButton onClick={cerrar} >
+                    <IconButton onClick={cerrar}>
                         <ArrowBackIcon />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Guardar" placement='top' arrow >
-                    <IconButton onClick={guardar} >
-                        <CheckIcon />
+                    <IconButton onClick={guardar} sx={{
+                        background: "#5b3c88",
+                        "&:hover": { background: "#6b4c88" }
+                    }} >
+                        <CheckIcon sx={{color:"white"}} />
                     </IconButton>
                 </Tooltip>
             </DialogActions>

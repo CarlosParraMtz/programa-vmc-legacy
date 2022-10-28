@@ -18,7 +18,13 @@ import DialogAgregarAsignacionReciente from './DialogAgregarAsignacionReciente';
 //* Funciones
 import obtenerTextoFecha from '../../functions/obtenerTextoFecha';
 
-export default function AsignacionReciente({ asignacion, i, ayudantesDialog, useUltimasAsignaciones, buscarAcompañante }) {
+export default function AsignacionReciente({ 
+    asignacion, i, 
+    ayudantesDialog, 
+    useUltimasAsignaciones, 
+    buscarAcompañante,
+    useAyudantesAnteriores
+ }) {
 
     const [open, setOpen] = useState(false)
     const [ultimasAsignaciones, setUltimasAsignaciones] = useUltimasAsignaciones
@@ -30,15 +36,10 @@ export default function AsignacionReciente({ asignacion, i, ayudantesDialog, use
                     <Typography variant="body1" >
                         <b>{asignacion.tipo} </b>
                     </Typography>
-                    <Stack direction="row" alignItems="center" spacing={1} >
-                        <Stack>
-                            <Typography>
-                                <b>Fecha:</b>
-                            </Typography>
-                            <Typography>
-                                {obtenerTextoFecha(asignacion.fecha)}
-                            </Typography>
-                        </Stack>
+                    <Typography>
+                        {obtenerTextoFecha(asignacion.fecha)}
+                    </Typography>
+                    <Stack direction="row" spacing={1} >
                         <Typography>
                             <b>Sala:</b> {asignacion.sala}
                         </Typography>
@@ -68,6 +69,7 @@ export default function AsignacionReciente({ asignacion, i, ayudantesDialog, use
                 ayudantes={ayudantesDialog}
                 useUltimasAsignaciones={useUltimasAsignaciones}
                 editar={{ data: asignacion, index: i }}
+                useAyudantesAnteriores={useAyudantesAnteriores}
             />
         </ListItem>
     )

@@ -263,9 +263,6 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
 
 
-    function UltimasAsign() {
-        
-    }
 
 
 
@@ -332,24 +329,29 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
                     <Divider sx={{ mt: 2, mb: 1 }}> Asignaciones recientes </Divider>
 
-                    <Box sx={{ background: "#f0f0f0", borderRadius: "5px", p: 1 }}>
-                        <List>
-                            <ListItemButton onClick={() => {
-                                const a = matriculados.filter(mtr => !(mtr.nombre == nombre || mtr.genero != genero))
-                                setAyudantesDialog(a)
-                                setDialogAgregarAsignacionOpen(true)
-                            }}>
+                    <Box sx={{ background: "#f0f0f0", borderRadius: "5px" }}>
+                        <List sx={{ maxHeight: "400px", overflow: "auto", pt: 0 }} >
+                            <ListItemButton
+                                divider
+                                onClick={() => {
+                                    const a = matriculados.filter(mtr => !(mtr.nombre == nombre || mtr.genero != genero))
+                                    setAyudantesDialog(a)
+                                    setDialogAgregarAsignacionOpen(true)
+                                }}
+                                sx={{ position: "sticky", top: 0, background: "#f0f0f0", zIndex: 2 }}
+                            >
                                 <ListItemText primary="Añadir asignación..." />
                             </ListItemButton>
                             {
                                 ultimasAsignaciones.map((asignacion, i) => (
-                                    <AsignacionReciente 
+                                    <AsignacionReciente
                                         key={i}
                                         asignacion={asignacion}
                                         i={i}
                                         ayudantesDialog={ayudantesDialog}
                                         useUltimasAsignaciones={[ultimasAsignaciones, setUltimasAsignaciones]}
                                         buscarAcompañante={buscarAcompañante}
+                                        useAyudantesAnteriores={[ayudantesAnteriores, setAyudantesAnteriores]}
                                     />
                                 ))
                             }
@@ -362,67 +364,9 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                         useOpen={[dialogAgregarAsignacionOpen, setDialogAgregarAsignacionOpen]}
                         ayudantes={ayudantesDialog}
                         useUltimasAsignaciones={[ultimasAsignaciones, setUltimasAsignaciones]}
+                        useAyudantesAnteriores={[ayudantesAnteriores, setAyudantesAnteriores]}
                     />
 
-
-
-                    <TextField
-                        margin="dense"
-                        id="name"
-                        label="Fecha de última asignación"
-                        type="date"
-                        defaultValue={obtenerDiaDeHoy()}
-                        fullWidth
-                        onChange={e => {
-                            let ult = { ...ultimaAsignacion }
-                            ult.fecha = e.target.value
-                            setUltimaAsignacion(ult)
-                        }}
-                        variant="outlined"
-                    />
-
-                    <Grid container spacing={0} sx={{ width: "100%" }}>
-                        <Grid item sm={4} xs={12}>
-                            <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
-                                <InputLabel>Sala de última asignación</InputLabel>
-                                <Select
-                                    value={ultimaAsignacion.sala}
-                                    label="Sala de última asignación"
-                                    onChange={e => {
-                                        let ult = { ...ultimaAsignacion }
-                                        ult.sala = e.target.value
-                                        setUltimaAsignacion(ult)
-                                    }}
-                                >
-                                    <MenuItem value={"A"}>A</MenuItem>
-                                    <MenuItem value={"B"}>B</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-
-                        <Grid item sm={8} xs={12}>
-                            <FormControl fullWidth sx={{ mb: 1, mt: 1 }}>
-                                <InputLabel>Tipo de última asignación</InputLabel>
-                                <Select
-                                    value={ultimaAsignacion.tipo}
-                                    label="Tipo de última asignación"
-                                    onChange={e => {
-                                        let ult = { ...ultimaAsignacion }
-                                        ult.tipo = e.target.value
-                                        setUltimaAsignacion(ult)
-                                    }}
-                                >
-
-                                    <MenuItem value={"Ayudante"}>Ayudante</MenuItem>
-                                    <MenuItem value={"Primera conversación"}>Primera conversación</MenuItem>
-                                    <MenuItem value={"Revisita"}>Revisita</MenuItem>
-                                    <MenuItem value={"Curso bíblico"}>Curso bíblico</MenuItem>
-                                    <MenuItem value={"Discurso"}>Discurso</MenuItem>
-                                    <MenuItem value={"Lectura"}>Lectura</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                    </Grid>
 
                     <List dense subheader={
                         <ListSubheader>
@@ -519,7 +463,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
                 </DialogContent>
 
-                <DialogActions>
+                <DialogActions sx={{ position: "sticky", bottom: 0, background:"white", zIndex:10 }} >
 
                     <Button
                         onClick={guardar}
