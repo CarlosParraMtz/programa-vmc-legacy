@@ -15,7 +15,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import CancelIcon from '@mui/icons-material/Cancel'
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
-export default function Controles({ useEditando, funciones }) {
+export default function Controles({ dataId, useEditando, funciones }) {
 
     const [editando, setEditando] = useEditando
     const [agregarPeriodo, activarEdicion, borrarPeriodo, guardar, cancelarEdicion, generarAsignaciones, verListaDePeriodos] = funciones;
@@ -33,7 +33,7 @@ export default function Controles({ useEditando, funciones }) {
 
                             <Tooltip title='Agregar periodo' >
                                 <span>
-                                    <IconButton sx={btnStyle} size='large' onClick={agregarPeriodo}>
+                                    <IconButton sx={btnStyle} size='large' onClick={agregarPeriodo} disabled={dataId === ''}>
                                         <AddIcon />
                                     </IconButton>
                                 </span>
@@ -49,7 +49,7 @@ export default function Controles({ useEditando, funciones }) {
 
                             <Tooltip title='Borrar periodo' >
                                 <span>
-                                    <IconButton sx={btnStyle} size='large' onClick={borrarPeriodo} >
+                                    <IconButton sx={btnStyle} size='large' onClick={borrarPeriodo} disabled={dataId === ''} >
                                         <DeleteIcon />
                                     </IconButton>
                                 </span>

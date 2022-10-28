@@ -24,6 +24,7 @@ import EditIcon from '@mui/icons-material/Edit';
 //* Componentes
 import Controles from './Controles';
 import FechaDeAsignaciones from './FechaDeAsignaciones';
+import DialogTema from '../DialogTema';
 
 //* Recoil
 import userState from '../../Recoil/userState'
@@ -148,7 +149,6 @@ export default function Tablero() {
 		//* tiempo, que se agrega a la copia local del registro.
 		//* Si sí tiene un ID, entonces se actualiza el registro que se
 		//* acaba de guardar.
-		//TODO: terminar esta función
 		if (data.id === '') {
 			//* Se va a crear un periodo
 			const res = await crearPeriodo(user.data.congregacion.id, data)
@@ -242,9 +242,23 @@ export default function Tablero() {
 
 
 	//* Comportamiento de botones en dialogs
-	const confirmaEliminar = () => { }
+	const confirmaEliminar = () => {
+		confirmaBorrarPeriodo()
+		setData({ ...dataInicial })
+		localStorage.setItem("periodo/data", JSON.stringify({ ...dataInicial }))
+		setDataOld({ ...dataInicial })
+		localStorage.setItem("periodo/data_old", JSON.stringify({ ...dataInicial }))
+		setAsignadosSinGuardar([])
+		localStorage.setItem("periodo/asignadosSinGuardar", JSON.stringify([]))
+		setAsignadosSinGuardarOld(null);
+		localStorage.setItem("periodo/asignadosSinGuardarOld", JSON.stringify(null))
+		setEditando(true)
+		localStorage.setItem('periodo/editando', JSON.stringify(true))
+		cerrarDialogConfirmaEliminar()
+	}
 
-	const cerrarDialogConfirmaEliminar = () => { }
+	const cerrarDialogConfirmaEliminar = () => { setDialogConfirmaEliminar(false) }
+
 
 
 	const abrirPeriodo = (periodo) => {
@@ -264,6 +278,7 @@ export default function Tablero() {
 	return (
 		<>
 			<Controles
+				dataId={data.id}
 				useEditando={[editando, setEditando]}
 				funciones={[agregarPeriodo, activarEdicion, borrarPeriodo,
 					guardar, cancelarEdicion, generarAsignaciones, verListaDePeriodos]}
@@ -331,31 +346,68 @@ export default function Tablero() {
 
 
 
-
-
-			<Dialog open={dialogListaPeriodos} onClose={cerrarDialogListaPeriodos} >
-				<DialogTitle sx={{ background: '#5b3c88', color: 'white' }} >
-					Seleccionar periodo para revisar:
-				</DialogTitle>
+			<DialogTema
+				open={dialogListaPeriodos}
+				onClose={cerrarDialogListaPeriodos}
+				titulo="Seleccionar periodo para revisar:"
+			>
 				<DialogContent>
-					<List>
-						{
-							listaDePeriodos.map(periodo => (
-								<ListItemButton key={periodo.id}
-									onClick={() => abrirPeriodo(periodo)}
-									disabled={data.id === periodo.id}
-								>
-									<ListItemText
-										primary={<b>{periodo.periodo}</b>}
-										secondary={data.id === periodo.id ? "Periodo actual" : ""}
-									/>
-								</ListItemButton>
-							))
-						}
-					</List>
-				</DialogContent>
+					{
+						listaDePeriodos.length === 0
+							? <Typography sx={{textAlign:"center", color:"#777", mt:2}} >
+								<b>No hay más periodos guardados</b>
+							</Typography>
+							: <List>
+								{
+									listaDePeriodos.map(periodo => (
+										<ListItemButton key={periodo.id}
+											onClick={() => abrirPeriodo(periodo)}
+											disabled={data.id === periodo.id}
+										>
+											<ListItemText
+												primary={<b>{periodo.periodo}</b>}
+												secondary={data.id === periodo.id ? "Periodo actual" : ""}
+											/>
+										</ListItemButton>
+									))
+								}
+							</List>
+					}
 
-			</Dialog>
+				</DialogContent>
+			</DialogTema>
+
+
+			<DialogTema
+				open={dialogConfirmaEliminar}
+				onClose={cerrarDialogConfirmaEliminar}
+				titulo="Confirmar"
+			>
+				<DialogContent sx={{ p: 2, mt: 1 }}>
+					<Typography sx={{ textAlign: "center" }} >
+						¿Seguro que desea eliminar este periodo?
+					</Typography>
+					<Typography sx={{ textAlign: "center", color: "#f44" }} >
+						<b>
+							Esta opción no se puede deshacer
+						</b>
+					</Typography>
+				</DialogContent>
+				<DialogActions>
+					<Button sx={{ color: "#000", "&:hover": { color: "#777" } }} >
+						Cancelar
+					</Button>
+
+					<Button
+						variant="contained"
+						sx={{ background: "#f44", "&:hover": { background: "#f55" } }}
+						onClick={confirmaEliminar}
+					>
+						Eliminar
+					</Button>
+
+				</DialogActions>
+			</DialogTema>
 
 		</>
 	)

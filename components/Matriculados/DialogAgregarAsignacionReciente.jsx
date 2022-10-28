@@ -50,7 +50,9 @@ export default function DialogAgregarAsignacionReciente({
 
 
     //* Detecta edición
-    useEffect(() => { if (editar != null) { setAsignacion(editar.data) } }, [open])
+    useEffect(() => { 
+        if (editar != null) { setAsignacion(editar.data) } 
+    }, [open])
 
 
 

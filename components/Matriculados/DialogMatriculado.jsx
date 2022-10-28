@@ -87,12 +87,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     const user = useRecoilValue(userState)
 
     const [nombre, setNombre] = useState("")
-    const [genero, setGenero] = useState("hombre")
-    const [ultimaAsignacion, setUltimaAsignacion] = useState({
-        fecha: '2022-01-01',
-        sala: 'A',
-        tipo: 'Ayudante'
-    })
+    const [genero, setGenero] = useState("hombre")    
     const [posiblesAsignaciones, setPosiblesAsignaciones] = useState({
         "Ayudante": false,
         "Primera conversación": false,
@@ -104,7 +99,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     const [observaciones, setObservaciones] = useState('')
 
 
-    const [ultimasAsignaciones, setUltimasAsignaciones] = useState([])
+    const [asignacionesAnteriores, setAsignacionesAnteriores] = useState([])
     const [dialogAgregarAsignacionOpen, setDialogAgregarAsignacionOpen] = useState(false)
 
     const [loading, setLoading] = useState(false)
@@ -117,11 +112,8 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     function vaciarDialog() {
         setNombre('');
         setGenero('');
-        setUltimaAsignacion({
-            fecha: '2022-01-01',
-            sala: 'A',
-            tipo: 'Ayudante'
-        })
+        setAsignacionesAnteriores([])
+        
         setPosiblesAsignaciones({
             "Ayudante": false,
             "Primera conversación": false,
@@ -136,7 +128,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     function rellenarDialog(data) {
         setNombre(data.nombre);
         setGenero(data.genero);
-        setUltimaAsignacion(data.ultimaAsignacion)
+        setAsignacionesAnteriores(data.asignacionesAnteriores)
         setPosiblesAsignaciones(data.posiblesAsignaciones)
         setAyudantesAnteriores(data.ayudantesAnteriores)
     }
@@ -212,14 +204,13 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     const matriculadoData = {
         nombre,
         genero,
-        ultimaAsignacion,
         ayudantesAnteriores,
         posiblesAsignaciones,
         familia: {
-            apellidos: '',
-            id: ''
+            apellidos: (data ? data.familia.apellidos : ""),
+            id: (data ? data.familia.id : "")
         },
-        asignacionesAnteriores: [],
+        asignacionesAnteriores,
         observaciones
     }
 
@@ -343,13 +334,13 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                                 <ListItemText primary="Añadir asignación..." />
                             </ListItemButton>
                             {
-                                ultimasAsignaciones.map((asignacion, i) => (
+                                asignacionesAnteriores.map((asignacion, i) => (
                                     <AsignacionReciente
                                         key={i}
                                         asignacion={asignacion}
                                         i={i}
                                         ayudantesDialog={ayudantesDialog}
-                                        useUltimasAsignaciones={[ultimasAsignaciones, setUltimasAsignaciones]}
+                                        useUltimasAsignaciones={[asignacionesAnteriores, setAsignacionesAnteriores]}
                                         buscarAcompañante={buscarAcompañante}
                                         useAyudantesAnteriores={[ayudantesAnteriores, setAyudantesAnteriores]}
                                     />
@@ -363,7 +354,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                     <DialogAgregarAsignacionReciente
                         useOpen={[dialogAgregarAsignacionOpen, setDialogAgregarAsignacionOpen]}
                         ayudantes={ayudantesDialog}
-                        useUltimasAsignaciones={[ultimasAsignaciones, setUltimasAsignaciones]}
+                        useUltimasAsignaciones={[asignacionesAnteriores, setAsignacionesAnteriores]}
                         useAyudantesAnteriores={[ayudantesAnteriores, setAyudantesAnteriores]}
                     />
 
