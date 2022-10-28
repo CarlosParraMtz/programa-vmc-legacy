@@ -1,6 +1,6 @@
 //* Módulos
 import { useState, useEffect } from 'react';
-import {useRecoilValue} from 'recoil'
+import { useRecoilValue } from 'recoil'
 
 import matriculadosState from '../../Recoil/matriculadosState';
 
@@ -27,10 +27,10 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import obtenerDiaDeHoy from '../../functions/obtenerDiaDeHoy';
 
 
-export default function DialogAgregarAsignacionReciente({ 
-    useOpen, 
-    ayudantes, 
-    useUltimasAsignaciones, 
+export default function DialogAgregarAsignacionReciente({
+    useOpen,
+    ayudantes,
+    useUltimasAsignaciones,
     useAyudantesAnteriores,
     editar = null }) {
 
@@ -45,7 +45,7 @@ export default function DialogAgregarAsignacionReciente({
     const [ultimasAsignaciones, setUltimasAsignaciones] = useUltimasAsignaciones;
     const [ayudantesAnteriores, setAyudantesAnteriores] = useAyudantesAnteriores;
 
-
+    const matriculados = useRecoilValue(matriculadosState)
 
 
 
@@ -67,6 +67,11 @@ export default function DialogAgregarAsignacionReciente({
         else { ua.push(asignacion); }
         const uao = ua.sort((x, y) => y.fecha.localeCompare(x.fecha));
         setUltimasAsignaciones(uao)
+
+        const mtr = matriculados.find(m => m.id === asignacion.acompañante)
+        setAyudantesAnteriores([...ayudantesAnteriores].concat(
+            { id: mtr.id, nombre: mtr.nombre }
+        ))
         cerrar();
     }
 
@@ -166,7 +171,7 @@ export default function DialogAgregarAsignacionReciente({
                         background: "#5b3c88",
                         "&:hover": { background: "#6b4c88" }
                     }} >
-                        <CheckIcon sx={{color:"white"}} />
+                        <CheckIcon sx={{ color: "white" }} />
                     </IconButton>
                 </Tooltip>
             </DialogActions>
