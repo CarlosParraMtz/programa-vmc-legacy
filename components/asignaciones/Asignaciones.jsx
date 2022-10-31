@@ -18,7 +18,7 @@ export default function Asignaciones() {
                     <SideBar />
                 </Box>
             }
-            <Box sx={{ background: '#f8f8f8', width:'100%' }} >
+            <Box sx={{ background: '#f8f8f8', width:'100%', p:0, maxHeight:"calc(100vh - 65px)", overflow:"auto" }} >
                 <Tablero />
             </Box>
 

@@ -25,7 +25,7 @@ export default function Controles({ dataId, useEditando, funciones }) {
 
 
     return (
-        <Box sx={{ background: '#ddd', display: 'flex', mb: 1 }} >
+        <Box sx={{ background: '#ddd', display: 'flex', mb: 0, position: "sticky", top:0 }} >
             {
                 !editando
                     ? (

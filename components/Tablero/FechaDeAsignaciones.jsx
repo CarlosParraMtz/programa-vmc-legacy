@@ -77,17 +77,18 @@ export default function FechaDeAsignaciones({ useData, indexFechas, useEditando,
 
     return (
         <Box sx={{ width: '100%', boxShadow: '1px 1px 4px #777' }} >
-            <Box sx={{ p: 1, background: '#cfcfcf', display: 'flex', alignItems: 'center' }} >
+            <Box sx={{ p: 1, background: '#9b7cc8', display: 'flex', alignItems: 'center', color: "white" }} >
 
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'start' }} >
-                    {editando && <Input type='date' value={data.fechas[indexFechas].fecha} onChange={cambiarFecha} sx={{ mr: 3 }} />}
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'start', p:1 }} >
+                    {editando && <Input type='date' value={data.fechas[indexFechas].fecha} onChange={cambiarFecha} sx={{ mr: 3, color:"white" }} />}
                     <Typography variant={editando ? 'caption' : ''} >{formatoFecha()}</Typography>
                 </Box>
 
-                <IconButton sx={{ ml: 'auto' }} onClick={eliminarFecha} >
-                    <CloseIcon />
-                </IconButton>
-
+                {editando &&
+                    <IconButton sx={{ ml: 'auto' }} onClick={eliminarFecha} >
+                        <CloseIcon sx={{ color: "white" }} />
+                    </IconButton>
+                }
             </Box>
 
             <Box sx={{ width: '100%', p: 2 }} >
