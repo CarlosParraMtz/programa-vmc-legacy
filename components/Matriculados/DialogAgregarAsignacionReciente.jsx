@@ -50,8 +50,8 @@ export default function DialogAgregarAsignacionReciente({
 
 
     //* Detecta edición
-    useEffect(() => { 
-        if (editar != null) { setAsignacion(editar.data) } 
+    useEffect(() => {
+        if (editar != null) { setAsignacion(editar.data) }
     }, [open])
 
 
@@ -70,10 +70,12 @@ export default function DialogAgregarAsignacionReciente({
         const uao = ua.sort((x, y) => y.fecha.localeCompare(x.fecha));
         setUltimasAsignaciones(uao)
 
-        const mtr = matriculados.find(m => m.id === asignacion.acompañante)
-        setAyudantesAnteriores([...ayudantesAnteriores].concat(
-            { id: mtr.id, nombre: mtr.nombre }
-        ))
+        if (!(asignacion.tipo === "Discurso" || asignacion.tipo === "Lectura")) {
+            const mtr = matriculados.find(m => m.id === asignacion.acompañante)
+            setAyudantesAnteriores([...ayudantesAnteriores].concat(
+                { id: mtr.id, nombre: mtr.nombre }
+            ))
+        }
         cerrar();
     }
 

@@ -117,7 +117,7 @@ export default function Matriculados() {
                             <span
                                 style={{ display: 'flex', alignItems: 'center' }}
                             >
-                                {noPuedePasarAsignaciones(matriculado) && <WarningIcon sx={{mr:1, color:'red'}} fontSize='small' />}
+                                {noPuedePasarAsignaciones(matriculado) && <WarningIcon sx={{ mr: 1, color: 'red' }} fontSize='small' />}
                                 {matriculado.nombre}
                             </span>
                         }
@@ -129,14 +129,22 @@ export default function Matriculados() {
                             </Typography>
                         }
 
-                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
-                            <b>Ultima asignación:</b>
-                        </Typography>
-                        <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
-                            {matriculado.ultimaAsignacion.tipo}, el {formatoFecha(matriculado.ultimaAsignacion.fecha)}, en la sala {matriculado.ultimaAsignacion.sala}
-                        </Typography>
+                        {
+                            matriculado.asignacionesAnteriores.length > 0 &&
+                            <>
+                                <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5 }}>
+                                    <b>Ultima asignación:</b>
+                                </Typography>
+                                <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left" }}>
+                                    {matriculado.asignacionesAnteriores[0].tipo},
+                                    el {formatoFecha(matriculado.asignacionesAnteriores[0].fecha)},
+                                    en la sala {matriculado.asignacionesAnteriores[0].sala}
+                                </Typography>
+                            </>
+                        }
+
                         {noPuedePasarAsignaciones(matriculado)
-                            ? <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5, color:'red' }}>
+                            ? <Typography variant="subtitle2" sx={{ fontSize: "1em", textAlign: "left", mt: 1.5, color: 'red' }}>
                                 <b>No puede pasar asignaciones</b>
                             </Typography>
                             : <>

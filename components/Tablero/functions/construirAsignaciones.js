@@ -25,6 +25,9 @@ export default function construirAsignaciones(matriculados, data) {
         fecha.asignaciones.forEach(asignacion => {
             asignacion.salas.forEach((sala, salaNum) => {
 
+
+
+
                 function agregarAsignacion(asignado) {
                     fecha.familias.push(asignado.familia);
                     sala.asignados.push({ nombre: asignado.nombre, id: asignado.id });
@@ -60,7 +63,6 @@ export default function construirAsignaciones(matriculados, data) {
 
 
                 switch (asignacion.tipo) {
-
                     case "Primera conversación":
                         if (sala.asignados.length != 0) { return }
                         let asignadoPC = mtrs.find(mtr => {
@@ -73,7 +75,7 @@ export default function construirAsignaciones(matriculados, data) {
                                     (
                                         mtr.asignacionesAnteriores.length > 0 &&
                                         (
-                                            mtr.asignacionesAnteriores[0].sala !== obtenerSalaNum(mtr.asignacionesAnteriores[0].sala) &&
+                                            salaNum !== obtenerSalaNum(mtr.asignacionesAnteriores[0].sala) &&
                                             (mtr.asignacionesAnteriores[0].tipo === "Ayudante" || !mtr.posiblesAsignaciones["Ayudante"])
                                         )
                                     )
@@ -85,8 +87,6 @@ export default function construirAsignaciones(matriculados, data) {
                                 )
                             );
                         })
-
-
                         let ayudantePC = mtrs.find(mtr => {
                             const famEncontrada = fecha.familias.find(fml => fml.id === mtr.familia.id);
                             const yaEstaAsignado = intentaEncontrarMtrEnAsignadosSinGuardar(mtr);
@@ -100,14 +100,11 @@ export default function construirAsignaciones(matriculados, data) {
                                     (
                                         mtr.asignacionesAnteriores.length > 0 &&
                                         (
-                                            mtr.asignacionesAnteriores[0].sala !== obtenerSalaNum(mtr.asignacionesAnteriores[0].sala) &&
+                                            mtr.asignacionesAnteriores[0].tipo !== "Ayudante" ||
                                             (
-                                                mtr.asignacionesAnteriores[0].tipo !== "Ayudante" ||
-                                                (
-                                                    !mtr.posiblesAsignaciones["Primera conversación"] &&
-                                                    !mtr.posiblesAsignaciones["Revisita"] &&
-                                                    !mtr.posiblesAsignaciones["Curso bíblico"]
-                                                )
+                                                !mtr.posiblesAsignaciones["Primera conversación"] &&
+                                                !mtr.posiblesAsignaciones["Revisita"] &&
+                                                !mtr.posiblesAsignaciones["Curso bíblico"]
                                             )
                                         )
                                     )
@@ -178,7 +175,7 @@ export default function construirAsignaciones(matriculados, data) {
                                     (
                                         mtr.asignacionesAnteriores.length > 0 &&
                                         (
-                                            mtr.asignacionesAnteriores[0].sala !== obtenerSalaNum(mtr.asignacionesAnteriores[0].sala) &&
+                                            salaNum !== obtenerSalaNum(mtr.asignacionesAnteriores[0].sala) &&
                                             (mtr.asignacionesAnteriores[0].tipo === "Ayudante" || !mtr.posiblesAsignaciones["Ayudante"])
                                         )
                                     )
@@ -204,14 +201,11 @@ export default function construirAsignaciones(matriculados, data) {
                                     (
                                         mtr.asignacionesAnteriores.length > 0 &&
                                         (
-                                            mtr.asignacionesAnteriores[0].sala !== obtenerSalaNum(mtr.asignacionesAnteriores[0].sala) &&
+                                            mtr.asignacionesAnteriores[0].tipo !== "Ayudante" ||
                                             (
-                                                mtr.asignacionesAnteriores[0].tipo !== "Ayudante" ||
-                                                (
-                                                    !mtr.posiblesAsignaciones["Primera conversación"] &&
-                                                    !mtr.posiblesAsignaciones["Revisita"] &&
-                                                    !mtr.posiblesAsignaciones["Curso bíblico"]
-                                                )
+                                                !mtr.posiblesAsignaciones["Primera conversación"] &&
+                                                !mtr.posiblesAsignaciones["Revisita"] &&
+                                                !mtr.posiblesAsignaciones["Curso bíblico"]
                                             )
                                         )
                                     )
@@ -265,6 +259,11 @@ export default function construirAsignaciones(matriculados, data) {
 
 
 
+
+
+
+
+
                     case "Curso bíblico":
                         if (sala.asignados.length != 0) { return }
                         let asignadoCB = mtrs.find(mtr => {
@@ -277,7 +276,7 @@ export default function construirAsignaciones(matriculados, data) {
                                     (
                                         mtr.asignacionesAnteriores.length > 0 &&
                                         (
-                                            mtr.asignacionesAnteriores[0].sala !== obtenerSalaNum(mtr.asignacionesAnteriores[0].sala) &&
+                                            salaNum !== obtenerSalaNum(mtr.asignacionesAnteriores[0].sala) &&
                                             (mtr.asignacionesAnteriores[0].tipo === "Ayudante" || !mtr.posiblesAsignaciones["Ayudante"])
                                         )
                                     )
@@ -303,14 +302,11 @@ export default function construirAsignaciones(matriculados, data) {
                                     (
                                         mtr.asignacionesAnteriores.length > 0 &&
                                         (
-                                            mtr.asignacionesAnteriores[0].sala !== obtenerSalaNum(mtr.asignacionesAnteriores[0].sala) &&
+                                            mtr.asignacionesAnteriores[0].tipo !== "Ayudante" ||
                                             (
-                                                mtr.asignacionesAnteriores[0].tipo !== "Ayudante" ||
-                                                (
-                                                    !mtr.posiblesAsignaciones["Primera conversación"] &&
-                                                    !mtr.posiblesAsignaciones["Revisita"] &&
-                                                    !mtr.posiblesAsignaciones["Curso bíblico"]
-                                                )
+                                                !mtr.posiblesAsignaciones["Primera conversación"] &&
+                                                !mtr.posiblesAsignaciones["Revisita"] &&
+                                                !mtr.posiblesAsignaciones["Curso bíblico"]
                                             )
                                         )
                                     )
@@ -360,7 +356,7 @@ export default function construirAsignaciones(matriculados, data) {
 
 
 
-                        
+
 
 
 
@@ -381,19 +377,19 @@ export default function construirAsignaciones(matriculados, data) {
                             );
                         })
 
-                         //* Acomodar asignaciones anteriores
-                         let asAntD = [...asignadoDiscurso.asignacionesAnteriores]
-                         asAntD.splice(0, 0, {
-                             fecha: fecha.fecha,
-                             sala: obtenerSala(salaNum),
-                             tipo: "Discurso",
-                             acompañante: ""
-                         })
-                         agregarAsignacion({
+                        //* Acomodar asignaciones anteriores
+                        let asAntD = [...asignadoDiscurso.asignacionesAnteriores]
+                        asAntD.splice(0, 0, {
+                            fecha: fecha.fecha,
+                            sala: obtenerSala(salaNum),
+                            tipo: "Discurso",
+                            acompañante: ""
+                        })
+                        agregarAsignacion({
                             ...asignadoDiscurso,
                             asignacionesAnteriores: asAntD,
                         });
-                        
+
                         break;
 
 
@@ -432,10 +428,10 @@ export default function construirAsignaciones(matriculados, data) {
                         })
 
                         agregarAsignacion({
-                           ...asignadoDiscurso,
-                           asignacionesAnteriores: asAntL,
-                       });
-                       
+                            ...asignadoDiscurso,
+                            asignacionesAnteriores: asAntL,
+                        });
+
                         break;
                 }
 

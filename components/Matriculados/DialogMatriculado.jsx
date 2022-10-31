@@ -59,10 +59,10 @@ import DialogAgregarAsignacionReciente from './DialogAgregarAsignacionReciente';
 import AsignacionReciente from './AsignacionReciente';
 
 
-const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked }) => {
+const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked, disabled = false }) => {
     return (
         <ListItem disablePadding >
-            <ListItemButton dense onClick={() => { cambiarChecked(nombre) }}>
+            <ListItemButton dense onClick={() => { cambiarChecked(nombre) }} disabled={disabled} >
                 <ListItemIcon>
                     <Checkbox
                         edge="start"
@@ -87,7 +87,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     const user = useRecoilValue(userState)
 
     const [nombre, setNombre] = useState("")
-    const [genero, setGenero] = useState("hombre")    
+    const [genero, setGenero] = useState("hombre")
     const [posiblesAsignaciones, setPosiblesAsignaciones] = useState({
         "Ayudante": false,
         "Primera conversación": false,
@@ -96,6 +96,15 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
         "Discurso": false,
         "Lectura": false
     })
+    useEffect(() => {
+        if (genero === "mujer") {
+            setPosiblesAsignaciones({
+                ...posiblesAsignaciones,
+                Discurso: false,
+                Lectura: false
+            })
+        }
+    }, [genero])
     const [observaciones, setObservaciones] = useState('')
 
 
@@ -113,7 +122,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
         setNombre('');
         setGenero('');
         setAsignacionesAnteriores([])
-        
+
         setPosiblesAsignaciones({
             "Ayudante": false,
             "Primera conversación": false,
@@ -269,7 +278,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                         position: 'sticky', top: 0, zIndex: 3
                     }} >
                     <Typography sx={{ color: 'white' }} >
-                        Agrega un matriculado
+                        Agrega un matriculado {nombre != '' && ` - ${nombre}`}
                     </Typography>
                     <Tooltip title='Cancelar y cerrar' >
                         <IconButton size='small' sx={{ ml: 'auto' }} onClick={cancelarYCerrar} >
@@ -433,8 +442,8 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                         <PosiblesAsignaciones nombre="Primera conversación" checked={posiblesAsignaciones["Primera conversación"]} cambiarChecked={cambiarChecked} />
                         <PosiblesAsignaciones nombre="Revisita" checked={posiblesAsignaciones["Revisita"]} cambiarChecked={cambiarChecked} />
                         <PosiblesAsignaciones nombre="Curso bíblico" checked={posiblesAsignaciones["Curso bíblico"]} cambiarChecked={cambiarChecked} />
-                        <PosiblesAsignaciones nombre="Discurso" checked={posiblesAsignaciones["Discurso"]} cambiarChecked={cambiarChecked} />
-                        <PosiblesAsignaciones nombre="Lectura" checked={posiblesAsignaciones["Lectura"]} cambiarChecked={cambiarChecked} />
+                        <PosiblesAsignaciones nombre="Discurso" checked={posiblesAsignaciones["Discurso"]} cambiarChecked={cambiarChecked} disabled={genero === "mujer"} />
+                        <PosiblesAsignaciones nombre="Lectura" checked={posiblesAsignaciones["Lectura"]} cambiarChecked={cambiarChecked} disabled={genero === "mujer"} />
                     </List>
 
 
@@ -454,7 +463,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
                 </DialogContent>
 
-                <DialogActions sx={{ position: "sticky", bottom: 0, background:"white", zIndex:10 }} >
+                <DialogActions sx={{ position: "sticky", bottom: 0, background: "white", zIndex: 10 }} >
 
                     <Button
                         onClick={guardar}

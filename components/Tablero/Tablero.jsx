@@ -373,7 +373,6 @@ export default function Tablero() {
 								}
 							</List>
 					}
-
 				</DialogContent>
 			</DialogTema>
 
