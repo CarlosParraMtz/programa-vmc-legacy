@@ -132,6 +132,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
             "Lectura": false
         })
         setAyudantesAnteriores([])
+        setObservaciones("");
     }
 
     function rellenarDialog(data) {
@@ -140,6 +141,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
         setAsignacionesAnteriores(data.asignacionesAnteriores)
         setPosiblesAsignaciones(data.posiblesAsignaciones)
         setAyudantesAnteriores(data.ayudantesAnteriores)
+        setObservaciones(data.observaciones)
     }
 
     useEffect(() => {
