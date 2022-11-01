@@ -1,7 +1,10 @@
 export default function construirAsignaciones(matriculados, data) {
 
     const matriculadosSO = [...matriculados]
-    const mtrs = matriculadosSO.sort((x, y) => x.ultimaAsignacion.fecha.localeCompare(y.ultimaAsignacion.fecha))
+    const mtrs = matriculadosSO.sort(
+        (x, y) => x.asignacionesAnteriores.length > 0 &&
+            x.asignacionesAnteriores[0].fecha.localeCompare(y.asignacionesAnteriores[0].fecha)
+    )
 
     /*
             let listaMtrSinFamilia = [];
@@ -54,7 +57,7 @@ export default function construirAsignaciones(matriculados, data) {
 
 
 
-
+                    console.log("Entrando a ", asignacion.tipo)
 
 
 
@@ -405,6 +408,8 @@ export default function construirAsignaciones(matriculados, data) {
                     case "Lectura":
                         if (sala.asignados.length != 0) { return }
                         let asignadoLectura = mtrs.find(mtr => {
+                            console.log("buscando familia")
+                            console.log(fecha)
                             const famEncontrada = fecha.familias.find(fml => fml.id === mtr.familia.id);
                             const yaEstaAsignado = intentaEncontrarMtrEnAsignadosSinGuardar(mtr);
                             if (
