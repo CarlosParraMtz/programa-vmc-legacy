@@ -226,9 +226,7 @@ export default function Tablero() {
 
 
 	const generarAsignaciones = () => {
-
 		const r = construirAsignaciones(matriculados, data)
-
 		setData(r.data);
 		setAsignadosSinGuardar(r.mtrSinGuardar);
 	}

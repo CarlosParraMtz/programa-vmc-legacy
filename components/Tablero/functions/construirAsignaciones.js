@@ -1,10 +1,13 @@
 export default function construirAsignaciones(matriculados, data) {
 
     const matriculadosSO = [...matriculados]
-    const mtrs = matriculadosSO.sort(
-        (x, y) => x.asignacionesAnteriores.length > 0 &&
-            x.asignacionesAnteriores[0].fecha.localeCompare(y.asignacionesAnteriores[0].fecha)
+    const mtrSinAsignaciones = matriculadosSO.filter(m => m.asignacionesAnteriores.length === 0)
+    const mtrConAsignaciones = matriculadosSO.filter(m => m.asignacionesAnteriores.length > 0)
+    const mtrConOrdenados = mtrConAsignaciones.sort(
+        (x, y) => x.asignacionesAnteriores[0].fecha.localeCompare(y.asignacionesAnteriores[0].fecha)
     )
+    const mtrs = mtrSinAsignaciones.concat(mtrConOrdenados)
+
 
     /*
             let listaMtrSinFamilia = [];
@@ -55,9 +58,6 @@ export default function construirAsignaciones(matriculados, data) {
                     return false;
                 }
 
-
-
-                    console.log("Entrando a ", asignacion.tipo)
 
 
 
@@ -115,7 +115,8 @@ export default function construirAsignaciones(matriculados, data) {
                                 !yaEstaAsignado &&
                                 !yaFueSuAyudante &&
                                 esDelMismoGenero &&
-                                (!famEncontrada || mtr.familia.apellidos === '')
+                                (!famEncontrada || mtr.familia.apellidos === '') &&
+                                mtr.id != asignadoPC.id
                             );
                         })
 
@@ -216,7 +217,8 @@ export default function construirAsignaciones(matriculados, data) {
                                 !yaEstaAsignado &&
                                 !yaFueSuAyudante &&
                                 esDelMismoGenero &&
-                                (!famEncontrada || mtr.familia.apellidos === '')
+                                (!famEncontrada || mtr.familia.apellidos === '') &&
+                                mtr.id != asignadoR.id
                             );
                         })
 
@@ -317,7 +319,8 @@ export default function construirAsignaciones(matriculados, data) {
                                 !yaEstaAsignado &&
                                 !yaFueSuAyudante &&
                                 esDelMismoGenero &&
-                                (!famEncontrada || mtr.familia.apellidos === '')
+                                (!famEncontrada || mtr.familia.apellidos === '') &&
+                                mtr.id != asignadoCB.id
                             );
                         })
 
@@ -371,6 +374,7 @@ export default function construirAsignaciones(matriculados, data) {
                         let asignadoDiscurso = mtrs.find(mtr => {
                             const famEncontrada = fecha.familias.find(fml => fml.id === mtr.familia.id);
                             const yaEstaAsignado = intentaEncontrarMtrEnAsignadosSinGuardar(mtr);
+
                             return (
                                 mtr.posiblesAsignaciones["Discurso"] && mtr.genero === "hombre" && !yaEstaAsignado &&
                                 (
@@ -407,20 +411,19 @@ export default function construirAsignaciones(matriculados, data) {
 
                     case "Lectura":
                         if (sala.asignados.length != 0) { return }
+
                         let asignadoLectura = mtrs.find(mtr => {
-                            console.log("buscando familia")
-                            console.log(fecha)
                             const famEncontrada = fecha.familias.find(fml => fml.id === mtr.familia.id);
                             const yaEstaAsignado = intentaEncontrarMtrEnAsignadosSinGuardar(mtr);
-                            if (
+                            return (
                                 mtr.posiblesAsignaciones["Lectura"] && mtr.genero === "hombre" && !yaEstaAsignado &&
                                 (
                                     !famEncontrada
                                     || mtr.familia.apellidos === ''
                                 )
-                            ) { return true; }
-                            else return false;
+                            )
                         })
+
 
 
                         //* Acomodar asignaciones anteriores
@@ -433,10 +436,9 @@ export default function construirAsignaciones(matriculados, data) {
                         })
 
                         agregarAsignacion({
-                            ...asignadoDiscurso,
+                            ...asignadoLectura,
                             asignacionesAnteriores: asAntL,
                         });
-
                         break;
                 }
 

@@ -39,7 +39,7 @@ export default function Asignaciones({ useData, indexFechas, indexAsignacion, us
 
     const tableSM = 12
     const tableXS = 12
-    const tableLG = 3
+    const tableLG = 12
 
     const borrarAsignacion = () => {
         let dataN = { ...data }
@@ -81,29 +81,35 @@ export default function Asignaciones({ useData, indexFechas, indexAsignacion, us
 
 
                     {editando
-                        ? <Box sx={{ display: 'flex', flexDirection: 'column' }} >
-                            <FormControl fullWidth size="small" >
-                                <InputLabel>Tipo</InputLabel>
-                                <Select
-                                    value={tipo}
-                                    label="Tipo"
-                                    onChange={e => setTipo(e.target.value)}
-                                    onBlur={cambiarTipo}
-                                    size="small"
-                                    sx={{ maxWidth: (esLG ? '140px' : '200px') }}
-                                >
-                                    <MenuItem value={"Lectura"}>Lectura</MenuItem>
-                                    <MenuItem value={"Primera conversación"}>Primera conversación</MenuItem>
-                                    <MenuItem value={"Revisita"}>Revisita</MenuItem>
-                                    <MenuItem value={"Curso bíblico"}>Curso bíblico</MenuItem>
-                                    <MenuItem value={"Discurso"}>Discurso</MenuItem>
-                                </Select>
-                            </FormControl>
+                        ? <Box sx={{ display: 'flex', flexDirection: 'column', width:"100%" }} >
+                            <Box sx={{display:"flex"}} >
+                                <FormControl fullWidth size="small" >
+                                    <InputLabel>Tipo</InputLabel>
+                                    <Select
+                                        value={tipo}
+                                        label="Tipo"
+                                        onChange={e => setTipo(e.target.value)}
+                                        onBlur={cambiarTipo}
+                                        size="small"
+                                        sx={{ maxWidth: (esLG ? '240px' : '260px') }}
+                                    >
+                                        <MenuItem value={"Lectura"}>Lectura</MenuItem>
+                                        <MenuItem value={"Primera conversación"}>Primera conversación</MenuItem>
+                                        <MenuItem value={"Revisita"}>Revisita</MenuItem>
+                                        <MenuItem value={"Curso bíblico"}>Curso bíblico</MenuItem>
+                                        <MenuItem value={"Discurso"}>Discurso</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <IconButton sx={{ ml: 'auto' }} size='small' onClick={borrarAsignacion} >
+                                    <CloseIcon fontSize="small" />
+                                </IconButton>
+                            </Box>
                             <TextField
                                 value={descripcion}
                                 variant='standard'
                                 size='small'
                                 multiline
+                                fullWidth
                                 onChange={e => setDescripcion(e.target.value)}
                                 onBlur={cambiarDescripcion}
                                 label='Descripción'
@@ -131,12 +137,6 @@ export default function Asignaciones({ useData, indexFechas, indexAsignacion, us
                         </Box>
                     }
 
-                    {
-                        editando &&
-                        <IconButton sx={{ ml: 'auto' }} size='small' onClick={borrarAsignacion} >
-                            <CloseIcon fontSize="small" />
-                        </IconButton>
-                    }
 
                 </Box>
             </Grid>
