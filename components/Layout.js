@@ -32,9 +32,7 @@ export default function Layout({ children }) {
         }
     }, [user])
 
-    useEffect(() => {
-        window.scrollTo(1, 0)
-    }, [])
+   
 
     const hacerLogout = () => {
         logout()

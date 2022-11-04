@@ -1,29 +1,29 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import Typography from '@mui/material/Typography'
-import {
-	Box,
-	Button,
-} from '@mui/material/';
-import Link from 'next/link';
-import Router from 'next/router';
+//* Módulos
+import { useState, useEffect } from 'react'
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
-
-import {
-	getFirestore,
-} from "firebase/firestore";
 import firebaseApp from '../firebase/config';
 import { useRecoilState } from 'recoil';
-import userState from '../Recoil/userState';
-import matriculadosState from '../Recoil/matriculadosState';
-import familiasState from '../Recoil/familiasState';
-import { useState, useEffect } from 'react'
 
+import Head from 'next/head'
+import Router from 'next/router';
+import Image from 'next/image'
+import Link from 'next/link';
+
+//* Recoil
+import userState from '../Recoil/userState';
+import familiasState from '../Recoil/familiasState';
+
+//* Funciones
 import descargarMatriculados from '../firebase/descargarMatriculados';
 import descargarFamilias from '../firebase/descargarFamilias'
-
 import comprobarConfigUsuario from '../firebase/comprobarConfigUsuario'
+
+//*Estilos
+import {
+	Box, Button, Card, CardContent, CircularProgress, Typography
+} from '@mui/material/';
+
+
 
 
 
@@ -35,11 +35,13 @@ const BotonGoogle = ({ onClick }) => <Button
 	sx={{
 		padding: 2,
 		border: "solid 1px #ccc",
-		color: "#ddd",
+		color: "#333",
+		background: "RGBA(0, 0, 0, 0.1)",
+		my: 7,
 		"&:hover": {
 			border: "solid 1px white",
 			color: "white",
-			background: "RGBA(255, 255, 255, 0.1)"
+			background: "RGBA(0, 0, 0, 0.8)"
 		}
 	}}
 >
@@ -54,14 +56,15 @@ export default function Login() {
 	const auth = getAuth(firebaseApp);
 	const googleProvider = new GoogleAuthProvider();
 
-	const [cargando, setCargando] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [user, setUser] = useRecoilState(userState);
-	const [matriculados, setMatriculados] = useRecoilState(matriculadosState);
 	const [familias, setFamilias] = useRecoilState(familiasState);
 
 
 
 	async function checarLogin() {
+		setLoading(true);
+
 		const auth = getAuth()
 		await onAuthStateChanged(auth, async (usuario) => {
 			if (usuario) {
@@ -86,15 +89,15 @@ export default function Login() {
 				if (newSesion.data.congregacion.nombre === '') {
 					Router.push('/nuevo-usuario')
 				} else {
-					const matr = await descargarMatriculados(newSesion.data.congregacion.id)
 					const fams = await descargarFamilias(newSesion.data.congregacion.id)
-					setMatriculados(matr)
 					setFamilias(fams)
 					Router.push('/')
 				}
 			}
+			setLoading(false)
 		})
 
+		
 	}
 
 	useEffect(() => { checarLogin() }, [])
@@ -102,7 +105,7 @@ export default function Login() {
 
 
 	const login = async () => {
-		setCargando(true)
+		setLoading(true)
 		await signInWithPopup(auth, googleProvider)
 			.then(async (result) => {
 				const datosUsuario = result.user;
@@ -127,48 +130,69 @@ export default function Login() {
 				if (usuario.data.congregacion.nombre === '') {
 					Router.push('/nuevo-usuario')
 				} else {
-					const matr = await descargarMatriculados(usuario.data.congregacion.id)
 					const fams = await descargarFamilias(usuario.data.congregacion.id)
-					setMatriculados(matr)
 					setFamilias(fams)
 					Router.push('/')
 				}
-
-
-
 			})
-		setCargando(false)
+		setLoading(false)
 	}
 
 
 
 
 	return (
-		<div className={styles.container}>
-			<div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "#5b3c88", zIndex: "-1" }} />
+		<>
+			<main id="login-page">
+
+				<div className="img-container" />
+				<div className="content-container">
+					<Card sx={{					
+						maxWidth: "400px",
+						width: "100%",
+						minHeight: "400px",
+						background: "#fafafa",
+						boxShadow: "3px 3px 6px #2f2f2f",
+						display:"flex",
+						alignItems:"center",
+						justifyContent:"center"
+					}} >
+						<CardContent sx={{
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "center",
+							height:"100%",
+							justifyContent:"center",
+						}} >
+
+							{
+								loading
+									? <>
+										<CircularProgress sx={{color:"#444"}} />
+										<Typography sx={{color:"#888", mt:5}} > <b><em>Cargando...</em></b> </Typography>
+									</>
+									: <>
+										<Typography variant="h4" sx={{ color: "#3a3a3a" }} >
+											<b>Programa VMC</b>
+										</Typography>
+
+										<Typography sx={{ textAlign: "center", my: 3 }} variant="body1" >
+											Inicie sesión con google.
+										</Typography>
+
+										<BotonGoogle onClick={login} />
+
+										<Typography sx={{ textAlign: "center", color: "#777" }} variant="body1" >
+											Al iniciar sesión confirma que está de acuerdo con las condiciones de uso.
+										</Typography>
+									</>
+							}
 
 
 
-			<main className={styles.main}>
-				<Typography variant="h3" sx={{ color: "white", fontFamily: "sans", mb: 2 }}>
-					<b>Bienvenido</b>
-				</Typography>
-
-				<BotonGoogle onClick={login} />
-
-				<Typography
-					sx={{
-						width: "90%",
-						maxWidth: "700px",
-						mt: 2,
-						textAlign: "center",
-						color: "white",
-					}}
-					variant="h6" >
-					Para poder acceder al generador automático de asignaciones para la reunión Vida y Ministerio Cristianos,
-					inicie sesión con su cuenta de google. Al hacerlo, confirma que está de acuerdo con las condiciones de uso.
-				</Typography>
-
+						</CardContent>
+					</Card>
+				</div>
 
 			</main>
 
@@ -178,7 +202,7 @@ export default function Login() {
 				bottom: 0,
 				left: 0,
 				width: "100%",
-				padding: "10px"
+				padding: "15px"
 			}} >
 
 				<Box sx={{
@@ -187,14 +211,14 @@ export default function Login() {
 					textAlign: "center",
 				}} >
 					<Link href="/condiciones" >
-						<a className={styles.btnCondiciones}>
+						<a className="boton-condiciones" >
 							Condiciones de uso
 						</a>
 					</Link>
 				</Box>
 			</footer>
 
-		</div>
+		</>
 	)
 }
 

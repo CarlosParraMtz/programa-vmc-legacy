@@ -237,19 +237,13 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
         *   Si se llamó desde el botón de editar matriculado, entonces data es la información de ese matriculado,
         *   y lo que hará al guardar será una actualización de este.
         */
+       
         if (data) {
             await actualizarMatriculado(user.data.congregacion.id, matriculadoData, data.id)
-            let nuevosMtr = [...matriculados]
-            nuevosMtr.splice(nuevosMtr.findIndex(i => i.id === data.id), 1, { ...matriculadoData, id: data.id })
-            setMatriculados(nuevosMtr)
             setData(null)
         } else {
             const id = uuid()
             await crearMatriculado(user.data.congregacion.id, matriculadoData, id)
-            const nuevosMtr = [...matriculados] //* Se agrega localmente el matriculado para evitar tener que consultar nuevamente a la base de datos.
-            nuevosMtr.push({ ...matriculadoData, id })
-            let nuevoOrden = nuevosMtr.sort((x, y) => x.nombre.localeCompare(y.nombre))
-            setMatriculados(nuevoOrden)
         }
 
         vaciarDialog()

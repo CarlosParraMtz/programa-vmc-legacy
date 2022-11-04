@@ -1,6 +1,8 @@
 //* Módulos
 import { useState, useEffect } from 'react'
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { onSnapshot, collection } from 'firebase/firestore'
+import { db } from '../../firebase/config'
 
 //* Material UI
 import {
@@ -58,7 +60,21 @@ export default function Tablero() {
 	const [dialogListaPeriodos, setDialogListaPeriodos] = useState(false)
 	const [listaDePeriodos, setListaDePeriodos] = useState([])
 
-	const matriculados = useRecoilValue(matriculadosState)
+
+	
+	
+	//* Firebase listener matriculados
+	const [matriculados, setMatriculados] = useRecoilState(matriculadosState)
+	useEffect(
+		() => onSnapshot(
+			collection(db, `congregaciones/${user.data.congregacion.id}/matriculados`),
+			(snapshot) => {
+				let data = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+				setMatriculados(data.sort((a, b) => a.nombre.localeCompare(b.nombre)))
+			}),
+		[]
+	)
+
 
 	//* Estas propiedades crean una lista de matriculados que se han asignado
 	//* en el periodo, pero que aún no se han guardado en la base de datos.
@@ -139,8 +155,6 @@ export default function Tablero() {
 	async function confirmaBorrarPeriodo() {
 		await eliminarPeriodo(user.data.congregacion.id, data.id)
 	}
-
-	async function obtenerUnPeriodo() { } //TODO
 
 	async function guardarOActualizar() {
 		//* Se evalúa si el periodo actual ya tiene un ID. 
@@ -352,7 +366,7 @@ export default function Tablero() {
 				<DialogContent>
 					{
 						listaDePeriodos.length === 0
-							? <Typography sx={{textAlign:"center", color:"#777", mt:2}} >
+							? <Typography sx={{ textAlign: "center", color: "#777", mt: 2 }} >
 								<b>No hay más periodos guardados</b>
 							</Typography>
 							: <List>
