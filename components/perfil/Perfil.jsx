@@ -27,7 +27,6 @@ export default function Perfil() {
         estado: '',
         pais: ''
     })
- 
 
     const [error, setError] = useState(false)
     const [errorCode, setErrorCode] = useState('')
@@ -58,18 +57,22 @@ export default function Perfil() {
             return;
         }
 
-
         const id = await crearCongregacion(congregacion)
         const congInfo = { ...congregacion, id: id }
-        console.log(congInfo)
-        await actualizarPerfil(user.email, congInfo, configuraciones)
-        setUser({ ...user, congregacion: congInfo })
-
+        await actualizarPerfil(user.email, congInfo)
+        setUser({
+            ...user,
+            data: {
+                congregacion: congInfo,
+                config: {
+                    salas: 2
+                }
+            }
+        })
 
         setError(false)
         setErrorCode('')
         Router.push('/')
-
     }
 
     return (
@@ -132,7 +135,7 @@ export default function Perfil() {
                     }}
                 />
 
-
+                {/* 
                 <Divider>
                     <Typography>Asignaciones:</Typography>
                 </Divider>
@@ -149,7 +152,7 @@ export default function Perfil() {
 
                     
                 </Box>
-
+ */}
 
 
                 <Button type='submit'

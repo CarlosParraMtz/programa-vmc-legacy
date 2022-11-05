@@ -97,7 +97,7 @@ export default function Login() {
 			setLoading(false)
 		})
 
-		
+
 	}
 
 	useEffect(() => { checarLogin() }, [])
@@ -147,29 +147,29 @@ export default function Login() {
 
 				<div className="img-container" />
 				<div className="content-container">
-					<Card sx={{					
+					<Card sx={{
 						maxWidth: "400px",
 						width: "100%",
 						minHeight: "400px",
 						background: "#fafafa",
 						boxShadow: "3px 3px 6px #2f2f2f",
-						display:"flex",
-						alignItems:"center",
-						justifyContent:"center"
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center"
 					}} >
 						<CardContent sx={{
 							display: "flex",
 							flexDirection: "column",
 							alignItems: "center",
-							height:"100%",
-							justifyContent:"center",
+							height: "100%",
+							justifyContent: "center",
 						}} >
 
 							{
 								loading
 									? <>
-										<CircularProgress sx={{color:"#444"}} />
-										<Typography sx={{color:"#888", mt:5}} > <b><em>Cargando...</em></b> </Typography>
+										<CircularProgress sx={{ color: "#444" }} />
+										<Typography sx={{ color: "#888", mt: 5 }} > <b><em>Cargando...</em></b> </Typography>
 									</>
 									: <>
 										<Typography variant="h4" sx={{ color: "#3a3a3a" }} >
@@ -183,7 +183,8 @@ export default function Login() {
 										<BotonGoogle onClick={login} />
 
 										<Typography sx={{ textAlign: "center", color: "#777" }} variant="body1" >
-											Al iniciar sesión confirma que está de acuerdo con las condiciones de uso.
+											Al iniciar sesión confirma que está de acuerdo con las 
+											<Link href="/condiciones" passRef><a><b> condiciones de uso. </b></a></Link>
 										</Typography>
 									</>
 							}
@@ -196,27 +197,6 @@ export default function Login() {
 
 			</main>
 
-			<footer style={{
-				background: "#222",
-				position: "fixed",
-				bottom: 0,
-				left: 0,
-				width: "100%",
-				padding: "15px"
-			}} >
-
-				<Box sx={{
-					margin: "0 auto",
-					maxWidth: "200px",
-					textAlign: "center",
-				}} >
-					<Link href="/condiciones" >
-						<a className="boton-condiciones" >
-							Condiciones de uso
-						</a>
-					</Link>
-				</Box>
-			</footer>
 
 		</>
 	)

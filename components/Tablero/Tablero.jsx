@@ -60,7 +60,7 @@ export default function Tablero() {
 	const [dialogListaPeriodos, setDialogListaPeriodos] = useState(false)
 	const [listaDePeriodos, setListaDePeriodos] = useState([])
 
-
+console.log(user)
 	
 	
 	//* Firebase listener matriculados

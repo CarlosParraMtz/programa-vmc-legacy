@@ -9,6 +9,12 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+  transition: all 0.2s;
+}
+
+a:hover {
+  color:#333;
+  transition: all 0.2s;
 }
 
 * {
@@ -26,13 +32,14 @@ a {
 
 .img-container {
   width: 100%;
-  height: 550px;
-  position: relative;
-  top: -20px;
+  height: 50%;
+  position: absolute;
+  top: 0px;
   background-image: url("/sillas.jpg");
   background-size: cover;
   background-position-y: center;
   background-repeat: no-repeat;
+  z-index: -1;
 }
 
 .content-container {
@@ -40,8 +47,9 @@ a {
   max-width: 1200px;
   padding: 15px;
   margin: 0 auto;
-  position: absolute;
-  top: 28%;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 
@@ -67,5 +75,5 @@ a {
 
 .boton-condiciones:hover::after {
   transition: all 0.2s;
-  width:100%;
+  width: 100%;
 }
