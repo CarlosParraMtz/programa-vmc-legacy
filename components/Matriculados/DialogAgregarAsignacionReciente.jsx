@@ -45,6 +45,8 @@ export default function DialogAgregarAsignacionReciente({
     const [ultimasAsignaciones, setUltimasAsignaciones] = useUltimasAsignaciones;
     const [ayudantesAnteriores, setAyudantesAnteriores] = useAyudantesAnteriores;
 
+    const [error, setError] = useState("")
+
     const matriculados = useRecoilValue(matriculadosState)
 
 
@@ -64,7 +66,15 @@ export default function DialogAgregarAsignacionReciente({
     }
 
     const guardar = () => {
-        //TODO Falta agregar una validación para que el ayudante no quede vacío antes de guardar
+        if ((!(asignacion.tipo === "Discurso" || asignacion.tipo === "Lectura")
+            && asignacion.acompañante === ""
+        ) || asignacion.fecha === ""
+            || asignacion.sala === ""
+            || asignacion.tipo === "") {
+            setError(true)
+            return
+        }
+
         let ua = [...ultimasAsignaciones];
         if (editar != null) { ua.splice(editar.index, 1, asignacion) }
         else { ua.push(asignacion); }
@@ -77,6 +87,7 @@ export default function DialogAgregarAsignacionReciente({
                 { id: mtr.id, nombre: mtr.nombre }
             ))
         }
+        setError(false);
         cerrar();
     }
 
@@ -87,83 +98,111 @@ export default function DialogAgregarAsignacionReciente({
                 <Typography>Agregar asignación</Typography>
             </DialogTitle>
             <DialogContent>
+                <form onSubmit={guardar} >
 
-                <TextField
-                    margin="dense"
-                    id="name"
-                    label="Fecha"
-                    type="date"
-                    size="small"
-                    defaultValue={obtenerDiaDeHoy()}
-                    fullWidth
-                    onChange={e => setAsignacion({ ...asignacion, fecha: e.target.value })}
-                    variant="outlined"
-                />
+                    <TextField
+                        margin="dense"
+                        id="name"
+                        label="Fecha"
+                        type="date"
+                        size="small"
+                        defaultValue={obtenerDiaDeHoy()}
+                        fullWidth
+                        onChange={e => setAsignacion({ ...asignacion, fecha: e.target.value })}
+                        variant="outlined"
+
+                        required
+                        error={error && asignacion.fecha == ""}
+                        helperText={error && asignacion.fecha == "" && "Fecha incorrecta"}
+                    />
 
 
-                <Stack direction="row" spacing={1} alignItems="center" >
-                    <FormControl fullWidth sx={{ mb: 1, mt: 1 }} size="small" >
-                        <InputLabel>Tipo</InputLabel>
-                        <Select
-                            value={asignacion.tipo}
-                            label="Tipo"
+                    <Stack direction="row" spacing={1} alignItems="center" >
+                        <FormControl
+                            fullWidth
+                            sx={{ mb: 1, mt: 1 }}
                             size="small"
-                            onChange={e => setAsignacion({ ...asignacion, tipo: e.target.value })}
+                            required
+                            error={error && asignacion.tipo === ""}
+                            helperText={error && asignacion.tipo === "" && "Se debe escoger un tipo de asignación"}
                         >
-                            <MenuItem value={"Ayudante"}>Ayudante</MenuItem>
-                            <MenuItem value={"Primera conversación"}>Primera conversación</MenuItem>
-                            <MenuItem value={"Revisita"}>Revisita</MenuItem>
-                            <MenuItem value={"Curso bíblico"}>Curso bíblico</MenuItem>
-                            <MenuItem value={"Discurso"}>Discurso</MenuItem>
-                            <MenuItem value={"Lectura"}>Lectura</MenuItem>
-                        </Select>
-                    </FormControl>
+                            <InputLabel>Tipo</InputLabel>
+                            <Select
+                                value={asignacion.tipo}
+                                label="Tipo"
+                                size="small"
+                                onChange={e => setAsignacion({ ...asignacion, tipo: e.target.value })}
+
+                                helperText={error && asignacion.tipo === "" && "Se debe escoger un tipo de asignación"}
+
+                            >
+                                <MenuItem value={"Ayudante"}>Ayudante</MenuItem>
+                                <MenuItem value={"Primera conversación"}>Primera conversación</MenuItem>
+                                <MenuItem value={"Revisita"}>Revisita</MenuItem>
+                                <MenuItem value={"Curso bíblico"}>Curso bíblico</MenuItem>
+                                <MenuItem value={"Discurso"}>Discurso</MenuItem>
+                                <MenuItem value={"Lectura"}>Lectura</MenuItem>
+                            </Select>
+                        </FormControl>
 
 
-                    <FormControl fullWidth sx={{ mb: 1, mt: 1 }} size="small">
-                        <InputLabel>Sala</InputLabel>
-                        <Select
-                            value={asignacion.sala}
-                            label="Sala"
+                        <FormControl fullWidth sx={{ mb: 1, mt: 1 }} size="small">
+                            <InputLabel>Sala</InputLabel>
+                            <Select
+                                value={asignacion.sala}
+                                label="Sala"
+                                size="small"
+                                onChange={e => {
+                                    setAsignacion({ ...asignacion, sala: e.target.value })
+                                }}
+
+                                required
+                                error={error && asignacion.sala === ""}
+                                helperText={asignacion.sala === "" && "Se debe escoger una sala"}
+                            >
+                                <MenuItem value={"A"}>A</MenuItem>
+                                <MenuItem value={"B"}>B</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                    </Stack>
+
+                    {
+                        asignacion.tipo != "" && !(asignacion.tipo === "Discurso" || asignacion.tipo === "Lectura") &&
+                        <FormControl
+                            fullWidth
+                            sx={{ mb: 1, mt: 1 }}
                             size="small"
-                            onChange={e => {
-                                setAsignacion({ ...asignacion, sala: e.target.value })
-                            }}
+
+                            required
+                            error={error && asignacion.acompañante === ""}
+                            helperText={error && asignacion.acompañante === "" && "Se debe elegir un acompañante"}
                         >
-                            <MenuItem value={"A"}>A</MenuItem>
-                            <MenuItem value={"B"}>B</MenuItem>
-                        </Select>
-                    </FormControl>
+                            <InputLabel>{asignacion.tipo == "Ayudante" ? "Ayudante de:" : "Ayudante:"}</InputLabel>
+                            <Select
+                                value={asignacion.acompañante}
+                                label={asignacion.tipo == "Ayudante" ? "Ayudante de:" : "Ayudante:"}
+                                size="small"
+                                required
+                                onChange={e => setAsignacion({ ...asignacion, acompañante: e.target.value })}
+                            >
+                                {
+                                    ayudantes.map(ayudante => (
+                                        <MenuItem
+                                            key={ayudante.id}
+                                            value={ayudante.id}
+                                            dense
+                                        >
+                                            {ayudante.nombre}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </Select>
+                        </FormControl>
 
-                </Stack>
+                    }
 
-                {
-                    asignacion.tipo != "" && !(asignacion.tipo === "Discurso" || asignacion.tipo === "Lectura") &&
-                    <FormControl fullWidth sx={{ mb: 1, mt: 1 }} size="small" >
-                        <InputLabel>{asignacion.tipo == "Ayudante" ? "Ayudante de:" : "Ayudante:"}</InputLabel>
-                        <Select
-                            value={asignacion.acompañante}
-                            label={asignacion.tipo == "Ayudante" ? "Ayudante de:" : "Ayudante:"}
-                            size="small"
-                            onChange={e => setAsignacion({ ...asignacion, acompañante: e.target.value })}
-                        >
-                            {
-                                ayudantes.map(ayudante => (
-                                    <MenuItem
-                                        key={ayudante.id}
-                                        value={ayudante.id}
-                                        dense
-                                    >
-                                        {ayudante.nombre}
-                                    </MenuItem>
-                                ))
-                            }
-                        </Select>
-                    </FormControl>
-
-                }
-
-
+                </form>
             </DialogContent>
             <DialogActions>
                 <Tooltip title="Regresar" placement='top' arrow >
