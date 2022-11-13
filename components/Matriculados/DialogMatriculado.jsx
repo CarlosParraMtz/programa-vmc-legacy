@@ -80,6 +80,13 @@ const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked, disabled = fals
 
 export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
+
+
+
+    //TODO Reemplazar la lista de los ayudantes anteriores por un mapeo de las asignaciones anteriores.
+
+
+
     const [data, setData] = useData
 
     const [open, setOpen] = useOpen;
@@ -314,6 +321,15 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                             <MenuItem value={"mujer"}>Mujer</MenuItem>
                         </Select>
                     </FormControl>
+
+
+
+
+
+
+
+
+
 
 
 

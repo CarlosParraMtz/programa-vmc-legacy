@@ -46,6 +46,13 @@ import actualizarMatriculados from './functions/actualizarMatriculados';
 
 export default function Tablero() {
 
+
+
+	// TODO Agregar a cada fecha de asignaciones opciones para asignaciones no estudiantiles
+	//! Urgente
+
+
+
 	const user = useRecoilValue(userState)
 
 	const dataInicial = { periodo: '', fechas: [], id: '', timestamp: '' }
@@ -60,8 +67,6 @@ export default function Tablero() {
 	const [dialogListaPeriodos, setDialogListaPeriodos] = useState(false)
 	const [listaDePeriodos, setListaDePeriodos] = useState([])
 
-console.log(user)
-	
 	
 	//* Firebase listener matriculados
 	const [matriculados, setMatriculados] = useRecoilState(matriculadosState)

@@ -48,11 +48,17 @@ export default function SideBar() {
                 <Matriculados />
             </SideTab>
 
-            <SideTab tab={1} texto='Familias' icon={<PeopleAltIcon />} >
+            <SideTab tab={1} texto='No estudiantiles' icon={<AccountCircleIcon />} >
+                {/* 
+                    //TODO Aquí irán los que pueden pasar asignaciones que no son esudiantiles
+                */}
+            </SideTab>
+
+            <SideTab tab={2} texto='Familias' icon={<PeopleAltIcon />} >
                 <Familias />
             </SideTab>
 
-            <SideTab tab={2} texto='Configuración' icon={<SettingsIcon />} >
+            <SideTab tab={3} texto='Configuración' icon={<SettingsIcon />} >
                 Configuraciones
             </SideTab>
 

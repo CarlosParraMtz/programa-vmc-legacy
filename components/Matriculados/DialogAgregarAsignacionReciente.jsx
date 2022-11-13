@@ -64,6 +64,7 @@ export default function DialogAgregarAsignacionReciente({
     }
 
     const guardar = () => {
+        //TODO Falta agregar una validación para que el ayudante no quede vacío antes de guardar
         let ua = [...ultimasAsignaciones];
         if (editar != null) { ua.splice(editar.index, 1, asignacion) }
         else { ua.push(asignacion); }

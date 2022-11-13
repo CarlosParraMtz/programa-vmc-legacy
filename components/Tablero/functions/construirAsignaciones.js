@@ -22,7 +22,10 @@ export default function construirAsignaciones(matriculados, data) {
             }
     */
 
-    //TODO Falta hacer que la función determine si los matriculados tienen demasiados compañeros para reiniciar el contador
+
+    //TODO Reemplazar la busqueda en los ayudantes anteriores por un mapeo de las asignaciones anteriores.
+    //TODO Falta hacer que la función determine si los matriculados tienen demasiados ayudantes anteriores (basado en el mapeo) para reiniciar el contador
+
 
     let mtrSinGuardar = []
     let d = { ...data }
