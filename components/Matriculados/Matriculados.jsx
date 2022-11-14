@@ -67,8 +67,7 @@ export default function Matriculados() {
             setFamilias(nuevasFamilias)
             await actualizarFamilia(user.data.congregacion.id, nuevaFamDelBorrado, nuevaFamDelBorrado.id)
         }
-        setLoading(false)
-        //TODO: Falta agregar lo que hace cuando está en loading
+        setLoading(false)        
     }
 
 

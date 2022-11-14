@@ -51,7 +51,6 @@ export default function Familias() {
 
 
         setLoading(false)
-        //TODO: Falta agregar lo que hace cuando está en loading
     }
 
     return (

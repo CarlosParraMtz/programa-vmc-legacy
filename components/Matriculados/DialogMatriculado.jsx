@@ -81,13 +81,6 @@ const PosiblesAsignaciones = ({ nombre, checked, cambiarChecked, disabled = fals
 
 export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
-
-
-
-    //TODO Reemplazar la lista de los ayudantes anteriores por un mapeo de las asignaciones anteriores.
-
-
-
     const [data, setData] = useData
 
     const [open, setOpen] = useOpen;
@@ -130,7 +123,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     useEffect(() => {
         const ayudantes = asignacionesAnteriores
             .filter(aa => (!(aa.tipo === "Lectura" || aa.tipo === "Discurso")))
-            .map(aa, i, array => {
+            .map((aa, i, array) => {
                 const ayudante = matriculados.find(m => m.id === aa.acompañante)
                 const arrayIDs = array.map(ar => ar.nombre)
                 if (arrayIDs.includes(ayudante.nombre)) { return }
