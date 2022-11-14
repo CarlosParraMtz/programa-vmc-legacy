@@ -148,6 +148,7 @@ export default function Login() {
 				<div className="img-container" />
 				<div className="content-container">
 					<Card sx={{
+						margin: "0 auto",
 						maxWidth: "400px",
 						width: "100%",
 						minHeight: "400px",
@@ -183,7 +184,7 @@ export default function Login() {
 										<BotonGoogle onClick={login} />
 
 										<Typography sx={{ textAlign: "center", color: "#777" }} variant="body1" >
-											Al iniciar sesión confirma que está de acuerdo con las 
+											Al iniciar sesión confirma que está de acuerdo con las
 											<Link href="/condiciones" passRef><a><b> condiciones de uso. </b></a></Link>
 										</Typography>
 									</>

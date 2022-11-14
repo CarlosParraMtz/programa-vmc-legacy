@@ -22,8 +22,7 @@ export default function AsignacionReciente({
     asignacion, i, 
     ayudantesDialog, 
     useUltimasAsignaciones, 
-    buscarAcompañante,
-    useAyudantesAnteriores
+    buscarAcompañante
  }) {
 
     const [open, setOpen] = useState(false)
@@ -69,7 +68,6 @@ export default function AsignacionReciente({
                 ayudantes={ayudantesDialog}
                 useUltimasAsignaciones={useUltimasAsignaciones}
                 editar={{ data: asignacion, index: i }}
-                useAyudantesAnteriores={useAyudantesAnteriores}
             />
         </ListItem>
     )

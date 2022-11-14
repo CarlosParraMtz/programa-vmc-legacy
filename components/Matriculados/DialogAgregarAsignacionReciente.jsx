@@ -31,7 +31,6 @@ export default function DialogAgregarAsignacionReciente({
     useOpen,
     ayudantes,
     useUltimasAsignaciones,
-    useAyudantesAnteriores,
     editar = null }) {
 
     const emptyForm = {
@@ -43,7 +42,6 @@ export default function DialogAgregarAsignacionReciente({
     const [open, setOpen] = useOpen;
     const [asignacion, setAsignacion] = useState(emptyForm)
     const [ultimasAsignaciones, setUltimasAsignaciones] = useUltimasAsignaciones;
-    const [ayudantesAnteriores, setAyudantesAnteriores] = useAyudantesAnteriores;
 
     const [error, setError] = useState("")
 
@@ -81,12 +79,7 @@ export default function DialogAgregarAsignacionReciente({
         const uao = ua.sort((x, y) => y.fecha.localeCompare(x.fecha));
         setUltimasAsignaciones(uao)
 
-        if (!(asignacion.tipo === "Discurso" || asignacion.tipo === "Lectura")) {
-            const mtr = matriculados.find(m => m.id === asignacion.acompañante)
-            setAyudantesAnteriores([...ayudantesAnteriores].concat(
-                { id: mtr.id, nombre: mtr.nombre }
-            ))
-        }
+        
         setError(false);
         cerrar();
     }

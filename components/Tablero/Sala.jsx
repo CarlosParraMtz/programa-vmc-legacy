@@ -31,8 +31,7 @@ export default function Sala({ indexFechas, indexAsignacion, indexSala, useData,
         dataN.fechas[indexFechas].asignaciones[indexAsignacion].salas.splice(indexSala, 1)
         setData(dataN)
     }
-
-    console.log("Se generó esta sala")
+    
 
     return (
         <Grid item lg={4} sm={4} xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '3px', p: 0.5, height: '100%' }} >
@@ -53,7 +52,7 @@ export default function Sala({ indexFechas, indexAsignacion, indexSala, useData,
 
                 {
                     data.fechas[indexFechas].asignaciones[indexAsignacion].salas[indexSala].asignados.map((asignado) => {
-                        console.info(asignado)
+
                         return (
                             <Grid
                                 key={asignado.id}

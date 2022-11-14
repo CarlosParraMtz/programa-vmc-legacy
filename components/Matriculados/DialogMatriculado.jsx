@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { v4 as uuid } from 'uuid';
+import mapearCompañeros from '../Tablero/functions/mapearCompañeros';
 
 //* Material UI
 import {
@@ -120,10 +121,23 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
 
     const [loading, setLoading] = useState(false)
     const [matriculados, setMatriculados] = useRecoilState(matriculadosState);
-    const [ayudantesAnteriores, setAyudantesAnteriores] = useState([])
     const [posiblesAyudantes, setPosiblesAyudantes] = useState([])
     const [posible, setPosible] = useState("")
     const [ayudantesDialog, setAyudantesDialog] = useState([])
+
+    const [ayudantesAnteriores, setAyudantesAnteriores] = useState([])
+
+    useEffect(() => {
+        const ayudantes = asignacionesAnteriores
+            .filter(aa => (!(aa.tipo === "Lectura" || aa.tipo === "Discurso")))
+            .map(aa, i, array => {
+                const ayudante = matriculados.find(m => m.id === aa.acompañante)
+                const arrayIDs = array.map(ar => ar.nombre)
+                if (arrayIDs.includes(ayudante.nombre)) { return }
+                return { nombre: ayudante.nombre, id: ayudante.id }
+            })
+        setAyudantesAnteriores(ayudantes);
+    }, [asignacionesAnteriores])
 
     function vaciarDialog() {
         setNombre('');
@@ -138,7 +152,6 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
             "Discurso": false,
             "Lectura": false
         })
-        setAyudantesAnteriores([])
         setObservaciones("");
     }
 
@@ -147,7 +160,6 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
         setGenero(data.genero);
         setAsignacionesAnteriores(data.asignacionesAnteriores)
         setPosiblesAsignaciones(data.posiblesAsignaciones)
-        setAyudantesAnteriores(data.ayudantesAnteriores)
         setObservaciones(data.observaciones)
     }
 
@@ -222,7 +234,6 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
     const matriculadoData = {
         nombre,
         genero,
-        ayudantesAnteriores,
         posiblesAsignaciones,
         familia: {
             apellidos: (data ? data.familia.apellidos : ""),
@@ -244,7 +255,7 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
         *   Si se llamó desde el botón de editar matriculado, entonces data es la información de ese matriculado,
         *   y lo que hará al guardar será una actualización de este.
         */
-       
+
         if (data) {
             await actualizarMatriculado(user.data.congregacion.id, matriculadoData, data.id)
             setData(null)
@@ -363,7 +374,6 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                                         ayudantesDialog={ayudantesDialog}
                                         useUltimasAsignaciones={[asignacionesAnteriores, setAsignacionesAnteriores]}
                                         buscarAcompañante={buscarAcompañante}
-                                        useAyudantesAnteriores={[ayudantesAnteriores, setAyudantesAnteriores]}
                                     />
                                 ))
                             }
@@ -376,7 +386,6 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                         useOpen={[dialogAgregarAsignacionOpen, setDialogAgregarAsignacionOpen]}
                         ayudantes={ayudantesDialog}
                         useUltimasAsignaciones={[asignacionesAnteriores, setAsignacionesAnteriores]}
-                        useAyudantesAnteriores={[ayudantesAnteriores, setAyudantesAnteriores]}
                     />
 
 
@@ -385,41 +394,10 @@ export default function DialogAgregarUno({ useOpen, useData = [null, null] }) {
                             Ayudantes anteriores:
                         </ListSubheader>
                     }>
-                        <ListItem dense>
-                            <ListItemButton onClick={desplegarMenuPosiblesAyudantes} >
-                                <ListItemText primary="Agregar ayudante..." />
-                            </ListItemButton>
-                        </ListItem>
-                        <Menu
-                            id="basic-menu"
-                            anchorEl={anchorEl}
-                            open={menuAbierto}
-                            onClose={cerrarMenu}
-                        >
-                            {
-                                posiblesAyudantes.map((op, i) => <MenuItem
-                                    key={i}
-                                    onClick={() => agregarAyudanteAnterior(op.nombre, op.id)}
-                                >
-                                    {op.nombre}
-                                </MenuItem>)
-                            }
-                            {
-                                posiblesAyudantes.length === 0 &&
-                                <Typography sx={{ color: '#bbb', p: 1 }} >
-                                    Agregar más matriculados para poder llenar esta lista
-                                </Typography>
-                            }
-                        </Menu>
-
                         {
-                            ayudantesAnteriores.map((a) => (
-                                <ListItem key={a.id} dense >
-                                    <ListItemIcon>
-                                        <IconButton onClick={() => borrarAyudante(a.id)} >
-                                            <Delete />
-                                        </IconButton>
-                                    </ListItemIcon>
+
+                            ayudantesAnteriores.map((a, i) => (
+                                <ListItem key={i} dense >
                                     <ListItemText primary={a.nombre} />
 
                                 </ListItem>

@@ -1,3 +1,5 @@
+import mapearCompañeros from "./mapearCompañeros"
+
 export default function construirAsignaciones(matriculados, data) {
 
     const matriculadosSO = [...matriculados]
@@ -25,7 +27,7 @@ export default function construirAsignaciones(matriculados, data) {
 
     //TODO Reemplazar la busqueda en los ayudantes anteriores por un mapeo de las asignaciones anteriores.
     //TODO Falta hacer que la función determine si los matriculados tienen demasiados ayudantes anteriores (basado en el mapeo) para reiniciar el contador
-
+    //! Esto solo se hará en la función que construye las asignaciones
 
     let mtrSinGuardar = []
     let d = { ...data }
@@ -93,11 +95,16 @@ export default function construirAsignaciones(matriculados, data) {
                                 )
                             );
                         })
+
+                        if (!asignadoPC) { return; }
+
+                        const ayudantesAsignadoPC = mapearCompañeros(asignadoPC);
+
                         let ayudantePC = mtrs.find(mtr => {
                             const famEncontrada = fecha.familias.find(fml => fml.id === mtr.familia.id);
                             const yaEstaAsignado = intentaEncontrarMtrEnAsignadosSinGuardar(mtr);
-                            const yaFueSuAyudante = asignadoPC.ayudantesAnteriores.find(
-                                ayudanteAnterior => ayudanteAnterior.id === mtr.id);
+                            const yaFueSuAyudante = ayudantesAsignadoPC.find(
+                                ayudanteAnterior => ayudanteAnterior === mtr.id);
                             const esDelMismoGenero = asignadoPC.genero === mtr.genero;
                             return (
                                 mtr.posiblesAsignaciones["Ayudante"] &&
@@ -328,7 +335,7 @@ export default function construirAsignaciones(matriculados, data) {
                         })
 
 
-                        //* Acomodar asignaciones anteriores
+                        /* Acomodar asignaciones anteriores */
                         let asAntCB = [...asignadoCB.asignacionesAnteriores]
                         asAntCB.splice(0, 0, {
                             fecha: fecha.fecha,
@@ -386,6 +393,7 @@ export default function construirAsignaciones(matriculados, data) {
                                 )
                             );
                         })
+                        if (asignadoDiscurso === undefined) { return }
 
                         //* Acomodar asignaciones anteriores
                         let asAntD = [...asignadoDiscurso.asignacionesAnteriores]
